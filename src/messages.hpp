@@ -1,6 +1,7 @@
 #pragma once
 #include "glm.hpp"
 #include <string>
+#include <fea/userinterface.hpp>
 
 struct QuitMessage
 {
@@ -29,6 +30,7 @@ struct StopSoundMessage
 
 struct MouseClickMessage
 {
+    fea::Mouse::Button button;
     glm::uvec2 position;
 };
 

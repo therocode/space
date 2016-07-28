@@ -7,14 +7,18 @@
 #include "audioplayer.hpp"
 #include "renderer.hpp"
 #include "resourcemanager.hpp"
+#include "instantiator.hpp"
 #include "data.hpp"
 
 class Space : public fea::Application,
-    public fea::MessageReceiver<QuitMessage>
+    public fea::MessageReceiver<QuitMessage,
+    MouseClickMessage>
 {
     public:
         Space();
         void handleMessage(const QuitMessage& message) override;
+        void handleMessage(const MouseClickMessage& message) override;
+        void addObject(Object object);
     protected:
         void loop() override;
     private:
@@ -28,6 +32,7 @@ class Space : public fea::Application,
 
         //resources
         ResourceManager mResources;
+        Instantiator mInstantiator;
 
         //input
         InputHandler mInputHandler;
@@ -39,5 +44,7 @@ class Space : public fea::Application,
         ent::TPosition mTPosition;
         gfx::TActorSprite mTActorSprite;
 
+        NumberPool<int32_t> mObjectIdPool;
+        NumberPool<int32_t> mActorSpriteIdPool;
         //AudioPlayer mAudioPlayer;
 };

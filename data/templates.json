@@ -1,0 +1,13 @@
+[
+    {
+        "name":"engineer",
+        "position": {},
+        "sprites":
+        [
+            {
+                "sprite": "dude",
+                "color": {"r": 245, "g": 222, "b": 179}
+            }
+        ]
+    }
+]

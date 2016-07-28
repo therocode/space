@@ -29,7 +29,7 @@ void InputHandler::process()
         }
         else if(event.type == fea::Event::MOUSEBUTTONPRESSED)
         {
-            mBus.send(MouseClickMessage{{event.mouseButton.x, event.mouseButton.y}});
+            mBus.send(MouseClickMessage{event.mouseButton.button, {event.mouseButton.x, event.mouseButton.y}});
         }
         else if(event.type == fea::Event::MOUSEBUTTONRELEASED)
         {
