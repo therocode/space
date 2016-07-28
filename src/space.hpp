@@ -6,6 +6,8 @@
 #include "messages.hpp"
 #include "audioplayer.hpp"
 #include "renderer.hpp"
+#include "resourcemanager.hpp"
+#include "data.hpp"
 
 class Space : public fea::Application,
     public fea::MessageReceiver<QuitMessage>
@@ -16,12 +18,26 @@ class Space : public fea::Application,
     protected:
         void loop() override;
     private:
+        void renderSprites();
+
+        //fea
         fea::MessageBus mBus;
         fea::Window mWindow;
         fea::Renderer2D mFeaRenderer;
         fea::InputHandler mFeaInputHandler;
 
+        //resources
+        ResourceManager mResources;
+
+        //input
         InputHandler mInputHandler;
-        AudioPlayer mAudioPlayer;
+        
+        //rendering
         Renderer mRenderer;
+
+        //data
+        ent::TPosition mTPosition;
+        gfx::TActorSprite mTActorSprite;
+
+        //AudioPlayer mAudioPlayer;
 };

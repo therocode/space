@@ -12,12 +12,22 @@
 #include "has.hpp"
 //includes
 #include "glm/glm.hpp"
+#include <fea/rendering/color.hpp>
 
 //table layouts
-struct ActionDuration
+struct ActorSprite
 {
-    ActionType action;
-    int32_t duration;
+    int32_t actorId;
+    int32_t textureId;
+    fea::Color color;
 };
 
-using TActionDuration  = DataTable<ActionDuration>;
+namespace ent
+{
+    using TPosition  = DataTable<glm::vec2>;
+}
+
+namespace gfx
+{
+    using TActorSprite = DataTable<ActorSprite>;
+}

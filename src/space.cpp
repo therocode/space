@@ -7,8 +7,8 @@ Space::Space() :
     mFeaRenderer(fea::Viewport({1366, 768}, {0, 0}, fea::Camera({1366 / 2.0f, 768 / 2.0f}))),
     mFeaInputHandler(new fea::SDL2InputBackend()),
     mInputHandler(mBus, mFeaInputHandler),
-    mAudioPlayer(mBus),
-    mRenderer(mFeaRenderer)
+    //mAudioPlayer(mBus),
+    mRenderer(mFeaRenderer, mResources.textures())
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -25,8 +25,38 @@ void Space::handleMessage(const QuitMessage& message)
 void Space::loop()
 {
     mInputHandler.process();
-    mAudioPlayer.update();
-    mRenderer.render();
+    //mAudioPlayer.update();
+
+
+
+
+
+    mRenderer.startFrame();
+    mRenderer.renderWorld();
+    renderSprites();
 
     mWindow.swapBuffers();
+}
+
+void Space::renderSprites()
+{
+    std::vector<RenderOrder> orders;
+
+    forEach(mTActorSprite, [&] (int32_t objectId, const ActorSprite& sprite)
+            {   
+            const glm::vec2& position = get(sprite.actorId, mTPosition).data;
+
+            orders.emplace_back(
+                    RenderOrder{
+                    position,
+                    sprite.textureId,
+                    sprite.color,
+                    //sprite.rotation,
+                    //sprite.animationProgress,
+                    //sprite.flip,
+                    }   
+                    );  
+            }); 
+
+    mRenderer.render(orders);
 }
