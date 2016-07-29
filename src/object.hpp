@@ -9,5 +9,7 @@ struct Object
 {
     int32_t id;
     th::Optional<glm::vec2> position;
+    th::Optional<Physics> physics;
+    th::Optional<MoveAbility> moveAbility;
     std::vector<ActorSprite> actorSprites;
 };

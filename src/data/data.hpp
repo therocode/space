@@ -22,9 +22,31 @@ struct ActorSprite
     fea::Color color;
 };
 
+struct Physics
+{
+    glm::vec2 acceleration;
+    glm::vec2 velocity;
+};
+
+struct MoveIntention
+{
+    glm::vec2 direction;
+    float speedPercent;
+};
+
+struct MoveAbility
+{
+    float maxSpeed;
+    float maxAcceleration;
+};
+
 namespace ent
 {
     using TPosition  = DataTable<glm::vec2>;
+    using TPhysics  = DataTable<Physics>;
+    using TWalkTarget = DataTable<glm::vec2>;
+    using TMoveIntention = DataTable<MoveIntention>;
+    using TMoveAbility = DataTable<MoveAbility>;
 }
 
 namespace gfx

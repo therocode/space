@@ -23,14 +23,25 @@ Instantiator::Instantiator(const ResourceManager& resources)
 
         auto physics = extractOptional(templateEntry, "physics");
 
-        //if(physics)
-        //{
-        //    templateToStore.physics = Physics
-        //    {
-        //        extractVec2(*physics, "velocity", {0.0f, 0.0f}),
-        //        extractVec2(*physics, "acceleration", {0.0f, 0.0f}),
-        //    };            
-        //}
+        if(physics)
+        {
+            templateToStore.physics = Physics
+            {
+                extractVec2(*physics, "velocity", {0.0f, 0.0f}),
+                extractVec2(*physics, "acceleration", {0.0f, 0.0f}),
+            };            
+        }
+
+        auto moveAbility = extractOptional(templateEntry, "move_ability");
+
+        if(moveAbility)
+        {
+            templateToStore.moveAbility = MoveAbility
+            {
+                (*moveAbility)["max_speed"].get<float>(),
+                (*moveAbility)["max_acceleration"].get<float>(),
+            };
+        }
 
         //auto walkSpeed = extractOptional(templateEntry, "walk_speed");
 

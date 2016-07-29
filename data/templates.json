@@ -2,6 +2,12 @@
     {
         "name":"engineer",
         "position": {},
+        "physics": {},
+        "move_ability":
+        {
+            "max_speed": 10.0,
+            "max_acceleration": 1.3
+        },
         "sprites":
         [
             {

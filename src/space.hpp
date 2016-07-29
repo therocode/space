@@ -9,6 +9,7 @@
 #include "resourcemanager.hpp"
 #include "instantiator.hpp"
 #include "data.hpp"
+//#include "http/httpdebugger.hpp"
 
 class Space : public fea::Application,
     public fea::MessageReceiver<QuitMessage,
@@ -18,7 +19,7 @@ class Space : public fea::Application,
         Space();
         void handleMessage(const QuitMessage& message) override;
         void handleMessage(const MouseClickMessage& message) override;
-        void addObject(Object object);
+        int32_t addObject(Object object);
     protected:
         void loop() override;
     private:
@@ -42,9 +43,15 @@ class Space : public fea::Application,
 
         //data
         ent::TPosition mTPosition;
+        ent::TPhysics mTPhysics;
+        ent::TWalkTarget mTWalkTarget;
+        ent::TMoveIntention mTMoveIntention;
+        ent::TMoveAbility mTMoveAbility;
         gfx::TActorSprite mTActorSprite;
 
         NumberPool<int32_t> mObjectIdPool;
         NumberPool<int32_t> mActorSpriteIdPool;
         //AudioPlayer mAudioPlayer;
+        
+        //HttpDebugger mHttpDebugger;
 };

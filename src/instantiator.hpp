@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include "object.hpp"
-#include "numberpool.hpp"
+#include "util/numberpool.hpp"
 #include "resourcemanager.hpp"
 
 class Instantiator
