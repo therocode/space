@@ -3,13 +3,14 @@
 #include <data.hpp>
 #include "data.hpp"
 
-enum ObjectType { ENGINEER, };
+enum ActorType { ENGINEER, };
 
-struct Object
+struct Actor
 {
     int32_t id;
     th::Optional<glm::vec2> position;
     th::Optional<Physics> physics;
     th::Optional<MoveAbility> moveAbility;
     std::vector<ActorSprite> actorSprites;
+    bool worker;
 };

@@ -40,6 +40,22 @@ struct MoveAbility
     float maxAcceleration;
 };
 
+struct RoomTask
+{
+    glm::ivec2 position;
+    glm::ivec2 size;
+};
+
+struct WallTask
+{
+    glm::ivec2 position;
+};
+
+struct DoorTask
+{
+    glm::ivec2 position;
+};
+
 namespace ent
 {
     using TPosition  = DataTable<glm::vec2>;
@@ -47,6 +63,13 @@ namespace ent
     using TWalkTarget = DataTable<glm::vec2>;
     using TMoveIntention = DataTable<MoveIntention>;
     using TMoveAbility = DataTable<MoveAbility>;
+}
+
+namespace tsk
+{
+    using TRoomTask = DataTable<RoomTask>;
+    using TWallTask = DataTable<WallTask>;
+    using TDoorTask = DataTable<DoorTask>;
 }
 
 namespace gfx

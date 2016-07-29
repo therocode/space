@@ -19,7 +19,7 @@ class Space : public fea::Application,
         Space();
         void handleMessage(const QuitMessage& message) override;
         void handleMessage(const MouseClickMessage& message) override;
-        int32_t addObject(Object object);
+        int32_t addActor(Actor actor);
     protected:
         void loop() override;
     private:
@@ -41,15 +41,24 @@ class Space : public fea::Application,
         //rendering
         Renderer mRenderer;
 
-        //data
+        //game data
         ent::TPosition mTPosition;
         ent::TPhysics mTPhysics;
         ent::TWalkTarget mTWalkTarget;
         ent::TMoveIntention mTMoveIntention;
         ent::TMoveAbility mTMoveAbility;
+        ////worker stuff
+        IdSet mBuilders;
+        IdSet mFreeWorkers;
+
+        ////tasks
+        tsk::TRoomTask mTRoomTask;
+        tsk::TWallTask mTWallTask;
+        tsk::TDoorTask mTDoorTask;
+
         gfx::TActorSprite mTActorSprite;
 
-        NumberPool<int32_t> mObjectIdPool;
+        NumberPool<int32_t> mActorIdPool;
         NumberPool<int32_t> mActorSpriteIdPool;
         //AudioPlayer mAudioPlayer;
         

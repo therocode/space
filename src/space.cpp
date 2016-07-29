@@ -30,10 +30,10 @@ void Space::handleMessage(const MouseClickMessage& message)
 {
     if(message.button == fea::Mouse::LEFT)
     {   
-        auto object = mInstantiator.instantiate("engineer", mObjectIdPool.next(), message.position);
-        int32_t added = addObject(std::move(object));
+        auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
+        int32_t added = addActor(std::move(actor));
 
-        insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
+        //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
     }   
     else if(message.button == fea::Mouse::RIGHT)
     {
@@ -42,17 +42,23 @@ void Space::handleMessage(const MouseClickMessage& message)
     }   
 }
 
-int32_t Space::addObject(Object object)
+int32_t Space::addActor(Actor actor)
 {
-    int32_t id = object.id;
-    tableEmplaceOptional(id, std::move(object.position), mTPosition);
-    tableEmplaceOptional(id, std::move(object.physics), mTPhysics);
-    tableEmplaceOptional(id, std::move(object.moveAbility), mTMoveAbility);
+    int32_t id = actor.id;
+    tableEmplaceOptional(id, std::move(actor.position), mTPosition);
+    tableEmplaceOptional(id, std::move(actor.physics), mTPhysics);
+    tableEmplaceOptional(id, std::move(actor.moveAbility), mTMoveAbility);
 
-    for(auto& sprite : object.actorSprites)
+    for(auto& sprite : actor.actorSprites)
     {   
         tableEmplaceOptional(mActorSpriteIdPool.next(), std::move(sprite), mTActorSprite);
     }   
+
+    if(actor.worker)
+    {
+        insert(id, mBuilders);
+        insert(id, mFreeWorkers);
+    }
 
     return id;
 }
@@ -77,7 +83,7 @@ void Space::renderSprites()
 {
     std::vector<RenderOrder> orders;
 
-    forEach(mTActorSprite, [&] (int32_t objectId, const ActorSprite& sprite)
+    forEach(mTActorSprite, [&] (int32_t actorId, const ActorSprite& sprite)
             {   
             const glm::vec2& position = get(sprite.actorId, mTPosition).data;
 

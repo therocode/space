@@ -10,7 +10,7 @@ Instantiator::Instantiator(const ResourceManager& resources)
 
     for(const auto& templateEntry : templateJson)
     {
-        Object templateToStore;
+        Actor templateToStore;
 
         std::string name = templateEntry["name"];
 
@@ -42,6 +42,8 @@ Instantiator::Instantiator(const ResourceManager& resources)
                 (*moveAbility)["max_acceleration"].get<float>(),
             };
         }
+
+        templateToStore.worker = templateEntry["worker"];
 
         //auto walkSpeed = extractOptional(templateEntry, "walk_speed");
 
@@ -85,23 +87,23 @@ Instantiator::Instantiator(const ResourceManager& resources)
     }   
 }
 
-Object Instantiator::instantiate(int32_t instanceId, int32_t objectId, const glm::vec2& position)
+Actor Instantiator::instantiate(int32_t instanceId, int32_t actorId, const glm::vec2& position)
 {
-    auto newObject = mTemplates.at(instanceId);
-    newObject.id = objectId;
+    auto newActor = mTemplates.at(instanceId);
+    newActor.id = actorId;
 
-    for(auto& sprite : newObject.actorSprites)
-        sprite.actorId = objectId;
+    for(auto& sprite : newActor.actorSprites)
+        sprite.actorId = actorId;
 
-    if(newObject.position)
-        newObject.position = position;
+    if(newActor.position)
+        newActor.position = position;
 
-    return newObject;
+    return newActor;
 }
 
-Object Instantiator::instantiate(const std::string& name, int32_t objectId, const glm::vec2& position)
+Actor Instantiator::instantiate(const std::string& name, int32_t actorId, const glm::vec2& position)
 {
-    return instantiate(mTemplateNames.at(name), objectId, position);
+    return instantiate(mTemplateNames.at(name), actorId, position);
 }
 
 int32_t Instantiator::id(const std::string& name)
