@@ -36,6 +36,7 @@ struct MouseClickMessage
 
 struct MouseReleaseMessage
 {
+    fea::Mouse::Button button;
     glm::uvec2 position;
 };
 

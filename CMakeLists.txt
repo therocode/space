@@ -8,7 +8,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/cmake/modu
 set(project_name space)
 project(${project_name})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wextra -Werror -Wshadow -Wconversion -Wno-long-long -pedantic -Wno-unused-parameter -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wall -Wextra -Werror -Wshadow -Wconversion -Wno-long-long -pedantic -Wno-unused-parameter -Wno-unused-variable -Wno-format-pedantic")
 
 file(GLOB_RECURSE source_files "src/*.cpp")
 file(GLOB_RECURSE header_files "src/*.hpp")
@@ -53,5 +53,9 @@ endif()
 include_directories("json/src")
 include_directories("src/data")
 
-add_executable(${executable_name} ${header_files} ${source_files})
+include_directories("imgui")
+file(GLOB_RECURSE imgui_source_files "imgui/*.cpp")
+file(GLOB_RECURSE imgui_header_files "imgui/*.h")
+
+add_executable(${executable_name} ${header_files} ${source_files} ${imgui_header_files} ${imgui_source_files})
 target_link_libraries(${executable_name} ${FEATHERKIT_LIBRARIES} ${OPENGL_LIBRARIES})

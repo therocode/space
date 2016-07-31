@@ -13,12 +13,16 @@
 
 class Space : public fea::Application,
     public fea::MessageReceiver<QuitMessage,
-    MouseClickMessage>
+    MouseClickMessage,
+    MouseReleaseMessage,
+    MouseMoveMessage>
 {
     public:
         Space();
         void handleMessage(const QuitMessage& message) override;
         void handleMessage(const MouseClickMessage& message) override;
+        void handleMessage(const MouseReleaseMessage& message) override;
+        void handleMessage(const MouseMoveMessage& message) override;
         int32_t addActor(Actor actor);
     protected:
         void loop() override;
@@ -63,4 +67,5 @@ class Space : public fea::Application,
         //AudioPlayer mAudioPlayer;
         
         //HttpDebugger mHttpDebugger;
+        fea::Texture mImguiFontTexture;
 };
