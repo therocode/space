@@ -10,4 +10,6 @@ class InputHandler
     private:
         fea::InputHandler& mHandler;
         fea::MessageBus& mBus;
+
+        bool mMouseDown;
 };

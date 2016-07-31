@@ -13,7 +13,8 @@ Space::Space() :
     mInstantiator(mResources),
     mInputHandler(mBus, mFeaInputHandler),
     //mAudioPlayer(mBus),
-    mRenderer(mFeaRenderer, mResources.textures())
+    mRenderer(mFeaRenderer, mResources.textures()),
+    mGuiBlocksMouse(false)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -39,55 +40,54 @@ void Space::handleMessage(const QuitMessage& message)
 
 void Space::handleMessage(const MouseClickMessage& message)
 {
-    bool mouse0Down = false;
-    bool mouse1Down = false;
-
     ImGuiIO& io = ImGui::GetIO();
 
-    if(message.button == fea::Mouse::LEFT)
-    {   
-        auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
-        int32_t added = addActor(std::move(actor));
-
-        //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
-
-        mouse0Down = true;
-    }   
-    else if(message.button == fea::Mouse::RIGHT)
+    if(!mGuiBlocksMouse)
     {
-        //mPositions[0].position = message.position;
-        //mPhysics[0].velocity = {};
-        mouse1Down = true;
-    }   
+        mController.worldMouseClick(message.position, message.position / 32, message.button);
+        //if(message.button == fea::Mouse::LEFT)
+        //{   
+        //    auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
+        //    int32_t added = addActor(std::move(actor));
 
-    io.MouseDown[0] = mouse0Down;
-    io.MouseDown[1] = mouse1Down;
+        //    //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
+        //}   
+        //else if(message.button == fea::Mouse::RIGHT)
+        //{
+        //    //mPositions[0].position = message.position;
+        //    //mPhysics[0].velocity = {};
+        //}   
+    }
+
+    if(message.button == fea::Mouse::LEFT)
+        io.MouseDown[0] = true;
+    else if(message.button == fea::Mouse::RIGHT)
+        io.MouseDown[1] = true;
 }
 
 void Space::handleMessage(const MouseReleaseMessage& message)
 {
-    bool mouse0Up = false;
-    bool mouse1Up = false;
-
     ImGuiIO& io = ImGui::GetIO();
 
     if(message.button == fea::Mouse::LEFT)
-    {   
-        mouse0Up = true;
-    }   
+        io.MouseDown[0] = false;
     else if(message.button == fea::Mouse::RIGHT)
-    {
-        mouse1Up = true;
-    }   
-
-    io.MouseDown[0] = !mouse0Up;
-    io.MouseDown[1] = !mouse1Up;
+        io.MouseDown[1] = false;
 }
 
 void Space::handleMessage(const MouseMoveMessage& message)
 {
     ImGuiIO& io = ImGui::GetIO();
     io.MousePos = (glm::vec2)message.position;
+
+    if(message.drag)
+        mController.worldMouseDrag(message.position, message.position / 32, fea::Mouse::LEFT);
+}
+
+void Space::handleMessage(const MouseWheelMessage& message)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    io.MouseWheel = static_cast<float>(message.delta);
 }
 
 int32_t Space::addActor(Actor actor)
@@ -125,6 +125,7 @@ void Space::loop()
     //io.KeysDown[i] = ...
     ImGui::NewFrame();
 
+    mGuiBlocksMouse = io.WantCaptureMouse;
     //mAudioPlayer.update();
 
     applyMoveIntention(mTMoveIntention, mTMoveAbility, mTPhysics);
@@ -134,7 +135,7 @@ void Space::loop()
     mRenderer.renderWorld();
     renderSprites();
 
-    ImGui::ShowTestWindow();
+    mController.updateAndRender(mFeaRenderer);
 
     ImGui::Render();
     mRenderer.renderImGui(*ImGui::GetDrawData());

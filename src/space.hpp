@@ -9,13 +9,15 @@
 #include "resourcemanager.hpp"
 #include "instantiator.hpp"
 #include "data.hpp"
+#include "gamecontroller.hpp"
 //#include "http/httpdebugger.hpp"
 
 class Space : public fea::Application,
     public fea::MessageReceiver<QuitMessage,
     MouseClickMessage,
     MouseReleaseMessage,
-    MouseMoveMessage>
+    MouseMoveMessage,
+    MouseWheelMessage>
 {
     public:
         Space();
@@ -23,6 +25,7 @@ class Space : public fea::Application,
         void handleMessage(const MouseClickMessage& message) override;
         void handleMessage(const MouseReleaseMessage& message) override;
         void handleMessage(const MouseMoveMessage& message) override;
+        void handleMessage(const MouseWheelMessage& message) override;
         int32_t addActor(Actor actor);
     protected:
         void loop() override;
@@ -68,4 +71,7 @@ class Space : public fea::Application,
         
         //HttpDebugger mHttpDebugger;
         fea::Texture mImguiFontTexture;
+
+        GameController mController;
+        bool mGuiBlocksMouse;
 };

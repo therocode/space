@@ -29,15 +29,21 @@ void InputHandler::process()
         }
         else if(event.type == fea::Event::MOUSEBUTTONPRESSED)
         {
+            mMouseDown = true;
             mBus.send(MouseClickMessage{event.mouseButton.button, {event.mouseButton.x, event.mouseButton.y}});
         }
         else if(event.type == fea::Event::MOUSEBUTTONRELEASED)
         {
+            mMouseDown = false;
             mBus.send(MouseReleaseMessage{event.mouseButton.button, {event.mouseButton.x, event.mouseButton.y}});
         }
         else if(event.type == fea::Event::MOUSEMOVED)
         {
-            mBus.send(MouseMoveMessage{{event.mouseMove.x, event.mouseMove.y}});
+            mBus.send(MouseMoveMessage{{event.mouseMove.x, event.mouseMove.y}, mMouseDown});
+        }
+        else if(event.type == fea::Event::MOUSEWHEELMOVED)
+        {
+            mBus.send(MouseWheelMessage{event.mouseWheel.delta});
         }
     }
 }
