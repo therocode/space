@@ -49,21 +49,21 @@ class Space : public fea::Application,
         Renderer mRenderer;
 
         //game data
-        ent::TPosition mTPosition;
-        ent::TPhysics mTPhysics;
-        ent::TWalkTarget mTWalkTarget;
-        ent::TMoveIntention mTMoveIntention;
-        ent::TMoveAbility mTMoveAbility;
+        ent::TPosition mTPosition = {"Position", "The positions of game entities"};
+        ent::TPhysics mTPhysics = {"Physics", "The acceleration and velocities of game entities"};
+        ent::TWalkTarget mTWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
+        ent::TMoveIntention mTMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
+        ent::TMoveAbility mTMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
         ////worker stuff
         IdSet mBuilders;
         IdSet mFreeWorkers;
 
         ////tasks
-        tsk::TRoomTask mTRoomTask;
-        tsk::TWallTask mTWallTask;
-        tsk::TDoorTask mTDoorTask;
+        tsk::TRoomTask mTRoomTask = {"Room Task", "Represent all rooms that need to be built"};
+        tsk::TWallTask mTWallTask = {"Wall Task", "Represent all walls that need to be built"};
+        tsk::TDoorTask mTDoorTask = {"Door Task", "Represent all doors that need to be built"};
 
-        gfx::TActorSprite mTActorSprite;
+        gfx::TActorSprite mTActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
 
         NumberPool<int32_t> mActorIdPool;
         NumberPool<int32_t> mActorSpriteIdPool;

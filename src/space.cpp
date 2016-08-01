@@ -4,6 +4,8 @@
 #include "tableutil.hpp"
 #include "logic/move.hpp"
 #include "logic/physics.hpp"
+#include "debugguidata.hpp"
+#include "debuggui.hpp"
 #include <imgui.h>
 
 Space::Space() :
@@ -45,13 +47,15 @@ void Space::handleMessage(const MouseClickMessage& message)
     if(!mGuiBlocksMouse)
     {
         mController.worldMouseClick(message.position, message.position / 32, message.button);
-        //if(message.button == fea::Mouse::LEFT)
-        //{   
-        //    auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
-        //    int32_t added = addActor(std::move(actor));
 
-        //    //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
-        //}   
+        if(message.button == fea::Mouse::LEFT)
+        {   
+            auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
+            int32_t added = addActor(std::move(actor));
+
+            insert(added, {50.0f, 50.0f}, mTWalkTarget);
+            //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
+        }   
         //else if(message.button == fea::Mouse::RIGHT)
         //{
         //    //mPositions[0].position = message.position;
@@ -137,6 +141,8 @@ void Space::loop()
 
     mController.updateAndRender(mFeaRenderer);
 
+    ImGui::ShowTestWindow();
+    DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
     ImGui::Render();
     mRenderer.renderImGui(*ImGui::GetDrawData());
 
