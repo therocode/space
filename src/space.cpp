@@ -9,8 +9,9 @@
 #include <imgui.h>
 
 Space::Space() :
-    mWindow(new fea::SDL2WindowBackend(), fea::VideoMode(1366, 768), "Space"),
-    mFeaRenderer(fea::Viewport({1366, 768}, {0, 0}, fea::Camera({1366 / 2.0f, 768 / 2.0f}))),
+    mWindowSize(1366, 768),
+    mWindow(new fea::SDL2WindowBackend(), fea::VideoMode(static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y)), "Space"),
+    mFeaRenderer(fea::Viewport(mWindowSize, {0, 0}, fea::Camera(static_cast<glm::vec2>(mWindowSize / 2)))),
     mFeaInputHandler(new fea::SDL2InputBackend()),
     mInstantiator(mResources),
     mInputHandler(mBus, mFeaInputHandler),
@@ -25,8 +26,8 @@ Space::Space() :
 
     //imgui
     ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize.x = 1366.0f;
-    io.DisplaySize.y = 768.0f;
+    io.DisplaySize.x = mWindowSize.x;
+    io.DisplaySize.y = mWindowSize.y;
     unsigned char* pixels;
     int width, height;
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
@@ -38,6 +39,15 @@ void Space::handleMessage(const QuitMessage& message)
 {
     (void)message;
     quit();
+}
+
+void Space::handleMessage(const ResizeMessage& message)
+{
+    mWindowSize = message.size;
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize.x = mWindowSize.x;
+    io.DisplaySize.y = mWindowSize.y;
+    mFeaRenderer.setViewport(fea::Viewport(mWindowSize, {0, 0}, fea::Camera(static_cast<glm::vec2>(mWindowSize / 2))));
 }
 
 void Space::handleMessage(const MouseClickMessage& message)

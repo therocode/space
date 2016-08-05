@@ -14,6 +14,7 @@
 
 class Space : public fea::Application,
     public fea::MessageReceiver<QuitMessage,
+    ResizeMessage,
     MouseClickMessage,
     MouseReleaseMessage,
     MouseMoveMessage,
@@ -22,6 +23,7 @@ class Space : public fea::Application,
     public:
         Space();
         void handleMessage(const QuitMessage& message) override;
+        void handleMessage(const ResizeMessage& message) override;
         void handleMessage(const MouseClickMessage& message) override;
         void handleMessage(const MouseReleaseMessage& message) override;
         void handleMessage(const MouseMoveMessage& message) override;
@@ -32,6 +34,7 @@ class Space : public fea::Application,
     private:
         void renderSprites();
 
+        glm::ivec2 mWindowSize;
         //fea
         fea::MessageBus mBus;
         fea::Window mWindow;
