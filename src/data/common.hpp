@@ -3,6 +3,7 @@
 #include <type_traits>
 #include <cstdint>
 #include <vector>
+#include "metrics.hpp"
 
 template<typename DataType>
 struct TableEntry
@@ -22,6 +23,8 @@ struct TableMeta
     std::vector<size_t> permutationCache;
     std::vector<int32_t> idSortCache;
     std::vector<DataType> dataSortCache;
+    //metrics
+    mutable Metrics metrics = {};
 };
 
 template<typename DataType>
@@ -41,6 +44,8 @@ struct IdSetMeta
     th::Optional<std::string> description;
     //sort
     bool sorted = true;
+    //metrics
+    mutable Metrics metrics = {};
 };
 
 struct IdSet

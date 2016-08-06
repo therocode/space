@@ -5,6 +5,7 @@
 template <typename DataTable>
 th::Optional<TableEntry<typename DataTable::Type>> findOne(int32_t id, DataTable& table)
 {
+    ++table.meta.metrics[AccessType::RandomAccess];
     //can be optimised by sorting and binary searching
     for(auto iter = table.ids.begin(); iter != table.ids.end(); ++iter)
     {
@@ -18,6 +19,7 @@ th::Optional<TableEntry<typename DataTable::Type>> findOne(int32_t id, DataTable
 template <typename DataTable>
 th::Optional<TableEntry<const typename DataTable::Type>> findOne(int32_t id, const DataTable& table)
 {
+    ++table.meta.metrics[AccessType::RandomAccess];
     auto nonConst = findOne(id, const_cast<DataTable&>(table));
 
     if(nonConst)
@@ -29,6 +31,7 @@ th::Optional<TableEntry<const typename DataTable::Type>> findOne(int32_t id, con
 template <typename DataTable, typename Functor>
 th::Optional<TableEntry<typename DataTable::Type>> findOne(Functor f, DataTable& table)
 {
+    ++table.meta.metrics[AccessType::RandomAccess];
     for(auto iter = table.data.begin(); iter != table.data.end(); ++iter)
     {
         int32_t id = table.ids[static_cast<size_t>(std::distance(table.data.begin(), iter))];

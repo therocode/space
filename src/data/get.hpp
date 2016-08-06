@@ -5,6 +5,7 @@
 template <typename DataTable>
 auto get(int32_t id, DataTable& table)
 {
+    ++table.meta.metrics[AccessType::RandomAccess];
     auto iter = table.ids.begin();
     for(; iter != table.ids.end(); ++iter)
     {
@@ -19,6 +20,7 @@ auto get(int32_t id, DataTable& table)
 template <typename DataTable>
 auto get(int32_t id, const DataTable& table)
 {
+    ++table.meta.metrics[AccessType::RandomAccess];
     auto nonConst = get(id, const_cast<DataTable&>(table));
     return TableEntry<const typename DataTable::Type>{nonConst.id, nonConst.data};
 }

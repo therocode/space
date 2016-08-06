@@ -8,6 +8,7 @@ void erase(int32_t id, IdSet& idSet);
 template <typename DataTable>
 void erase(int32_t id, DataTable& table)
 {
+    ++table.meta.metrics[AccessType::Deletion];
     auto toErase = std::find(table.ids.begin(), table.ids.end(), id);
 
     if(toErase != table.ids.end())
@@ -20,6 +21,8 @@ void erase(int32_t id, DataTable& table)
 template <typename Functor>
 void eraseIf(Functor f, IdSet& idSet)
 {
+    ++idSet.meta.metrics[AccessType::Deletion];
+    ++idSet.meta.metrics[AccessType::Iteration];
     for(auto iter = idSet.ids.begin(); iter != idSet.ids.end();)
     {
         if(f(*iter))
@@ -36,6 +39,8 @@ void eraseIf(Functor f, IdSet& idSet)
 template <typename Functor, typename DataTable>
 void eraseIf(Functor f, DataTable& table)
 {
+    ++table.meta.metrics[AccessType::Deletion];
+    ++table.meta.metrics[AccessType::Iteration];
     auto idIter = table.ids.begin();
     auto dataIter = table.data.begin();
 

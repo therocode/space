@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "data/memory.hpp"
+#include "data/accesspattern.hpp"
 
 namespace DebugGui
 {
@@ -39,6 +40,14 @@ namespace DebugGui
             if(showData)
             {
                 ImGui::Begin((table.meta.name + " data").c_str());
+
+                AccessPatternInfo accessPattern = accessPatternInfo(table);
+                text("Access pattern:");
+                text(std::string("Random access: ") + std::to_string(accessPattern.percent[AccessType::RandomAccess] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::RandomAccess]));
+                text(std::string("Iteration: ") + std::to_string(accessPattern.percent[AccessType::Iteration] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::Iteration]));
+                text(std::string("Addition: ") + std::to_string(accessPattern.percent[AccessType::Addition] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::Addition]));
+                text(std::string("Deletion: ") + std::to_string(accessPattern.percent[AccessType::Deletion] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::Deletion]));
+                ImGui::Separator();
                 if(!table.ids.empty())
                 {
                     auto headers = debugHeaders(table);

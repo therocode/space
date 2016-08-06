@@ -37,6 +37,8 @@ template <typename Functor, typename...Args>
 void join(Functor functor, Args&...args)
 {
     using swallow = int[];
+        
+    (void)swallow{(++args.meta.metrics[AccessType::Iteration], 0)...}; //executes func on each args entry
 
     if(!return_if_false([&](const auto& data){return !data.ids.empty();}, args...))
         return;

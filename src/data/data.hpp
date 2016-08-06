@@ -13,6 +13,7 @@
 #include "clear.hpp"
 #include "has.hpp"
 #include "memory.hpp"
+#include "accesspattern.hpp"
 //includes
 #include "glm/glm.hpp"
 #include <fea/rendering/color.hpp>

@@ -8,6 +8,7 @@ bool has(int32_t id, const IdSet& idSet);
 template <typename DataType>
 bool has(int32_t id, const DataTable<DataType>& table)
 {
+    ++table.meta.metrics[AccessType::RandomAccess];
     return std::find(table.ids.begin(), table.ids.end(), id) != table.ids.end();
 }
 
@@ -25,12 +26,14 @@ bool has(int32_t id, const IdContainer&... idContainers)
 template <typename Functor>
 bool has(Functor f, const IdSet& idSet)
 {
+    ++idSet.meta.metrics[AccessType::RandomAccess];
     return std::find_if(idSet.ids.begin(), idSet.ids.end(), f) != idSet.ids.end();
 }
 
 template <typename Functor, typename DataType>
 bool has(Functor f, const DataTable<DataType>& table)
 {
+    ++table.meta.metrics[AccessType::RandomAccess];
     auto idIter = table.ids.begin();
     auto dataIter = table.data.begin();
 
