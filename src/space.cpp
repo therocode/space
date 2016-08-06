@@ -165,6 +165,7 @@ void Space::loop()
     mGuiBlocksMouse = io.WantCaptureMouse;
     //mAudioPlayer.update();
 
+    calculateMoveIntention(mTWalkTarget, mTMoveIntention, mTPosition);
     applyMoveIntention(mTMoveIntention, mTMoveAbility, mTPhysics);
     applyPhysics(mTPosition, mTPhysics);
 
@@ -178,7 +179,7 @@ void Space::loop()
     sort(mBuilders);
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
+    //DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
     ImGui::Render();
     mRenderer.renderImGui(*ImGui::GetDrawData());
 

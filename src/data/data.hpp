@@ -6,6 +6,7 @@
 #include "insert.hpp"
 #include "find.hpp"
 #include "get.hpp"
+#include "set.hpp"
 #include "foreach.hpp"
 #include "erase.hpp"
 #include "count.hpp"
