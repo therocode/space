@@ -32,3 +32,25 @@ void eraseIf(Functor f, IdSet& idSet)
         }
     }
 }
+
+template <typename Functor, typename DataTable>
+void eraseIf(Functor f, DataTable& table)
+{
+    auto idIter = table.ids.begin();
+    auto dataIter = table.data.begin();
+
+    for(; idIter != table.ids.end();)
+    {
+        if(f(*idIter, *dataIter))
+        {
+            idIter = table.ids.erase(idIter);
+            dataIter = table.data.erase(dataIter);
+        }
+        else
+        {
+            ++idIter;
+            ++dataIter;
+        }
+    }
+}
+

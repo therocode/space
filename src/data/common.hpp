@@ -12,11 +12,16 @@ struct TableEntry
     typename std::add_lvalue_reference<DataType>::type data;
 };
 
+template <typename DataType>
 struct TableMeta
 {
     std::string name;
     th::Optional<std::string> description;
+    //sort
     bool sorted = true;
+    std::vector<size_t> permutationCache;
+    std::vector<int32_t> idSortCache;
+    std::vector<DataType> dataSortCache;
 };
 
 template<typename DataType>
@@ -27,10 +32,19 @@ struct DataTable
     using Type = DataType;
     std::vector<int32_t> ids;
     std::vector<DataType> data;
-    TableMeta meta;
+    TableMeta<DataType> meta;
+};
+
+struct IdSetMeta
+{
+    std::string name;
+    th::Optional<std::string> description;
+    //sort
+    bool sorted = true;
 };
 
 struct IdSet
 {
     std::vector<int32_t> ids;
+    IdSetMeta meta;
 };

@@ -29,6 +29,7 @@ class Space : public fea::Application,
         void handleMessage(const MouseMoveMessage& message) override;
         void handleMessage(const MouseWheelMessage& message) override;
         int32_t addActor(Actor actor);
+        void removeActor(int32_t id);
     protected:
         void loop() override;
     private:

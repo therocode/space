@@ -8,8 +8,11 @@
 #include "get.hpp"
 #include "foreach.hpp"
 #include "erase.hpp"
+#include "count.hpp"
+#include "sort.hpp"
 #include "clear.hpp"
 #include "has.hpp"
+#include "memory.hpp"
 //includes
 #include "glm/glm.hpp"
 #include <fea/rendering/color.hpp>

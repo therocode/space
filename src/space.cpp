@@ -66,11 +66,17 @@ void Space::handleMessage(const MouseClickMessage& message)
             insert(added, {50.0f, 50.0f}, mTWalkTarget);
             //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
         }   
-        //else if(message.button == fea::Mouse::RIGHT)
-        //{
-        //    //mPositions[0].position = message.position;
-        //    //mPhysics[0].velocity = {};
-        //}   
+        else if(message.button == fea::Mouse::RIGHT)
+        {
+            int32_t toDelete = rand() % count(mTPosition);
+            if(has(toDelete, mTPosition))
+            {
+                removeActor(toDelete);
+                mActorIdPool.release(toDelete);
+            }
+            //mPositions[0].position = message.position;
+            //mPhysics[0].velocity = {};
+        }   
     }
 
     if(message.button == fea::Mouse::LEFT)
@@ -125,6 +131,23 @@ int32_t Space::addActor(Actor actor)
     return id;
 }
 
+void Space::removeActor(int32_t id)
+{
+    erase(id, mTPosition);
+    erase(id, mTPhysics);
+    erase(id, mTMoveAbility);
+    eraseIf([&] (int32_t actorSpriteId, const ActorSprite& actorSprite)
+    {
+        if(actorSprite.actorId == id)
+        {
+            mActorSpriteIdPool.release(actorSpriteId);
+            return true;
+        }
+        return false;
+    }, mTActorSprite);
+    erase(id, mBuilders);
+    erase(id, mFreeWorkers);
+}
 
 void Space::loop()
 {
@@ -150,6 +173,9 @@ void Space::loop()
     renderSprites();
 
     mController.updateAndRender(mFeaRenderer);
+
+    sort(mTPosition);
+    sort(mBuilders);
 
     ImGui::ShowTestWindow();
     DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);

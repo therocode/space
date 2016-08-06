@@ -2,6 +2,7 @@
 #include <imgui.h>
 #include <string>
 #include <vector>
+#include "data/memory.hpp"
 
 namespace DebugGui
 {
@@ -11,6 +12,8 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const T&) { return {};}
 
     void text(const std::string& string);
+
+    std::string formatMemory(size_t memorySize);
 
     template <typename Table>
     void addTableInfo(const Table& table)
@@ -28,6 +31,9 @@ namespace DebugGui
             text(table.meta.sorted ? "sorted" : "unsorted");
 
             static bool showData = false;
+
+            MemoryInfo memory = memoryInfo(table);
+            text("Memory: " + formatMemory(memory.dataSize) + " (" + formatMemory(memory.totalSize) + ")");
 
             ImGui::Checkbox(("Show data##" + table.meta.name).c_str(), &showData);
             if(showData)
