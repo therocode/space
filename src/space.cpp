@@ -52,8 +52,6 @@ void Space::handleMessage(const ResizeMessage& message)
 
 void Space::handleMessage(const MouseClickMessage& message)
 {
-    ImGuiIO& io = ImGui::GetIO();
-
     if(!mGuiBlocksMouse)
     {
         mController.worldMouseClick(message.position, message.position / 32, message.button);
@@ -79,6 +77,8 @@ void Space::handleMessage(const MouseClickMessage& message)
         }   
     }
 
+    ImGuiIO& io = ImGui::GetIO();
+
     if(message.button == fea::Mouse::LEFT)
         io.MouseDown[0] = true;
     else if(message.button == fea::Mouse::RIGHT)
@@ -87,6 +87,11 @@ void Space::handleMessage(const MouseClickMessage& message)
 
 void Space::handleMessage(const MouseReleaseMessage& message)
 {
+    if(!mGuiBlocksMouse)
+    {
+        mController.worldMouseRelease(message.position, message.position / 32, message.button);
+    }
+
     ImGuiIO& io = ImGui::GetIO();
 
     if(message.button == fea::Mouse::LEFT)
@@ -136,6 +141,8 @@ void Space::removeActor(int32_t id)
     erase(id, mTPosition);
     erase(id, mTPhysics);
     erase(id, mTMoveAbility);
+    erase(id, mTMoveIntention);
+    erase(id, mTWalkTarget);
     eraseIf([&] (int32_t actorSpriteId, const ActorSprite& actorSprite)
     {
         if(actorSprite.actorId == id)
@@ -165,21 +172,21 @@ void Space::loop()
     mGuiBlocksMouse = io.WantCaptureMouse;
     //mAudioPlayer.update();
 
+    handleControllerOutput(mController.fetchOutput());
+
     calculateMoveIntention(mTWalkTarget, mTMoveIntention, mTPosition);
     applyMoveIntention(mTMoveIntention, mTMoveAbility, mTPhysics);
     applyPhysics(mTPosition, mTPhysics);
 
     mRenderer.startFrame();
     mRenderer.renderWorld();
+    renderTasks();
     renderSprites();
 
     mController.updateAndRender(mFeaRenderer);
 
-    sort(mTPosition);
-    sort(mBuilders);
-
     ImGui::ShowTestWindow();
-    //DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
+    DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
     ImGui::Render();
     mRenderer.renderImGui(*ImGui::GetDrawData());
 
@@ -199,6 +206,7 @@ void Space::renderSprites()
                     position,
                     sprite.textureId,
                     sprite.color,
+                    {}
                     //sprite.rotation,
                     //sprite.animationProgress,
                     //sprite.flip,
@@ -207,4 +215,37 @@ void Space::renderSprites()
             }); 
 
     mRenderer.render(orders);
+}
+
+void Space::renderTasks()
+{
+    std::vector<RenderOrder> orders;
+
+    forEach(mTRoomTask, [&] (int32_t taskId, const RoomTask& roomTask)
+    {   
+        const glm::vec2& position = roomTask.position * 32;
+        const glm::vec2& size = roomTask.size * 32;
+
+        orders.emplace_back(
+                RenderOrder{
+                position,
+                {},
+                fea::Color(50, 150, 0, 200),
+                size,
+                //sprite.rotation,
+                //sprite.animationProgress,
+                //sprite.flip,
+                }   
+                );  
+    }); 
+
+    mRenderer.render(orders);
+}
+
+void Space::handleControllerOutput(GameController::Output output)
+{
+    for(auto& roomTask : output.roomTasks)
+    {
+        insert(mTaskIdPool.next(), std::move(roomTask), mTRoomTask);
+    }
 }

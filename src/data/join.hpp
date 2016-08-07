@@ -37,6 +37,7 @@ template <typename Functor, typename...Args>
 void join(Functor functor, Args&...args)
 {
     using swallow = int[];
+    (void)swallow{(sort(args), 0)...}; //executes func on each args entry
         
     (void)swallow{(++args.meta.metrics[AccessType::Iteration], 0)...}; //executes func on each args entry
 

@@ -68,14 +68,26 @@ void Renderer::render(const std::vector<RenderOrder>& orders) const
 {
     for(const auto& renderOrder : orders)
     {
-        const auto textureIter = std::find_if(mTextures.begin(), mTextures.end(), [&renderOrder] (const Texture& disp) { return disp.textureId == renderOrder.textureId; });
-        TH_ASSERT(textureIter != mTextures.end(), "render order uses invalid texture " << renderOrder.textureId);
-        const Texture& texture = *textureIter;
+        const Texture* texture = nullptr;
+        th::Optional<glm::vec2> size;
+        if(renderOrder.textureId)
+        {
+            const auto textureIter = std::find_if(mTextures.begin(), mTextures.end(), [&renderOrder] (const Texture& disp) { return disp.textureId == *renderOrder.textureId; });
+            TH_ASSERT(textureIter != mTextures.end(), "render order uses invalid texture " << *renderOrder.textureId);
+            texture = &*textureIter;
+            size = texture->size;
+        }
 
-        fea::AnimatedQuad quad(texture.size);
+        if(renderOrder.size)
+            size = renderOrder.size;
 
-        if(texture.texture)
-            quad.setTexture(*texture.texture);
+        TH_ASSERT(size, "no size supplied for render order");
+
+
+        fea::AnimatedQuad quad(*size);
+
+        if(texture && texture->texture)
+            quad.setTexture(*texture->texture);
         //if(texture.animation)
         //{
         //    quad.setAnimation(*texture.animation);

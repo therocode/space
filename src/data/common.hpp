@@ -19,10 +19,10 @@ struct TableMeta
     std::string name;
     th::Optional<std::string> description;
     //sort
-    bool sorted = true;
-    std::vector<size_t> permutationCache;
-    std::vector<int32_t> idSortCache;
-    std::vector<DataType> dataSortCache;
+    mutable bool sorted = true;
+    mutable std::vector<size_t> permutationCache;
+    mutable std::vector<int32_t> idSortCache;
+    mutable std::vector<DataType> dataSortCache;
     //metrics
     mutable Metrics metrics = {};
 };
@@ -43,7 +43,7 @@ struct IdSetMeta
     std::string name;
     th::Optional<std::string> description;
     //sort
-    bool sorted = true;
+    mutable bool sorted = true;
     //metrics
     mutable Metrics metrics = {};
 };

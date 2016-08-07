@@ -1,7 +1,12 @@
 #include "sort.hpp"
 
-void sort(IdSet& idSet)
+void sort(const IdSet& cIdSet)
 {
-    std::sort(idSet.ids.begin(), idSet.ids.end());
-    idSet.meta.sorted = true;
+    IdSet& idSet = const_cast<IdSet&>(cIdSet);
+    if(!idSet.meta.sorted)
+    {
+        ++idSet.meta.metrics[AccessType::Sort];
+        std::sort(idSet.ids.begin(), idSet.ids.end());
+        idSet.meta.sorted = true;
+    }
 }

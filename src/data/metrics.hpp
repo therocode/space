@@ -2,6 +2,6 @@
 #include <cstdint>
 #include <array>
 
-enum AccessType { RandomAccess, Iteration, Addition, Deletion};
+enum AccessType { RandomAccess, Iteration, Addition, Deletion, Sort};
 
-using Metrics = std::array<int64_t, 4>;
+using Metrics = std::array<int64_t, 5>;

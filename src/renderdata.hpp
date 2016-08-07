@@ -1,12 +1,14 @@
 #pragma once
+#include <thero/optional.hpp>
 #include "glm.hpp"
 #include "pi.hpp"
 
 struct RenderOrder
 { 
     glm::vec2 position;
-    int32_t textureId;
+    th::Optional<int32_t> textureId;
     fea::Color color;
+    th::Optional<glm::vec2> size;
     //float rotation = pi / 2.0f;
     //int32_t animationProgress = 0;
     //bool flip;

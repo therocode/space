@@ -34,6 +34,8 @@ class Space : public fea::Application,
         void loop() override;
     private:
         void renderSprites();
+        void renderTasks();
+        void handleControllerOutput(GameController::Output output);
 
         glm::ivec2 mWindowSize;
         //fea
@@ -71,6 +73,7 @@ class Space : public fea::Application,
 
         NumberPool<int32_t> mActorIdPool;
         NumberPool<int32_t> mActorSpriteIdPool;
+        NumberPool<int32_t> mTaskIdPool;
         //AudioPlayer mAudioPlayer;
         
         //HttpDebugger mHttpDebugger;

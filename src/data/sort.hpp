@@ -4,34 +4,40 @@
 #include <vector>
 #include <numeric>
 
-void sort(IdSet& idSet);
+void sort(const IdSet& idSet);
 
 template <typename DataTable>
-void sort(DataTable& table)
+void sort(const DataTable& cTable)
 {
-    std::vector<size_t>& permutations = table.meta.permutationCache;
-    permutations.resize(table.ids.size());
-
-    std::iota(permutations.begin(), permutations.end(), 0);
-    std::sort(permutations.begin(), permutations.end(), [&] (size_t i, size_t j)
+    DataTable& table = const_cast<DataTable&>(cTable);
+    if(!table.meta.sorted)
     {
-        return table.ids[i] < table.ids[j];
-    });
+        ++table.meta.metrics[AccessType::Sort];
 
-    std::vector<int32_t>& sortedIds = table.meta.idSortCache = table.ids;
-    std::vector<typename DataTable::Type>& sortedData = table.meta.dataSortCache = table.data;
+        std::vector<size_t>& permutations = table.meta.permutationCache;
+        permutations.resize(table.ids.size());
 
-    std::transform(permutations.begin(), permutations.end(), sortedIds.begin(), [&] (std::size_t i)
-    {
-        return sortedIds[i];
-    });
-    std::transform(permutations.begin(), permutations.end(), sortedData.begin(), [&] (std::size_t i)
-    {
-        return sortedData[i];
-    });
+        std::iota(permutations.begin(), permutations.end(), 0);
+        std::sort(permutations.begin(), permutations.end(), [&] (size_t i, size_t j)
+        {
+            return table.ids[i] < table.ids[j];
+        });
 
-    table.ids = sortedIds;
-    table.data = sortedData;
+        std::vector<int32_t>& sortedIds = table.meta.idSortCache = table.ids;
+        std::vector<typename DataTable::Type>& sortedData = table.meta.dataSortCache = table.data;
 
-    table.meta.sorted = true;
+        std::transform(permutations.begin(), permutations.end(), sortedIds.begin(), [&] (std::size_t i)
+        {
+            return table.ids[i];
+        });
+        std::transform(permutations.begin(), permutations.end(), sortedData.begin(), [&] (std::size_t i)
+        {
+            return table.data[i];
+        });
+
+        table.ids = sortedIds;
+        table.data = sortedData;
+
+        table.meta.sorted = true;
+    }
 }

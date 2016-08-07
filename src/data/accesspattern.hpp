@@ -5,8 +5,8 @@
 
 struct AccessPatternInfo
 {
-    std::array<float, 4> percent;
-    std::array<int64_t, 4> total;
+    std::array<float, 5> percent;
+    std::array<int64_t, 5> total;
 };
 
 template <typename Container>
@@ -22,6 +22,7 @@ AccessPatternInfo accessPatternInfo(const Container& container)
     info.percent[AccessType::Iteration] = info.total[AccessType::Iteration] / total;
     info.percent[AccessType::Addition] = info.total[AccessType::Addition] / total;
     info.percent[AccessType::Deletion] = info.total[AccessType::Deletion] / total;
+    info.percent[AccessType::Sort] = info.total[AccessType::Sort] / total;
 
     return info;
 }

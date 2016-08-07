@@ -1,4 +1,5 @@
 #include "gamecontroller.hpp"
+#include "drawables/linerect.hpp"
 #include <imgui.h>
 
 GameController::GameController():
@@ -20,11 +21,12 @@ void GameController::updateAndRender(fea::Renderer2D& renderer)
 
     if(mRoomStart && mRoomEnd)
     {
-        fea::Quad roomQuad(static_cast<glm::vec2>((*mRoomEnd) - (*mRoomStart) + glm::ivec2{1, 1}) * 32.0f);
+        LineRect roomRect(static_cast<glm::vec2>((*mRoomEnd) - (*mRoomStart) + glm::ivec2{1, 1}) * 32.0f);
 
-        roomQuad.setPosition(static_cast<glm::vec2>(*mRoomStart) * 32.0f);
+        roomRect.setColor(fea::Color::Green);
+        roomRect.setPosition(static_cast<glm::vec2>(*mRoomStart) * 32.0f);
 
-        renderer.render(roomQuad);
+        renderer.render(roomRect);
     }
 }
 
@@ -47,6 +49,22 @@ void GameController::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
     }
 }
 
+void GameController::worldMouseRelease(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
+{
+    if(mState == PLAN_ROOM)
+    {
+        mNewRoomTasks.push_back(RoomTask
+        {
+            *mRoomStart,
+            *mRoomEnd - *mRoomStart + glm::ivec2(1, 1),
+        });
+        mRoomStart = {};
+        mRoomEnd = {};
+
+        mState = IDLE;
+    }
+}
+
 std::string GameController::stateToString(State state) const
 {
     if(state == IDLE)
@@ -55,4 +73,16 @@ std::string GameController::stateToString(State state) const
         return "Build Room";
     else
         return "None";
+}
+
+GameController::Output GameController::fetchOutput()
+{
+    GameController::Output output
+    {
+        std::move(mNewRoomTasks),
+    };
+
+    mNewRoomTasks.clear();
+
+    return output;
 }
