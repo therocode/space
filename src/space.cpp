@@ -7,6 +7,7 @@
 #include "debugguidata.hpp"
 #include "debuggui.hpp"
 #include <imgui.h>
+#include "drawables/linerect.hpp"
 
 Space::Space() :
     mWindowSize(1366, 768),
@@ -186,7 +187,8 @@ void Space::loop()
     mController.updateAndRender(mFeaRenderer);
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
+    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
+    if(clickedId) mSelectedDebugEntity = clickedId;
     ImGui::Render();
     mRenderer.renderImGui(*ImGui::GetDrawData());
 
@@ -198,21 +200,31 @@ void Space::renderSprites()
     std::vector<RenderOrder> orders;
 
     forEach(mTActorSprite, [&] (int32_t actorId, const ActorSprite& sprite)
-            {   
-            const glm::vec2& position = get(sprite.actorId, mTPosition).data;
+    {   
+        const glm::vec2& position = get(sprite.actorId, mTPosition).data;
 
-            orders.emplace_back(
-                    RenderOrder{
-                    position,
-                    sprite.textureId,
-                    sprite.color,
-                    {}
-                    //sprite.rotation,
-                    //sprite.animationProgress,
-                    //sprite.flip,
-                    }   
-                    );  
-            }); 
+        orders.emplace_back(
+                RenderOrder{
+                position,
+                sprite.textureId,
+                sprite.color,
+                {}
+                //sprite.rotation,
+                //sprite.animationProgress,
+                //sprite.flip,
+                }   
+                );  
+
+        if(mSelectedDebugEntity && *mSelectedDebugEntity == actorId)
+        {
+            const auto textureIter = std::find_if(mResources.textures().begin(), mResources.textures().end(), [&] (const Texture& disp) { return disp.textureId == sprite.textureId; });
+
+            LineRect rect(textureIter->size);
+            rect.setPosition(position);
+            rect.setColor(fea::Color::Yellow);
+            mFeaRenderer.render(rect);
+        }
+    }); 
 
     mRenderer.render(orders);
 }

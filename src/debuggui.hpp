@@ -1,9 +1,11 @@
 #pragma once
+#include <thero/optional.hpp>
 #include <imgui.h>
 #include <string>
 #include <vector>
 #include "data/memory.hpp"
 #include "data/accesspattern.hpp"
+#include <iostream>
 
 namespace DebugGui
 {
@@ -17,7 +19,7 @@ namespace DebugGui
     std::string formatMemory(size_t memorySize);
 
     template <typename Table>
-    void addTableInfo(const Table& table)
+    void addTableInfo(const Table& table, th::Optional<int32_t>& clickedId)
     {
         if(ImGui::CollapsingHeader(table.meta.name.c_str()))
         {
@@ -47,6 +49,7 @@ namespace DebugGui
                 text(std::string("Iteration: ") + std::to_string(accessPattern.percent[AccessType::Iteration] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::Iteration]));
                 text(std::string("Addition: ") + std::to_string(accessPattern.percent[AccessType::Addition] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::Addition]));
                 text(std::string("Deletion: ") + std::to_string(accessPattern.percent[AccessType::Deletion] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::Deletion]));
+                text(std::string("Sort: ") + std::to_string(accessPattern.percent[AccessType::Sort] * 100.0f) + std::string("% - ") + std::to_string(accessPattern.total[AccessType::Sort]));
                 ImGui::Separator();
                 if(!table.ids.empty())
                 {
@@ -65,7 +68,11 @@ namespace DebugGui
                     TextList debugTexts;
                     for(size_t i = 0; i < table.ids.size(); ++i)
                     {
-                        text(std::to_string(table.ids[i])); ImGui::NextColumn();
+                        if(ImGui::SmallButton((std::to_string(table.ids[i]) + "##" + table.meta.name).c_str()))
+                        {
+                            if(!clickedId)
+                                clickedId = table.ids[i];
+                        } ImGui::NextColumn();
                         debugText(table.data[i], debugTexts);
 
                         for(size_t cellIndex = 0; cellIndex < debugTexts.size(); ++cellIndex)
@@ -103,12 +110,15 @@ namespace DebugGui
     }
 
     template <typename... Tables>
-    void showDataTables(const Tables&... tables)
+    th::Optional<int32_t> showDataTables(const Tables&... tables)
     {
         using swallow = int[];
 
+        th::Optional<int32_t> clickedId;
         ImGui::Begin("Data tables");
-        (void)swallow{(addTableInfo(tables), 0)...};
+        (void)swallow{(addTableInfo(tables, clickedId), 0)...};
         ImGui::End();
+
+        return clickedId;
     }
 }

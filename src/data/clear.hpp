@@ -8,4 +8,5 @@ void clear(DataTable& table)
 {
     table.ids.clear();
     table.data.clear();
+    table.meta.sorted = true;
 }

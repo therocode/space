@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <algorithm>
 #include "common.hpp"
+#include "sort.hpp"
 
 bool has(int32_t id, const IdSet& idSet);
 
@@ -9,6 +10,9 @@ template <typename DataType>
 bool has(int32_t id, const DataTable<DataType>& table)
 {
     ++table.meta.metrics[AccessType::RandomAccess];
+    if(!table.meta.sorted)
+        sort(table);
+
     return std::find(table.ids.begin(), table.ids.end(), id) != table.ids.end();
 }
 
@@ -27,6 +31,9 @@ template <typename Functor>
 bool has(Functor f, const IdSet& idSet)
 {
     ++idSet.meta.metrics[AccessType::RandomAccess];
+    if(!idSet.meta.sorted)
+        sort(idSet);
+
     return std::find_if(idSet.ids.begin(), idSet.ids.end(), f) != idSet.ids.end();
 }
 
@@ -34,6 +41,9 @@ template <typename Functor, typename DataType>
 bool has(Functor f, const DataTable<DataType>& table)
 {
     ++table.meta.metrics[AccessType::RandomAccess];
+    if(!table.sorted)
+        sort(table);
+
     auto idIter = table.ids.begin();
     auto dataIter = table.data.begin();
 

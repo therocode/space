@@ -81,4 +81,5 @@ class Space : public fea::Application,
 
         GameController mController;
         bool mGuiBlocksMouse;
+        th::Optional<int32_t> mSelectedDebugEntity;
 };

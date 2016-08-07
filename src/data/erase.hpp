@@ -16,6 +16,8 @@ void erase(int32_t id, DataTable& table)
         table.data.erase(table.data.begin() + std::distance(table.ids.begin(), toErase));
         table.ids.erase(toErase);
     }
+
+    table.meta.sorted = false;
 }
 
 template <typename Functor>
@@ -23,6 +25,8 @@ void eraseIf(Functor f, IdSet& idSet)
 {
     ++idSet.meta.metrics[AccessType::Deletion];
     ++idSet.meta.metrics[AccessType::Iteration];
+
+    size_t beforeSize = idSet.ids.size();
     for(auto iter = idSet.ids.begin(); iter != idSet.ids.end();)
     {
         if(f(*iter))
@@ -34,6 +38,9 @@ void eraseIf(Functor f, IdSet& idSet)
             ++iter;
         }
     }
+
+    if(beforeSize != idSet.ids.size())
+        idSet.meta.sorted = false;
 }
 
 template <typename Functor, typename DataTable>
@@ -44,6 +51,7 @@ void eraseIf(Functor f, DataTable& table)
     auto idIter = table.ids.begin();
     auto dataIter = table.data.begin();
 
+    size_t beforeSize = table.ids.size();
     for(; idIter != table.ids.end();)
     {
         if(f(*idIter, *dataIter))
@@ -57,5 +65,8 @@ void eraseIf(Functor f, DataTable& table)
             ++dataIter;
         }
     }
+
+    if(beforeSize != table.ids.size())
+        table.meta.sorted = false;
 }
 
