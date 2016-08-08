@@ -1,13 +1,13 @@
-#include "gamecontroller.hpp"
+#include "gameinterface.hpp"
 #include "drawables/linerect.hpp"
 #include <imgui.h>
 
-GameController::GameController():
+GameInterface::GameInterface():
     mState(IDLE)
 {
 }
 
-void GameController::updateAndRender(fea::Renderer2D& renderer)
+void GameInterface::updateAndRender(fea::Renderer2D& renderer)
 {
     ImGui::Begin("Space");
     ImGui::Text("%s", stateToString(mState).c_str());
@@ -30,7 +30,7 @@ void GameController::updateAndRender(fea::Renderer2D& renderer)
     }
 }
 
-void GameController::worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
+void GameInterface::worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
 {
     if(mState == PLAN_ROOM)
     {
@@ -38,7 +38,7 @@ void GameController::worldMouseClick(const glm::ivec2& position, const glm::ivec
     }
 }
 
-void GameController::worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
+void GameInterface::worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
 {
     if(mState == PLAN_ROOM)
     {
@@ -49,7 +49,7 @@ void GameController::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
     }
 }
 
-void GameController::worldMouseRelease(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
+void GameInterface::worldMouseRelease(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
 {
     if(mState == PLAN_ROOM)
     {
@@ -65,7 +65,7 @@ void GameController::worldMouseRelease(const glm::ivec2& position, const glm::iv
     }
 }
 
-std::string GameController::stateToString(State state) const
+std::string GameInterface::stateToString(State state) const
 {
     if(state == IDLE)
         return "Idle";
@@ -75,9 +75,9 @@ std::string GameController::stateToString(State state) const
         return "None";
 }
 
-GameController::Output GameController::fetchOutput()
+GameInterface::Output GameInterface::fetchOutput()
 {
-    GameController::Output output
+    GameInterface::Output output
     {
         std::move(mNewRoomTasks),
     };

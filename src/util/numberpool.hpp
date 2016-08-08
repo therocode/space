@@ -1,6 +1,7 @@
 #pragma once
 #include <type_traits>
 #include <unordered_set>
+#include <thero/assert.hpp>
 
 template <typename IntegralType>
 class NumberPool
@@ -31,7 +32,7 @@ class NumberPool
 
         void release(IntegralType value)
         {
-            FEA_ASSERT(value < mNext && mReturned.count(value) == 0, "Returning invalid value " + std::to_string(value));
+            TH_ASSERT(value < mNext && mReturned.count(value) == 0, "Returning invalid value " + std::to_string(value));
             mReturned.emplace(value);
         }
     private:

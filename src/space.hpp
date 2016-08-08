@@ -1,16 +1,16 @@
 #include <fea/structure.hpp>
-#include <fea/render2d.hpp>
 #include <fea/util.hpp>
 #include <fea/userinterface.hpp>
+#include <fea/render2d.hpp>
 #include "inputhandler.hpp"
 #include "messages.hpp"
 #include "audioplayer.hpp"
-#include "renderer.hpp"
 #include "resourcemanager.hpp"
 #include "instantiator.hpp"
 #include "data.hpp"
-#include "gamecontroller.hpp"
-//#include "http/httpdebugger.hpp"
+#include "logic/interfacelogic.hpp"
+#include "logic/actorlogic.hpp"
+#include "logic/renderlogic.hpp"
 
 class Space : public fea::Application,
     public fea::MessageReceiver<QuitMessage,
@@ -28,14 +28,9 @@ class Space : public fea::Application,
         void handleMessage(const MouseReleaseMessage& message) override;
         void handleMessage(const MouseMoveMessage& message) override;
         void handleMessage(const MouseWheelMessage& message) override;
-        int32_t addActor(Actor actor);
-        void removeActor(int32_t id);
     protected:
         void loop() override;
     private:
-        void renderSprites();
-        void renderTasks();
-        void handleControllerOutput(GameController::Output output);
 
         glm::ivec2 mWindowSize;
         //fea
@@ -50,9 +45,6 @@ class Space : public fea::Application,
 
         //input
         InputHandler mInputHandler;
-        
-        //rendering
-        Renderer mRenderer;
 
         //game data
         ent::TPosition mTPosition = {"Position", "The positions of game entities"};
@@ -72,14 +64,16 @@ class Space : public fea::Application,
         gfx::TActorSprite mTActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
 
         NumberPool<int32_t> mActorIdPool;
-        NumberPool<int32_t> mActorSpriteIdPool;
         NumberPool<int32_t> mTaskIdPool;
         //AudioPlayer mAudioPlayer;
         
         //HttpDebugger mHttpDebugger;
         fea::Texture mImguiFontTexture;
 
-        GameController mController;
         bool mGuiBlocksMouse;
-        th::Optional<int32_t> mSelectedDebugEntity;
+
+        //logic
+        ActorLogic mActorLogic;
+        RenderLogic mRenderLogic;
+        InterfaceLogic mInterfaceLogic;
 };

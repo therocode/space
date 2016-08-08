@@ -4,9 +4,10 @@
 #include <glm/glm.hpp>
 #include <fea/render2d.hpp>
 #include <fea/userinterface.hpp>
-#include "data/data.hpp"
+#include <data.hpp>
+#include "../util/numberpool.hpp"
 
-class GameController
+class InterfaceLogic
 {
     public:
         struct Output
@@ -16,12 +17,11 @@ class GameController
 
         enum State { IDLE, PLAN_ROOM };
 
-        GameController();
-        void updateAndRender(fea::Renderer2D& renderer);
+        InterfaceLogic(fea::Renderer2D& renderer, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask);
+        void update();
         void worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseRelease(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
-        Output fetchOutput();
     private:
         std::string stateToString(State state) const;
         State mState;
@@ -29,6 +29,7 @@ class GameController
         th::Optional<glm::ivec2> mRoomStart;
         th::Optional<glm::ivec2> mRoomEnd;
 
-        //out
-        std::vector<RoomTask> mNewRoomTasks;
+        fea::Renderer2D& mRenderer;
+        NumberPool<int32_t>& mTaskIdPool;
+        tsk::TRoomTask& mTRoomTask;
 };

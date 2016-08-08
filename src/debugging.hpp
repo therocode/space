@@ -58,10 +58,10 @@ namespace dbg
     extern std::unordered_map<std::string, th::Any> dvars;
 
     template<typename T> 
-    T& set(const std::string& name, T&& value)
+    T& set(const std::string& name, const T& value)
     {
         th::Any& stored = dvars[name];
-        stored = std::move(value);
+        stored = value;
         return stored. template get<T>();
     }
 
