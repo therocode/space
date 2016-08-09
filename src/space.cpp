@@ -15,13 +15,14 @@ Space::Space() :
     mFeaInputHandler(new fea::SDL2InputBackend()),
     mInstantiator(mResources),
     mInputHandler(mBus, mFeaInputHandler),
+    mGameSpeedMultiplier(4),
     //mAudioPlayer(mBus),
     mWalls(cMapSize),
     mZones(cMapSize, 0),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask),
-    mInterfaceLogic(mFeaRenderer, mTaskIdPool, mTRoomTask)
+    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mTRoomTask)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -43,6 +44,20 @@ void Space::handleMessage(const QuitMessage& message)
 {
     (void)message;
     quit();
+}
+
+void Space::handleMessage(const KeyPressedMessage& message)
+{
+    if(message.key == fea::Keyboard::TILDE)
+        mGameSpeedMultiplier = 0;
+    if(message.key == fea::Keyboard::NUM1)
+        mGameSpeedMultiplier = 1;
+    if(message.key == fea::Keyboard::NUM2)
+        mGameSpeedMultiplier = 2;
+    if(message.key == fea::Keyboard::NUM3)
+        mGameSpeedMultiplier = 4;
+    if(message.key == fea::Keyboard::NUM4)
+        mGameSpeedMultiplier = 8;
 }
 
 void Space::handleMessage(const ResizeMessage& message)
@@ -131,7 +146,8 @@ void Space::loop()
 
     mRenderLogic.frameStart();
 
-    mActorLogic.update();
+    for(int32_t i = 0; i < mGameSpeedMultiplier; ++i)
+        mActorLogic.update();
 
     ImGui::ShowTestWindow();
     auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
@@ -149,7 +165,11 @@ void Space::loop()
 }
 
 //TODO:
-//- IndoorMap with render
+//wall tasks on all of room's edges
+//room task finish condition
+//zone detection
+//task system
+//dudes should build walls
 
 void Space::temp()
 {

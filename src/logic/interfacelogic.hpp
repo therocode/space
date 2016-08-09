@@ -17,7 +17,7 @@ class InterfaceLogic
 
         enum State { IDLE, PLAN_ROOM };
 
-        InterfaceLogic(fea::Renderer2D& renderer, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask);
+        InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask);
         void update();
         void worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
@@ -30,6 +30,7 @@ class InterfaceLogic
         th::Optional<glm::ivec2> mRoomEnd;
 
         fea::Renderer2D& mRenderer;
+        int32_t& mGameSpeedMultiplier;
         NumberPool<int32_t>& mTaskIdPool;
         tsk::TRoomTask& mTRoomTask;
 };

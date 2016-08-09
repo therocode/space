@@ -17,6 +17,7 @@
 class Space : public fea::Application,
     public fea::MessageReceiver<QuitMessage,
     ResizeMessage,
+    KeyPressedMessage,
     MouseClickMessage,
     MouseReleaseMessage,
     MouseMoveMessage,
@@ -26,6 +27,7 @@ class Space : public fea::Application,
         Space();
         void handleMessage(const QuitMessage& message) override;
         void handleMessage(const ResizeMessage& message) override;
+        void handleMessage(const KeyPressedMessage& message) override;
         void handleMessage(const MouseClickMessage& message) override;
         void handleMessage(const MouseReleaseMessage& message) override;
         void handleMessage(const MouseMoveMessage& message) override;
@@ -47,6 +49,9 @@ class Space : public fea::Application,
 
         //input
         InputHandler mInputHandler;
+
+        //system
+        int32_t mGameSpeedMultiplier;
 
         //game data
         ent::TPosition mTPosition = {"Position", "The positions of game entities"};

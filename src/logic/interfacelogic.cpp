@@ -2,9 +2,10 @@
 #include "../drawables/linerect.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask):
+InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask):
     mState(IDLE),
     mRenderer(renderer),
+    mGameSpeedMultiplier(gameSpeedMultiplier),
     mTaskIdPool(taskIdPool),
     mTRoomTask(tRoomTask)
 {
@@ -13,6 +14,7 @@ InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, NumberPool<int32_t>& t
 void InterfaceLogic::update()
 {
     ImGui::Begin("Space");
+    ImGui::SliderInt("Game speed", &mGameSpeedMultiplier, 0, 16);
     ImGui::Text("%s", stateToString(mState).c_str());
 
     if(ImGui::SmallButton("Build Room"))

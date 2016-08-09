@@ -58,6 +58,7 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones)
     const auto& hWallArray = walls.horizontalWalls();
 
     quad = fea::Quad({cTileWidth, cWallThickness});
+    quad.setColor(fea::Color(90, 90, 90));
 
     for(int32_t y = 0; y < size.y; ++y)
     {
@@ -65,7 +66,7 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones)
         {
             if(hWallArray[walls.toIndex({x, y})])
             {
-                quad.setPosition(glm::vec2(x, y) * 32.0f);
+                quad.setPosition(glm::vec2(x, y) * 32.0f - glm::vec2(0.0f, cWallThickness / 2.0f));
                 mRenderer.render(quad);
             }
         }
@@ -73,7 +74,7 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones)
 
     const auto& vWallArray = walls.verticalWalls();
 
-    quad = fea::Quad({cWallThickness, cTileWidth});
+    quad.setSize({cWallThickness, cTileWidth});
 
     for(int32_t y = 0; y < size.y; ++y)
     {
@@ -81,7 +82,7 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones)
         {
             if(vWallArray[walls.toIndex({x, y})])
             {
-                quad.setPosition(glm::vec2(x, y) * 32.0f);
+                quad.setPosition(glm::vec2(x, y) * 32.0f - glm::vec2(cWallThickness / 2.0f, 0.0f));
                 mRenderer.render(quad);
             }
         }
