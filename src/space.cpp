@@ -17,9 +17,10 @@ Space::Space() :
     mInputHandler(mBus, mFeaInputHandler),
     //mAudioPlayer(mBus),
     mWalls(cMapSize),
+    mZones(cMapSize, 0),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mTActorSprite, mTPosition, mTRoomTask),
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask),
     mInterfaceLogic(mFeaRenderer, mTaskIdPool, mTRoomTask)
 {
     mWindow.setVSyncEnabled(true);
@@ -166,6 +167,14 @@ void Space::temp()
         {
             mWalls.set({position.x, y}, WallMap::Orientation::Vertical, 1);
             mWalls.set({position.x + size.x, y}, WallMap::Orientation::Vertical, 1);
+        }
+
+        for(int32_t y = position.y; y < position.y + size.y; ++y)
+        {
+            for(int32_t x = position.x; x < position.x + size.x; ++x)
+            {
+                mZones.set({x, y}, id+1); //+1 to make it not zero
+            }
         }
     }, mTRoomTask);
 

@@ -2,11 +2,12 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Grid<int32_t>& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
     mWalls(walls),
+    mZones(zones),
     mTActorSprite(tActorSprite),
     mTPosition(tPosition),
     mTRoomTask(tRoomTask)
@@ -21,7 +22,7 @@ void RenderLogic::frameStart()
 void RenderLogic::update()
 {
     mRenderer.startFrame();
-    mRenderer.renderWorld(mWalls);
+    mRenderer.renderWorld(mWalls, mZones);
     renderTasks();
     renderSprites();
 }

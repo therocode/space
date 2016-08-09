@@ -23,14 +23,41 @@ void Renderer::startFrame()
     mRenderer.clear();
 }
 
-void Renderer::renderWorld(const WallMap& walls)
+void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones)
 {
     mRenderer.clear(cGroundColor);
 
-    const auto& size = walls.size();
+    fea::Quad quad({cTileWidth, cTileWidth});
+
+    auto size = zones.size();
+
+    int32_t maxZoneId = 0;
+    for(int32_t y = 0; y < size.y; ++y)
+    {
+        for(int32_t x = 0; x < size.x; ++x)
+        {
+            maxZoneId = std::max(maxZoneId, zones.at({x, y}));
+        }
+    }
+
+    for(int32_t y = 0; y < size.y; ++y)
+    {
+        for(int32_t x = 0; x < size.x; ++x)
+        {
+            int32_t id = zones.at({x, y});
+            if(id)
+            {
+                quad.setPosition(glm::vec2(x, y) * 32.0f);
+                quad.setColor(fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
+                mRenderer.render(quad);
+            }
+        }
+    }
+
+    size = walls.size();
     const auto& hWallArray = walls.horizontalWalls();
 
-    fea::Quad wallQuad({cTileWidth, cWallThickness});
+    quad = fea::Quad({cTileWidth, cWallThickness});
 
     for(int32_t y = 0; y < size.y; ++y)
     {
@@ -38,15 +65,15 @@ void Renderer::renderWorld(const WallMap& walls)
         {
             if(hWallArray[walls.toIndex({x, y})])
             {
-                wallQuad.setPosition(glm::vec2(x, y) * 32.0f);
-                mRenderer.render(wallQuad);
+                quad.setPosition(glm::vec2(x, y) * 32.0f);
+                mRenderer.render(quad);
             }
         }
     }
 
     const auto& vWallArray = walls.verticalWalls();
 
-    wallQuad = fea::Quad({cWallThickness, cTileWidth});
+    quad = fea::Quad({cWallThickness, cTileWidth});
 
     for(int32_t y = 0; y < size.y; ++y)
     {
@@ -54,11 +81,13 @@ void Renderer::renderWorld(const WallMap& walls)
         {
             if(vWallArray[walls.toIndex({x, y})])
             {
-                wallQuad.setPosition(glm::vec2(x, y) * 32.0f);
-                mRenderer.render(wallQuad);
+                quad.setPosition(glm::vec2(x, y) * 32.0f);
+                mRenderer.render(quad);
             }
         }
     }
+
+
 }
 
 void Renderer::renderImGui(ImDrawData& drawData)
