@@ -15,3 +15,12 @@ doxy/gen/*
 *.kdev4
 install_manifest.txt
 */donk
+imgui.ini
+progress/*
+flamegraph.sh
+out.folded
+out.perf
+out.svg
+perf.data
+perf.data.old
+vgcore.*
