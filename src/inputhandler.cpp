@@ -3,7 +3,8 @@
 
 InputHandler::InputHandler(fea::MessageBus& bus, fea::InputHandler& handler):
     mHandler(handler),
-    mBus(bus)
+    mBus(bus),
+    mMouseDown(false)
 {
 }
 

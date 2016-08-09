@@ -1,7 +1,7 @@
 #pragma once
 
-template <typename DataTable, typename Functor>
-void forEach(DataTable& table, Functor f)
+template <typename Functor, typename DataTable>
+void forEach(Functor f, DataTable& table)
 {
     ++table.meta.metrics[AccessType::Iteration];
     for(size_t i = 0; i < table.ids.size(); ++i)

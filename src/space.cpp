@@ -6,6 +6,8 @@
 #include "debug.hpp"
 #include <imgui.h>
 
+const glm::ivec2 cMapSize(256, 256);
+
 Space::Space() :
     mWindowSize(1366, 768),
     mWindow(new fea::SDL2WindowBackend(), fea::VideoMode(static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y)), "Space"),
@@ -14,9 +16,10 @@ Space::Space() :
     mInstantiator(mResources),
     mInputHandler(mBus, mFeaInputHandler),
     //mAudioPlayer(mBus),
+    mWalls(cMapSize),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
-    mRenderLogic(mResources, mFeaRenderer, mTActorSprite, mTPosition, mTRoomTask),
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mTActorSprite, mTPosition, mTRoomTask),
     mInterfaceLogic(mFeaRenderer, mTaskIdPool, mTRoomTask)
 {
     mWindow.setVSyncEnabled(true);
@@ -139,9 +142,32 @@ void Space::loop()
 
     mRenderLogic.frameEnd();
 
+    temp();
+
     mWindow.swapBuffers();
 }
 
 //TODO:
-//- WallMap with render
 //- IndoorMap with render
+
+void Space::temp()
+{
+    forEach([this] (int32_t id, const RoomTask& roomTask)
+    {
+        const auto& position = roomTask.position;
+        const auto& size = roomTask.size;
+
+        for(int32_t x = position.x; x < position.x + size.x; ++x)
+        {
+            mWalls.set({x, position.y}, WallMap::Orientation::Horizontal, 1);
+            mWalls.set({x, position.y + size.y}, WallMap::Orientation::Horizontal, 1);
+        }
+        for(int32_t y = position.y; y < position.y + size.y; ++y)
+        {
+            mWalls.set({position.x, y}, WallMap::Orientation::Vertical, 1);
+            mWalls.set({position.x + size.x, y}, WallMap::Orientation::Vertical, 1);
+        }
+    }, mTRoomTask);
+
+    clear(mTRoomTask);
+}

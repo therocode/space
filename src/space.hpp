@@ -8,6 +8,7 @@
 #include "resourcemanager.hpp"
 #include "instantiator.hpp"
 #include "data.hpp"
+#include "wallmap.hpp"
 #include "logic/interfacelogic.hpp"
 #include "logic/actorlogic.hpp"
 #include "logic/renderlogic.hpp"
@@ -52,6 +53,7 @@ class Space : public fea::Application,
         ent::TWalkTarget mTWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
         ent::TMoveIntention mTMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
         ent::TMoveAbility mTMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
+
         ////worker stuff
         IdSet mBuilders;
         IdSet mFreeWorkers;
@@ -61,6 +63,10 @@ class Space : public fea::Application,
         tsk::TWallTask mTWallTask = {"Wall Task", "Represent all walls that need to be built"};
         tsk::TDoorTask mTDoorTask = {"Door Task", "Represent all doors that need to be built"};
 
+        //world
+        WallMap mWalls;
+
+        //gfx
         gfx::TActorSprite mTActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
 
         NumberPool<int32_t> mActorIdPool;
@@ -76,4 +82,6 @@ class Space : public fea::Application,
         ActorLogic mActorLogic;
         RenderLogic mRenderLogic;
         InterfaceLogic mInterfaceLogic;
+
+        void temp();
 };

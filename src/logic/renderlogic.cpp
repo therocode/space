@@ -2,10 +2,11 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
+    mWalls(walls),
     mTActorSprite(tActorSprite),
     mTPosition(tPosition),
     mTRoomTask(tRoomTask)
@@ -20,7 +21,7 @@ void RenderLogic::frameStart()
 void RenderLogic::update()
 {
     mRenderer.startFrame();
-    mRenderer.renderWorld();
+    mRenderer.renderWorld(mWalls);
     renderTasks();
     renderSprites();
 }
@@ -35,7 +36,7 @@ void RenderLogic::renderSprites()
 {
     std::vector<RenderOrder> orders;
 
-    forEach(mTActorSprite, [&] (int32_t actorId, const ActorSprite& sprite)
+     forEach([&] (int32_t actorId, const ActorSprite& sprite)
     {
         const glm::vec2& position = get(sprite.actorId, mTPosition).data;
 
@@ -60,7 +61,7 @@ void RenderLogic::renderSprites()
             rect.setColor(fea::Color::Yellow);
             mFeaRenderer.render(rect);
         }
-    }); 
+    }, mTActorSprite); 
 
     mRenderer.render(orders);
 }
@@ -69,7 +70,7 @@ void RenderLogic::renderTasks()
 {
     std::vector<RenderOrder> orders;
 
-    forEach(mTRoomTask, [&] (int32_t taskId, const RoomTask& roomTask)
+    forEach([&] (int32_t taskId, const RoomTask& roomTask)
     {   
         const glm::vec2& position = roomTask.position * 32;
         const glm::vec2& size = roomTask.size * 32;
@@ -85,7 +86,7 @@ void RenderLogic::renderTasks()
                 //sprite.flip,
                 }   
                 );  
-    }); 
+    }, mTRoomTask); 
 
     mRenderer.render(orders);
 }

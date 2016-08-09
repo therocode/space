@@ -7,6 +7,9 @@
 #include "debugrenderer.hpp"
 #include "drawables/imguidrawable.hpp"
 
+const float cTileWidth = 32.0f;
+const float cWallThickness = 8.0f;
+
 const fea::Color cGroundColor = {83, 75, 57};
 Renderer::Renderer(fea::Renderer2D& renderer, const std::vector<Texture>& textures):
     mRenderer(renderer),
@@ -20,9 +23,42 @@ void Renderer::startFrame()
     mRenderer.clear();
 }
 
-void Renderer::renderWorld()
+void Renderer::renderWorld(const WallMap& walls)
 {
     mRenderer.clear(cGroundColor);
+
+    const auto& size = walls.size();
+    const auto& hWallArray = walls.horizontalWalls();
+
+    fea::Quad wallQuad({cTileWidth, cWallThickness});
+
+    for(int32_t y = 0; y < size.y; ++y)
+    {
+        for(int32_t x = 0; x < size.x; ++x)
+        {
+            if(hWallArray[walls.toIndex({x, y})])
+            {
+                wallQuad.setPosition(glm::vec2(x, y) * 32.0f);
+                mRenderer.render(wallQuad);
+            }
+        }
+    }
+
+    const auto& vWallArray = walls.verticalWalls();
+
+    wallQuad = fea::Quad({cWallThickness, cTileWidth});
+
+    for(int32_t y = 0; y < size.y; ++y)
+    {
+        for(int32_t x = 0; x < size.x; ++x)
+        {
+            if(vWallArray[walls.toIndex({x, y})])
+            {
+                wallQuad.setPosition(glm::vec2(x, y) * 32.0f);
+                mRenderer.render(wallQuad);
+            }
+        }
+    }
 }
 
 void Renderer::renderImGui(ImDrawData& drawData)
