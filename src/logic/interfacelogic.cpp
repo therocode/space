@@ -2,12 +2,13 @@
 #include "../drawables/linerect.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask):
+InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask):
     mState(IDLE),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
     mTaskIdPool(taskIdPool),
-    mTRoomTask(tRoomTask)
+    mTRoomTask(tRoomTask),
+    mTWallTask(tWallTask)
 {
 }
 
@@ -63,6 +64,34 @@ void InterfaceLogic::worldMouseRelease(const glm::ivec2& position, const glm::iv
             *mRoomStart,
             *mRoomEnd - *mRoomStart + glm::ivec2(1, 1),
         }, mTRoomTask);
+
+        for(int32_t x = mRoomStart->x; x <= mRoomEnd->x; ++x)
+        {
+            insert(mTaskIdPool.next(), WallTask
+            {
+                {x, mRoomStart->y},
+                Orientation::Horizontal,
+            }, mTWallTask);
+            insert(mTaskIdPool.next(), WallTask
+            {
+                {x, mRoomEnd->y + 1},
+                Orientation::Horizontal,
+            }, mTWallTask);
+        }
+
+        for(int32_t y = mRoomStart->y; y <= mRoomEnd->y; ++y)
+        {
+            insert(mTaskIdPool.next(), WallTask
+            {
+                {mRoomStart->x, y},
+                Orientation::Vertical,
+            }, mTWallTask);
+            insert(mTaskIdPool.next(), WallTask
+            {
+                {mRoomEnd->x + 1, y},
+                Orientation::Vertical,
+            }, mTWallTask);
+        }
 
         mRoomStart = {};
         mRoomEnd = {};

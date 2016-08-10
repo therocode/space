@@ -8,7 +8,7 @@
 class RenderLogic
 {
     public:
-        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Grid<int32_t>& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask);
+        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Grid<int32_t>& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask);
         void frameStart();
         void update();
         void frameEnd();
@@ -25,4 +25,5 @@ class RenderLogic
         const gfx::TActorSprite& mTActorSprite;
         const ent::TPosition& mTPosition;
         const tsk::TRoomTask& mTRoomTask;
+        const tsk::TWallTask& mTWallTask;
 };

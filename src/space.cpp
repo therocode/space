@@ -21,8 +21,8 @@ Space::Space() :
     mZones(cMapSize, 0),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask),
-    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mTRoomTask)
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask),
+    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mTRoomTask, mTWallTask)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -150,7 +150,7 @@ void Space::loop()
         mActorLogic.update();
 
     ImGui::ShowTestWindow();
-    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTDoorTask, mTActorSprite);
+    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mTActorSprite);
     if(clickedId)
         dbg::set<int32_t>("selected_actor", *clickedId);
 
@@ -159,13 +159,12 @@ void Space::loop()
 
     mRenderLogic.frameEnd();
 
-    temp();
+    //temp();
 
     mWindow.swapBuffers();
 }
 
 //TODO:
-//wall tasks on all of room's edges
 //room task finish condition
 //zone detection
 //task system

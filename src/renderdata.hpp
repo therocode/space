@@ -3,12 +3,15 @@
 #include "glm.hpp"
 #include "pi.hpp"
 
+enum class FillType { Solid, Hollow };
+
 struct RenderOrder
 { 
     glm::vec2 position;
     th::Optional<int32_t> textureId;
     fea::Color color;
     th::Optional<glm::vec2> size;
+    FillType fillType;
     //float rotation = pi / 2.0f;
     //int32_t animationProgress = 0;
     //bool flip;

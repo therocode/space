@@ -18,6 +18,7 @@
 //includes
 #include "glm/glm.hpp"
 #include <fea/rendering/color.hpp>
+#include "../orientation.hpp"
 
 //table layouts
 struct ActorSprite
@@ -54,6 +55,7 @@ struct RoomTask
 struct WallTask
 {
     glm::ivec2 position;
+    Orientation orientation;
 };
 
 struct DoorTask

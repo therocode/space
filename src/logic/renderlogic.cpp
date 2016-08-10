@@ -2,7 +2,7 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Grid<int32_t>& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Grid<int32_t>& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
@@ -10,7 +10,8 @@ RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRendere
     mZones(zones),
     mTActorSprite(tActorSprite),
     mTPosition(tPosition),
-    mTRoomTask(tRoomTask)
+    mTRoomTask(tRoomTask),
+    mTWallTask(tWallTask)
 {
 }
 
@@ -46,7 +47,8 @@ void RenderLogic::renderSprites()
                 position,
                 sprite.textureId,
                 sprite.color,
-                {}
+                {},
+                FillType::Solid,
                 //sprite.rotation,
                 //sprite.animationProgress,
                 //sprite.flip,
@@ -82,12 +84,35 @@ void RenderLogic::renderTasks()
                 {},
                 fea::Color(50, 150, 0, 200),
                 size,
+                FillType::Hollow,
                 //sprite.rotation,
                 //sprite.animationProgress,
                 //sprite.flip,
                 }   
                 );  
     }, mTRoomTask); 
+
+    forEach([&] (int32_t taskId, const WallTask& wallTask)
+    {   
+        Orientation orientation = wallTask.orientation;
+        const glm::vec2& position = static_cast<glm::vec2>(wallTask.position * 32) - 
+            (orientation == Orientation::Horizontal ? glm::vec2{0.0f, 4.0f} : glm::vec2{4.0f, 0.0f});
+
+        glm::vec2 size = orientation == Orientation::Horizontal ? glm::vec2{32.0f, 8.0f} : glm::vec2{8.0f, 32.0f};
+
+        orders.emplace_back(
+                RenderOrder{
+                position,
+                {},
+                fea::Color(50, 150, 0, 200),
+                size,
+                FillType::Hollow,
+                //sprite.rotation,
+                //sprite.animationProgress,
+                //sprite.flip,
+                }   
+                );  
+    }, mTWallTask); 
 
     mRenderer.render(orders);
 }

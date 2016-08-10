@@ -6,6 +6,7 @@
 #include "texturemaker.hpp"
 #include "debugrenderer.hpp"
 #include "drawables/imguidrawable.hpp"
+#include "drawables/linerect.hpp"
 
 const float cTileWidth = 32.0f;
 const float cWallThickness = 8.0f;
@@ -150,30 +151,29 @@ void Renderer::render(const std::vector<RenderOrder>& orders) const
         TH_ASSERT(size, "no size supplied for render order");
 
 
-        fea::AnimatedQuad quad(*size);
+        if(renderOrder.fillType == FillType::Solid)
+        {
+            fea::AnimatedQuad quad(*size);
 
-        if(texture && texture->texture)
-            quad.setTexture(*texture->texture);
-        //if(texture.animation)
-        //{
-        //    quad.setAnimation(*texture.animation);
-        //    quad.setAnimationFrame(static_cast<uint32_t>(renderOrder.animationProgress) / texture.animation->getDelay() % texture.animation->getFrameAmount());
-        //}
+            if(texture && texture->texture)
+                quad.setTexture(*texture->texture);
 
+            quad.setPosition(renderOrder.position);// + offset);
+            //quad.setRotation(renderOrder.rotation - pi / 2.0f); //take away pi/2.0f which is a quarter of a full turn because featherkit expects 0 degrees to be --> but in the game, it is downwards
+            //quad.setHFlip(renderOrder.flip);
+            quad.setColor(renderOrder.color);
 
-        //auto offset = texture.offset;
-        //if(renderOrder.flip)
-        //{
-        //    offset.x *= -1.0f;
-        //    offset.x += -texture.size.x;
-        //}
+            mRenderer.render(quad);
+        }
+        else if(renderOrder.fillType == FillType::Hollow)
+        {
+            LineRect lineRect(*size);
 
-        quad.setPosition(renderOrder.position);// + offset);
-        //quad.setRotation(renderOrder.rotation - pi / 2.0f); //take away pi/2.0f which is a quarter of a full turn because featherkit expects 0 degrees to be --> but in the game, it is downwards
-        //quad.setHFlip(renderOrder.flip);
-        quad.setColor(renderOrder.color);
+            lineRect.setPosition(renderOrder.position);
+            lineRect.setColor(renderOrder.color);
 
-        mRenderer.render(quad);
+            mRenderer.render(lineRect);
+        }
     }
 
     DRen::flush();
