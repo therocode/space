@@ -4,6 +4,7 @@
 #include "debugguidata.hpp"
 #include "debuggui.hpp"
 #include "debug.hpp"
+#include "roomutil.hpp"
 #include <imgui.h>
 
 const glm::ivec2 cMapSize(256, 256);
@@ -21,8 +22,9 @@ Space::Space() :
     mZones(cMapSize, 0),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
+    mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask),
-    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mTRoomTask, mTWallTask)
+    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mWalls, mTRoomTask, mTWallTask)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -85,14 +87,17 @@ void Space::handleMessage(const MouseClickMessage& message)
         }   
         else if(message.button == fea::Mouse::RIGHT)
         {
-            int32_t toDelete = rand() % count(mTPosition);
-            if(has(toDelete, mTPosition))
+            if(count(mTPosition))
             {
-                mActorLogic.removeActor(toDelete);
-                mActorIdPool.release(toDelete);
+                int32_t toDelete = rand() % count(mTPosition);
+                if(has(toDelete, mTPosition))
+                {
+                    mActorLogic.removeActor(toDelete);
+                    mActorIdPool.release(toDelete);
+                }
+                //mPositions[0].position = message.position;
+                //mPhysics[0].velocity = {};
             }
-            //mPositions[0].position = message.position;
-            //mPhysics[0].velocity = {};
         }   
     }
 
@@ -147,7 +152,10 @@ void Space::loop()
     mRenderLogic.frameStart();
 
     for(int32_t i = 0; i < mGameSpeedMultiplier; ++i)
+    {
         mActorLogic.update();
+        mTaskLogic.update();
+    }
 
     ImGui::ShowTestWindow();
     auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mTActorSprite);
@@ -165,7 +173,6 @@ void Space::loop()
 }
 
 //TODO:
-//room task finish condition
 //zone detection
 //task system
 //dudes should build walls
@@ -177,24 +184,16 @@ void Space::temp()
         const auto& position = roomTask.position;
         const auto& size = roomTask.size;
 
-        for(int32_t x = position.x; x < position.x + size.x; ++x)
+        forEachWall(position, size, [this] (const glm::ivec2& coordinate, Orientation orientation)
         {
-            mWalls.set({x, position.y}, WallMap::Orientation::Horizontal, 1);
-            mWalls.set({x, position.y + size.y}, WallMap::Orientation::Horizontal, 1);
-        }
-        for(int32_t y = position.y; y < position.y + size.y; ++y)
-        {
-            mWalls.set({position.x, y}, WallMap::Orientation::Vertical, 1);
-            mWalls.set({position.x + size.x, y}, WallMap::Orientation::Vertical, 1);
-        }
+            mWalls.set(coordinate, orientation, 1);
+        });
 
-        for(int32_t y = position.y; y < position.y + size.y; ++y)
+        forEachFloor(position, size, [&] (const glm::ivec2& coordinate)
         {
-            for(int32_t x = position.x; x < position.x + size.x; ++x)
-            {
-                mZones.set({x, y}, id+1); //+1 to make it not zero
-            }
-        }
+            mZones.set(coordinate, id+1); //+1 to make it not zero
+        });
+
     }, mTRoomTask);
 
     clear(mTRoomTask);

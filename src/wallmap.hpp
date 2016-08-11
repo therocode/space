@@ -2,11 +2,11 @@
 #include <cstdint>
 #include <vector>
 #include "glm.hpp"
+#include "orientation.hpp"
 
 class WallMap
 {
     public:
-        enum class Orientation { Horizontal, Vertical };
         WallMap(glm::ivec2 tileCount);
         int32_t at(const glm::ivec2& position, Orientation orientation) const;
         int32_t& at(const glm::ivec2& position, Orientation orientation);

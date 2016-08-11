@@ -12,6 +12,7 @@
 #include "util/grid.hpp"
 #include "logic/interfacelogic.hpp"
 #include "logic/actorlogic.hpp"
+#include "logic/tasklogic.hpp"
 #include "logic/renderlogic.hpp"
 
 class Space : public fea::Application,
@@ -87,6 +88,7 @@ class Space : public fea::Application,
 
         //logic
         ActorLogic mActorLogic;
+        TaskLogic mTaskLogic;
         RenderLogic mRenderLogic;
         InterfaceLogic mInterfaceLogic;
 

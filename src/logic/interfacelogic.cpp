@@ -2,11 +2,12 @@
 #include "../drawables/linerect.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask):
+InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask):
     mState(IDLE),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
     mTaskIdPool(taskIdPool),
+    mWalls(walls),
     mTRoomTask(tRoomTask),
     mTWallTask(tWallTask)
 {
@@ -42,6 +43,12 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
     {
         mRoomStart = mRoomEnd = tile;
     }
+    //TEMP
+    else
+    {
+        mWalls.set(position / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal, 1);
+    }
+    //ENDTEMP
 }
 
 void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
