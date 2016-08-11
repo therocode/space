@@ -1,6 +1,4 @@
 #include "tasklogic.hpp"
-#include "../util/accelerator.hpp"
-#include "../tableutil.hpp"
 #include "../roomutil.hpp"
 
 TaskLogic::TaskLogic(const WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, tsk::TDoorTask& tDoorTask):

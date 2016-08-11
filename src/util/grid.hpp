@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <vector>
 #include <thero/assert.hpp>
-#include "glm/glm.hpp"
+#include "../glm.hpp"
 
 template<typename Type>
 class Grid

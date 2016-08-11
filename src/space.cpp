@@ -19,7 +19,6 @@ Space::Space() :
     mGameSpeedMultiplier(4),
     //mAudioPlayer(mBus),
     mWalls(cMapSize),
-    mZones(cMapSize, 0),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask),
@@ -30,6 +29,8 @@ Space::Space() :
     mWindow.setFramerateLimit(60);
 
     subscribe(mBus, *this, false);
+
+    init(cMapSize, 0, mZones);
 
     //imgui
     ImGuiIO& io = ImGui::GetIO();
@@ -191,7 +192,7 @@ void Space::temp()
 
         forEachFloor(position, size, [&] (const glm::ivec2& coordinate)
         {
-            mZones.set(coordinate, id+1); //+1 to make it not zero
+            set(coordinate, id+1, mZones); //+1 to make it not zero
         });
 
     }, mTRoomTask);

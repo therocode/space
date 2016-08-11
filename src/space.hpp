@@ -9,7 +9,7 @@
 #include "instantiator.hpp"
 #include "data.hpp"
 #include "wallmap.hpp"
-#include "util/grid.hpp"
+#include "zones.hpp"
 #include "logic/interfacelogic.hpp"
 #include "logic/actorlogic.hpp"
 #include "logic/tasklogic.hpp"
@@ -72,7 +72,7 @@ class Space : public fea::Application,
 
         //world
         WallMap mWalls;
-        Grid<int32_t> mZones;
+        Zones mZones;
 
         //gfx
         gfx::TActorSprite mTActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};

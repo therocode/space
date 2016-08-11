@@ -3,12 +3,13 @@
 #include <fea/render2d.hpp>
 #include "../resourcemanager.hpp"
 #include "../wallmap.hpp"
+#include "../zones.hpp"
 #include <data.hpp>
 
 class RenderLogic
 {
     public:
-        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Grid<int32_t>& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask);
+        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask);
         void frameStart();
         void update();
         void frameEnd();
@@ -20,7 +21,7 @@ class RenderLogic
         Renderer mRenderer;
 
         const WallMap& mWalls;
-        const Grid<int32_t>& mZones;
+        const Zones& mZones;
 
         const gfx::TActorSprite& mTActorSprite;
         const ent::TPosition& mTPosition;
