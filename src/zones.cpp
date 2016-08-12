@@ -2,6 +2,7 @@
 
 void init(const glm::ivec2& size, int32_t id, Zones& zones)
 {
+    zones.zones = {size, id + 1}; //this makes it not the same as incoming ID so that everything is properly inserted
     for(int32_t y = 0; y < size.y; ++y)
     {
         for(int32_t x = 0; x < size.x; ++x)
@@ -21,7 +22,7 @@ void set(const glm::ivec2& coordinate, int32_t id, Zones& zones)
 
         zones.tiles[id].insert(coordinate);
 
-        auto& coordinateSet = zones.tiles.at(old);
+        auto& coordinateSet = zones.tiles[old];
         coordinateSet.erase(coordinate);
         if(coordinateSet.empty())
             zones.tiles.erase(old);

@@ -5,6 +5,7 @@
 #include "debuggui.hpp"
 #include "debug.hpp"
 #include "roomutil.hpp"
+#include "wallutil.hpp"
 #include <imgui.h>
 
 const glm::ivec2 cMapSize(256, 256);
@@ -22,6 +23,7 @@ Space::Space() :
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask),
+    mZoneLogic(mWalls, mZones),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask),
     mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mWalls, mTRoomTask, mTWallTask)
 {
@@ -142,6 +144,7 @@ void Space::handleMessage(const MouseWheelMessage& message)
 
 void Space::loop()
 {
+    WallMap oldWalls = mWalls;
     //grab input
     mInputHandler.process();
 
@@ -156,6 +159,9 @@ void Space::loop()
     {
         mActorLogic.update();
         mTaskLogic.update();
+        auto wallChanges = wallDiff(oldWalls, mWalls);
+        mZoneLogic.update(wallChanges);
+        oldWalls = mWalls;
     }
 
     ImGui::ShowTestWindow();

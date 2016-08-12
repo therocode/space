@@ -16,7 +16,7 @@ class WallMap
         const std::vector<int32_t>& verticalWalls() const;
         size_t toIndex(const glm::ivec2& position) const;
     private:
-        const glm::ivec2 mSize;
+        glm::ivec2 mSize;
         std::vector<int32_t> mHorizontalWalls;
         std::vector<int32_t> mVerticalWalls;
 };
