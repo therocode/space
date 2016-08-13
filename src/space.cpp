@@ -21,7 +21,7 @@ Space::Space() :
     //mAudioPlayer(mBus),
     mWalls(cMapSize),
     mGuiBlocksMouse(false),
-    mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mUnassignedTasks),
+    mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
     mZoneLogic(mWalls, mZones),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask),
@@ -177,7 +177,6 @@ void Space::loop()
 }
 
 //TODO:
-//dudes should not be dangling busy workers
 //dudes working on wall building tasks should build them
 //option for internal/external book keeping in tables
 //task dependencies

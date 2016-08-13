@@ -21,13 +21,13 @@ void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
     {
         std::vector<glm::ivec2> result;
 
-        if(!mWalls.at(node, Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, -1)) == 0 && at(node + glm::ivec2(0, -1), mZones) != ignoreId && node.y > 0)
+        if(node.y > 0 && !mWalls.at(node, Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, -1)) == 0 && at(node + glm::ivec2(0, -1), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(0, -1));
-        if(!mWalls.at(node, Orientation::Vertical) && ignoreNodes.count(node + glm::ivec2(-1, 0)) == 0 && at(node + glm::ivec2(-1, 0), mZones) != ignoreId && node.x > 0)
+        if(node.x > 0 && !mWalls.at(node, Orientation::Vertical) && ignoreNodes.count(node + glm::ivec2(-1, 0)) == 0 && at(node + glm::ivec2(-1, 0), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(-1, 0));
-        if(!mWalls.at(node + glm::ivec2(0, 1), Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, 1)) == 0 && at(node + glm::ivec2(0, 1), mZones) != ignoreId && node.y < mWalls.size().y - 2)
+        if(node.y < mWalls.size().y - 2 && !mWalls.at(node + glm::ivec2(0, 1), Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, 1)) == 0 && at(node + glm::ivec2(0, 1), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(0, 1));
-        if(!mWalls.at(node + glm::ivec2(1, 0), Orientation::Vertical) && ignoreNodes.count(node + glm::ivec2(1, 0)) == 0 && at(node + glm::ivec2(1, 0), mZones) != ignoreId && node.x < mWalls.size().x - 2)
+        if(node.x < mWalls.size().x - 2 && !mWalls.at(node + glm::ivec2(1, 0), Orientation::Vertical) && ignoreNodes.count(node + glm::ivec2(1, 0)) == 0 && at(node + glm::ivec2(1, 0), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(1, 0));
 
         return result;

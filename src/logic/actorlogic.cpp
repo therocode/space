@@ -2,8 +2,9 @@
 #include "../util/accelerator.hpp"
 #include "../tableutil.hpp"
 #include "../taskutil.hpp"
+#include "../debug.hpp"
 
-ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, IdSet& unassignedTasks):
+ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, IdSet& unassignedTasks, WallMap& walls):
     mTPosition(tPosition),
     mTPhysics(tPhysics),
     mTMoveAbility(tMoveAbility),
@@ -14,7 +15,10 @@ ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::
     mFreeWorkers(freeWorkers),
     mTBusyWorker(tBusyWorker),
     mTAssignedTask(tAssignedTask),
-    mUnassignedTasks(unassignedTasks)
+    mTRoomTask(tRoomTask),
+    mTWallTask(tWallTask),
+    mUnassignedTasks(unassignedTasks),
+    mWalls(walls)
 {
 }
 
@@ -46,6 +50,7 @@ void ActorLogic::removeActor(int32_t id)
     erase(id, mTMoveAbility);
     erase(id, mTMoveIntention);
     erase(id, mTWalkTarget);
+
     eraseIf([&] (int32_t actorSpriteId, const ActorSprite& actorSprite)
     {
         if(actorSprite.actorId == id)
@@ -62,6 +67,7 @@ void ActorLogic::removeActor(int32_t id)
 void ActorLogic::update()
 {
     updateWorkers();
+    updateTaskWork();
     calculateMoveIntention();
     applyMoveIntention();
     applyPhysics();
@@ -102,8 +108,45 @@ void ActorLogic::updateWorkers()
     }, mFreeWorkers);
 }
 
+void ActorLogic::updateTaskWork()
+{
+    forEach([&](const int32_t workerId, const BusyWorker& worker)
+    {
+        if(auto wallTask = findOne(worker.taskId, mTWallTask))
+        {
+            glm::vec2 taskPosition = wallTask->data.position * 32;
+            const glm::vec2& workerPosition = get(workerId, mTPosition).data;
+
+            if(glm::distance(taskPosition, workerPosition) <= 32.0f)
+            {
+                erase(workerId, mTWalkTarget);
+
+                if(rand() % 100 == 0)
+                {
+                    mWalls.set(wallTask->data.position, wallTask->data.orientation, 1);
+                }
+            }
+            else
+            {
+                set(workerId, {taskPosition}, mTWalkTarget);
+            }
+        }
+        else if(auto roomTask = findOne(worker.taskId, mTRoomTask))
+        {
+        }
+    }, mTBusyWorker);
+}
+
 void ActorLogic::calculateMoveIntention()
 {
+    forEach([&] (int32_t id, MoveIntention& intention)
+    {
+        if(!has(id, mTWalkTarget))
+        {
+            intention.speedPercent = 0.0f;
+        }
+    }, mTMoveIntention);
+
     join([&] (int32_t id, const glm::vec2& walkTarget, const glm::vec2& position)
     {
         MoveIntention moveIntention;

@@ -2,16 +2,18 @@
 #include "data.hpp"
 #include "../actor.hpp"
 #include "../util/numberpool.hpp"
+#include "../wallmap.hpp"
 
 class ActorLogic
 {
     public:
-        ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, IdSet& unassignedTasks);
+        ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, IdSet& unassignedTasks, WallMap& walls);
         void removeActor(int32_t id);
         int32_t addActor(Actor actor);
         void update();
     private:
         void updateWorkers();
+        void updateTaskWork();
         void calculateMoveIntention();
         void applyMoveIntention();
         void applyPhysics();
@@ -27,5 +29,8 @@ class ActorLogic
         IdSet& mFreeWorkers;
         ent::TBusyWorker& mTBusyWorker;
         tsk::TAssignedTask& mTAssignedTask;
+        const tsk::TRoomTask& mTRoomTask;//move out later
+        const tsk::TWallTask& mTWallTask;//move out later
         IdSet& mUnassignedTasks;
+        WallMap& mWalls;
 };
