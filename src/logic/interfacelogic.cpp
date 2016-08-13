@@ -46,7 +46,9 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
     //TEMP
     else
     {
-        mWalls.set(position / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal, 1);
+        glm::ivec2 offset = button == fea::Mouse::LEFT ? glm::ivec2(16, 0) : glm::ivec2(0, 16);
+        int32_t idToSet = mWalls.at((position + offset) / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal) ? 0 : 1;
+        mWalls.set((position + offset) / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal, idToSet);
     }
     //ENDTEMP
 }

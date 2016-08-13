@@ -82,10 +82,10 @@ void Space::handleMessage(const MouseClickMessage& message)
 
         if(message.button == fea::Mouse::LEFT)
         {   
-            auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
-            int32_t added = mActorLogic.addActor(std::move(actor));
+            //auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
+            //int32_t added = mActorLogic.addActor(std::move(actor));
 
-            insert(added, {50.0f, 50.0f}, mTWalkTarget);
+            //insert(added, {50.0f, 50.0f}, mTWalkTarget);
             //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
         }   
         else if(message.button == fea::Mouse::RIGHT)

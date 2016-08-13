@@ -15,5 +15,5 @@ class ZoneLogic
 
         const WallMap& mWalls;
         Zones& mZones;
-        int32_t mNextZoneId;
+        NumberPool<int32_t> mZoneIds;
 };

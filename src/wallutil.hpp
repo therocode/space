@@ -8,7 +8,7 @@ struct WallChange
 {
     glm::ivec2 position;
     Orientation orientation;
-    int32_t value;
+    int32_t id;
 };
 
 std::vector<WallChange> wallDiff(const WallMap& oldWalls, const WallMap& newWalls);

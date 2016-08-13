@@ -1,6 +1,6 @@
 #pragma once
 #include <type_traits>
-#include <unordered_set>
+#include <set>
 #include <thero/assert.hpp>
 
 template <typename IntegralType>
@@ -37,5 +37,5 @@ class NumberPool
         }
     private:
         IntegralType mNext;
-        std::unordered_set<IntegralType> mReturned;
+        std::set<IntegralType> mReturned;
 };
