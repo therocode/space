@@ -25,7 +25,7 @@ Space::Space() :
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask),
     mZoneLogic(mWalls, mZones),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask),
-    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mWalls, mTRoomTask, mTWallTask)
+    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -165,7 +165,7 @@ void Space::loop()
     }
 
     ImGui::ShowTestWindow();
-    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mTActorSprite);
+    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mAssignedTasks, mBuilders, mFreeWorkers, mTActorSprite);
     if(clickedId)
         dbg::set<int32_t>("selected_actor", *clickedId);
 
@@ -180,7 +180,6 @@ void Space::loop()
 }
 
 //TODO:
-//zone detection
 //task system
 //dudes should build walls
 

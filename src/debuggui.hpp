@@ -18,6 +18,8 @@ namespace DebugGui
 
     std::string formatMemory(size_t memorySize);
 
+    void addTableInfo(const IdSet& idSet, th::Optional<int32_t>& clickedId);
+
     template <typename Table>
     void addTableInfo(const Table& table, th::Optional<int32_t>& clickedId)
     {

@@ -1,15 +1,17 @@
 #include "interfacelogic.hpp"
 #include "../drawables/linerect.hpp"
+#include "../taskutil.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask):
+InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, IdSet& unassignedTasks):
     mState(IDLE),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
     mTaskIdPool(taskIdPool),
     mWalls(walls),
     mTRoomTask(tRoomTask),
-    mTWallTask(tWallTask)
+    mTWallTask(tWallTask),
+    mUnassignedTasks(unassignedTasks)
 {
 }
 
@@ -68,38 +70,38 @@ void InterfaceLogic::worldMouseRelease(const glm::ivec2& position, const glm::iv
 {
     if(mState == PLAN_ROOM)
     {
-        insert(mTaskIdPool.next(), RoomTask
+        addTask(mTaskIdPool.next(), RoomTask
         {
             *mRoomStart,
             *mRoomEnd - *mRoomStart + glm::ivec2(1, 1),
-        }, mTRoomTask);
+        }, mTRoomTask, mUnassignedTasks);
 
         for(int32_t x = mRoomStart->x; x <= mRoomEnd->x; ++x)
         {
-            insert(mTaskIdPool.next(), WallTask
+            addTask(mTaskIdPool.next(), WallTask
             {
                 {x, mRoomStart->y},
                 Orientation::Horizontal,
-            }, mTWallTask);
-            insert(mTaskIdPool.next(), WallTask
+            }, mTWallTask, mUnassignedTasks);
+            addTask(mTaskIdPool.next(), WallTask
             {
                 {x, mRoomEnd->y + 1},
                 Orientation::Horizontal,
-            }, mTWallTask);
+            }, mTWallTask, mUnassignedTasks);
         }
 
         for(int32_t y = mRoomStart->y; y <= mRoomEnd->y; ++y)
         {
-            insert(mTaskIdPool.next(), WallTask
+            addTask(mTaskIdPool.next(), WallTask
             {
                 {mRoomStart->x, y},
                 Orientation::Vertical,
-            }, mTWallTask);
-            insert(mTaskIdPool.next(), WallTask
+            }, mTWallTask, mUnassignedTasks);
+            addTask(mTaskIdPool.next(), WallTask
             {
                 {mRoomEnd->x + 1, y},
                 Orientation::Vertical,
-            }, mTWallTask);
+            }, mTWallTask, mUnassignedTasks);
         }
 
         mRoomStart = {};

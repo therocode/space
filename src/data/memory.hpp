@@ -1,10 +1,15 @@
 #pragma once
+#include <cstdint>
+#include <cstddef>
+#include "data.hpp"
 
 struct MemoryInfo
 {
     size_t dataSize;
     size_t totalSize;
 };
+
+MemoryInfo memoryInfo(const IdSet& idSet);
 
 template <typename DataTable>
 MemoryInfo memoryInfo(const DataTable& table)
