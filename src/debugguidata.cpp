@@ -86,6 +86,21 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const ent::TBusyWorker& table)
+    {
+        return {"Task ID",};
+    }
+
+    void debugText(const BusyWorker& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.taskId),
+            },
+        };
+    }
+
     std::vector<std::string> debugHeaders(const tsk::TRoomTask& table)
     {
         return {"Position", "Size"};
@@ -130,6 +145,21 @@ namespace DebugGui
         {
             {
                 vec2ToStringList(data.position),
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const tsk::TAssignedTask& table)
+    {
+        return {"Assignee ID"};
+    }
+
+    void debugText(const AssignedTask& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.assigneeId),
             },
         };
     }

@@ -21,8 +21,8 @@ Space::Space() :
     //mAudioPlayer(mBus),
     mWalls(cMapSize),
     mGuiBlocksMouse(false),
-    mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers),
-    mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask),
+    mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mUnassignedTasks),
+    mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
     mZoneLogic(mWalls, mZones),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask),
     mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
@@ -80,13 +80,10 @@ void Space::handleMessage(const MouseClickMessage& message)
     {
         mInterfaceLogic.worldMouseClick(message.position, message.position / 32, message.button);
 
-        if(message.button == fea::Mouse::LEFT)
+        if(message.button == fea::Mouse::MIDDLE)
         {   
-            //auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
-            //int32_t added = mActorLogic.addActor(std::move(actor));
-
-            //insert(added, {50.0f, 50.0f}, mTWalkTarget);
-            //insert(added, {{1.0f, 0.0f}, 1.0f}, mTMoveIntention);
+            auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
+            int32_t added = mActorLogic.addActor(std::move(actor));
         }   
         else if(message.button == fea::Mouse::RIGHT)
         {
@@ -165,7 +162,7 @@ void Space::loop()
     }
 
     ImGui::ShowTestWindow();
-    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mAssignedTasks, mBuilders, mFreeWorkers, mTActorSprite);
+    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
     if(clickedId)
         dbg::set<int32_t>("selected_actor", *clickedId);
 
@@ -180,8 +177,10 @@ void Space::loop()
 }
 
 //TODO:
-//task system
-//dudes should build walls
+//dudes should not be dangling busy workers
+//dudes working on wall building tasks should build them
+//option for internal/external book keeping in tables
+//task dependencies
 
 void Space::temp()
 {

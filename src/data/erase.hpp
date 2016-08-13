@@ -23,7 +23,6 @@ void erase(int32_t id, DataTable& table)
 template <typename Functor>
 void eraseIf(Functor f, IdSet& idSet)
 {
-    ++idSet.meta.metrics[AccessType::Deletion];
     ++idSet.meta.metrics[AccessType::Iteration];
 
     size_t beforeSize = idSet.ids.size();
@@ -31,6 +30,7 @@ void eraseIf(Functor f, IdSet& idSet)
     {
         if(f(*iter))
         {
+            ++idSet.meta.metrics[AccessType::Deletion];
             iter = idSet.ids.erase(iter);
         }
         else
@@ -46,7 +46,6 @@ void eraseIf(Functor f, IdSet& idSet)
 template <typename Functor, typename DataTable>
 void eraseIf(Functor f, DataTable& table)
 {
-    ++table.meta.metrics[AccessType::Deletion];
     ++table.meta.metrics[AccessType::Iteration];
     auto idIter = table.ids.begin();
     auto dataIter = table.data.begin();
@@ -56,6 +55,7 @@ void eraseIf(Functor f, DataTable& table)
     {
         if(f(*idIter, *dataIter))
         {
+            ++table.meta.metrics[AccessType::Deletion];
             idIter = table.ids.erase(idIter);
             dataIter = table.data.erase(dataIter);
         }
@@ -69,4 +69,3 @@ void eraseIf(Functor f, DataTable& table)
     if(beforeSize != table.ids.size())
         table.meta.sorted = false;
 }
-

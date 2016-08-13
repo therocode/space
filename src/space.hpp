@@ -65,13 +65,14 @@ class Space : public fea::Application,
         ////worker stuff
         IdSet mBuilders = {{}, {"Builders", "All workers who are builders"}};
         IdSet mFreeWorkers = {{}, {"Free workers", "All workers who are currently not working on any task"}};
+        ent::TBusyWorker mTBusyWorker = {"Busy Worker", "The workers who are working on a task"};
 
         ////tasks
         tsk::TRoomTask mTRoomTask = {"Room Task", "Represent all rooms that need to be built"};
         tsk::TWallTask mTWallTask = {"Wall Task", "Represent all walls that need to be built"};
         tsk::TDoorTask mTDoorTask = {"Door Task", "Represent all doors that need to be built"};
         IdSet mUnassignedTasks = {{}, {"Unassigned tasks", "All tasks which no worker is currently on"}};
-        IdSet mAssignedTasks = {{}, {"Assigned tasks", "All tasks which are assigned to a worker"}};
+        tsk::TAssignedTask mTAssignedTask = {"Assigned tasks", "All tasks which are assigned to a worker"};
 
         //world
         WallMap mWalls;

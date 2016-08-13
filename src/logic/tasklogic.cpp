@@ -1,11 +1,14 @@
 #include "tasklogic.hpp"
 #include "../roomutil.hpp"
+#include "../taskutil.hpp"
 
-TaskLogic::TaskLogic(const WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, tsk::TDoorTask& tDoorTask):
+TaskLogic::TaskLogic(const WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, tsk::TDoorTask& tDoorTask, IdSet& unassignedTasks, tsk::TAssignedTask& tAssignedTask):
     mWalls(walls),
     mTRoomTask(tRoomTask),
     mTWallTask(tWallTask),
-    mTDoorTask(tDoorTask)
+    mTDoorTask(tDoorTask),
+    mUnassignedTasks(unassignedTasks),
+    mTAssignedTask(tAssignedTask)
 {
     (void)mTDoorTask;
 }
@@ -18,23 +21,42 @@ void TaskLogic::update()
 
 void TaskLogic::updateRoomTasks()
 {
-    eraseIf([&] (int32_t id, const RoomTask& roomTask)
+    std::vector<int32_t> toErase;
+
+    forEach([&] (int32_t id, const RoomTask& roomTask)
     {
         bool finished = true;
         forEachWall(roomTask.position, roomTask.size, [&]  (const glm::ivec2& coordinate, Orientation orientation)
         {
             if(!mWalls.at(coordinate, orientation))
+            {
                 finished = false;
+            }
         });       
 
-        return finished;
+        if(finished)
+        {
+            toErase.push_back(id);
+        }
     }, mTRoomTask);
+
+    for(int32_t id : toErase)
+        eraseTask(id, mTRoomTask, mUnassignedTasks, mTAssignedTask);
 }
 
 void TaskLogic::updateWallTasks()
 {
-    eraseIf([&] (int32_t id, const WallTask& wallTask)
+    std::vector<int32_t> toErase;
+
+    forEach([&] (int32_t id, const WallTask& wallTask)
     {
-        return mWalls.at(wallTask.position, wallTask.orientation);
+        bool finished = mWalls.at(wallTask.position, wallTask.orientation);
+        if(finished)
+        {
+            toErase.push_back(id);
+        }
     }, mTWallTask);
+
+    for(int32_t id : toErase)
+        eraseTask(id, mTWallTask, mUnassignedTasks, mTAssignedTask);
 }

@@ -41,6 +41,9 @@ void InterfaceLogic::update()
 
 void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
 {
+    if(button == fea::Mouse::MIDDLE)
+        return;
+
     if(mState == PLAN_ROOM)
     {
         mRoomStart = mRoomEnd = tile;
@@ -57,6 +60,9 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
 
 void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
 {
+    if(button == fea::Mouse::MIDDLE)
+        return;
+
     if(mState == PLAN_ROOM)
     {
         mRoomEnd = tile;
@@ -68,6 +74,9 @@ void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
 
 void InterfaceLogic::worldMouseRelease(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
 {
+    if(button == fea::Mouse::MIDDLE)
+        return;
+
     if(mState == PLAN_ROOM)
     {
         addTask(mTaskIdPool.next(), RoomTask

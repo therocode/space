@@ -13,6 +13,7 @@
 #include "sort.hpp"
 #include "clear.hpp"
 #include "has.hpp"
+#include "extract.hpp"
 #include "memory.hpp"
 #include "accesspattern.hpp"
 //includes
@@ -63,6 +64,16 @@ struct DoorTask
     glm::ivec2 position;
 };
 
+struct AssignedTask
+{
+    int32_t assigneeId;
+};
+
+struct BusyWorker
+{
+    int32_t taskId;
+};
+
 namespace ent
 {
     using TPosition  = DataTable<glm::vec2>;
@@ -70,6 +81,7 @@ namespace ent
     using TWalkTarget = DataTable<glm::vec2>;
     using TMoveIntention = DataTable<MoveIntention>;
     using TMoveAbility = DataTable<MoveAbility>;
+    using TBusyWorker = DataTable<BusyWorker>;
 }
 
 namespace tsk
@@ -77,6 +89,7 @@ namespace tsk
     using TRoomTask = DataTable<RoomTask>;
     using TWallTask = DataTable<WallTask>;
     using TDoorTask = DataTable<DoorTask>;
+    using TAssignedTask = DataTable<AssignedTask>;
 }
 
 namespace gfx

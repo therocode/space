@@ -1,8 +1,9 @@
 #include "actorlogic.hpp"
 #include "../util/accelerator.hpp"
 #include "../tableutil.hpp"
+#include "../taskutil.hpp"
 
-ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers):
+ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, IdSet& unassignedTasks):
     mTPosition(tPosition),
     mTPhysics(tPhysics),
     mTMoveAbility(tMoveAbility),
@@ -10,7 +11,10 @@ ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::
     mTWalkTarget(tWalkTarget),
     mTActorSprite(tActorSprite),
     mBuilders(builders),
-    mFreeWorkers(freeWorkers)
+    mFreeWorkers(freeWorkers),
+    mTBusyWorker(tBusyWorker),
+    mTAssignedTask(tAssignedTask),
+    mUnassignedTasks(unassignedTasks)
 {
 }
 
@@ -57,9 +61,45 @@ void ActorLogic::removeActor(int32_t id)
 
 void ActorLogic::update()
 {
+    updateWorkers();
     calculateMoveIntention();
     applyMoveIntention();
     applyPhysics();
+}
+
+void ActorLogic::updateWorkers()
+{
+    //validate that busy workers are not working on a deleted task
+    eraseIf([&] (int32_t id, const BusyWorker& worker)
+    {
+        bool erase = false;
+        //if(!has(mT verify that it is in assigned tasks, otherwise insert in free workers and delete
+        if(!findOne([&](int32_t taskId, const AssignedTask& assignedTask)
+        {
+            return assignedTask.assigneeId == id;
+        }, mTAssignedTask))
+        {
+            erase = true;
+            insert(id, mFreeWorkers);
+        }
+
+        return erase;
+    }, mTBusyWorker);
+
+    //assign free workers to unassigned tasks
+    eraseIf([&] (int32_t id)
+    {
+        bool erase = false;
+        if(count(mUnassignedTasks) > 0)
+        {
+            int32_t taskId = extractOne(mUnassignedTasks);
+            assignTask(taskId, id, mTAssignedTask);
+            insert(id, {taskId}, mTBusyWorker);
+            erase = true;
+        }
+
+        return erase;
+    }, mFreeWorkers);
 }
 
 void ActorLogic::calculateMoveIntention()
