@@ -24,7 +24,7 @@ void Renderer::startFrame()
     mRenderer.clear();
 }
 
-void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones)
+void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, bool showZones)
 {
     mRenderer.clear(cGroundColor);
 
@@ -32,25 +32,28 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones)
 
     auto size = zones.size();
 
-    int32_t maxZoneId = 0;
-    for(int32_t y = 0; y < size.y; ++y)
+    if(showZones)
     {
-        for(int32_t x = 0; x < size.x; ++x)
+        int32_t maxZoneId = 0;
+        for(int32_t y = 0; y < size.y; ++y)
         {
-            maxZoneId = std::max(maxZoneId, zones.at({x, y}));
-        }
-    }
-
-    for(int32_t y = 0; y < size.y; ++y)
-    {
-        for(int32_t x = 0; x < size.x; ++x)
-        {
-            int32_t id = zones.at({x, y});
-            if(id)
+            for(int32_t x = 0; x < size.x; ++x)
             {
-                quad.setPosition(glm::vec2(x, y) * 32.0f);
-                quad.setColor(fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
-                mRenderer.render(quad);
+                maxZoneId = std::max(maxZoneId, zones.at({x, y}));
+            }
+        }
+
+        for(int32_t y = 0; y < size.y; ++y)
+        {
+            for(int32_t x = 0; x < size.x; ++x)
+            {
+                int32_t id = zones.at({x, y});
+                if(id)
+                {
+                    quad.setPosition(glm::vec2(x, y) * 32.0f);
+                    quad.setColor(fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
+                    mRenderer.render(quad);
+                }
             }
         }
     }

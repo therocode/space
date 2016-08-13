@@ -24,14 +24,14 @@ Space::Space() :
     mInstantiator(mResources),
     mInputHandler(mBus, mFeaInputHandler),
     mGameSpeedMultiplier(4),
-    //mAudioPlayer(mBus),
+    mShowZones(false),
     mWalls(cMapSize),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
     mZoneLogic(mWalls, mZones),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask),
-    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mShowZones),
+    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mShowZones, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -183,9 +183,17 @@ void Space::loop()
 }
 
 //TODO:
-//
+//atmosphere
+//simple choking/dying
+//wall collision
+//door on map
+//door opening
 //task dependencies
 //option for internal/external book keeping in tables
+
+//refact:
+//get rid of double rendering layer
+//group up system variables
 
 void Space::temp()
 {

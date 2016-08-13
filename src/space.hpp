@@ -54,6 +54,7 @@ class Space : public fea::Application,
 
         //system
         int32_t mGameSpeedMultiplier;
+        bool mShowZones;
 
         //game data
         ent::TPosition mTPosition = {"Position", "The positions of game entities"};

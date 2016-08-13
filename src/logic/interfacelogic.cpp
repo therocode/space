@@ -3,7 +3,7 @@
 #include "../taskutil.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, NumberPool<int32_t>& taskIdPool, WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, IdSet& unassignedTasks):
+InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, NumberPool<int32_t>& taskIdPool, WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, IdSet& unassignedTasks):
     mState(IDLE),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
@@ -11,7 +11,8 @@ InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMult
     mWalls(walls),
     mTRoomTask(tRoomTask),
     mTWallTask(tWallTask),
-    mUnassignedTasks(unassignedTasks)
+    mUnassignedTasks(unassignedTasks),
+    mShowZones(showZones)
 {
 }
 
@@ -25,6 +26,8 @@ void InterfaceLogic::update()
     {
         mState = PLAN_ROOM;
     }
+
+    ImGui::Checkbox("Show zones", &mShowZones);
 
     ImGui::End();
 
