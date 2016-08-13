@@ -177,9 +177,9 @@ void Space::loop()
 }
 
 //TODO:
-//dudes working on wall building tasks should build them
-//option for internal/external book keeping in tables
+//
 //task dependencies
+//option for internal/external book keeping in tables
 
 void Space::temp()
 {
