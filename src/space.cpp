@@ -10,9 +10,15 @@
 
 const glm::ivec2 cMapSize(256, 256);
 
+#ifdef EMSCRIPTEN
+const fea::ContextSettings::Type contextType = fea::ContextSettings::Type::ES;
+#else
+const fea::ContextSettings::Type contextType = fea::ContextSettings::Type::CORE;
+#endif
+
 Space::Space() :
     mWindowSize(1366, 768),
-    mWindow(new fea::SDL2WindowBackend(), fea::VideoMode(static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y)), "Space"),
+    mWindow(new fea::SDL2WindowBackend(), fea::VideoMode(static_cast<uint32_t>(mWindowSize.x), static_cast<uint32_t>(mWindowSize.y)), "Space", fea::Style::Default, fea::ContextSettings(0, 0, 0, 2, 0, contextType)),
     mFeaRenderer(fea::Viewport(mWindowSize, {0, 0}, fea::Camera(static_cast<glm::vec2>(mWindowSize / 2)))),
     mFeaInputHandler(new fea::SDL2InputBackend()),
     mInstantiator(mResources),
