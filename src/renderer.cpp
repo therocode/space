@@ -24,7 +24,7 @@ void Renderer::startFrame()
     mRenderer.clear();
 }
 
-void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, bool showZones)
+void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, bool showZones, const Grid<Gases>& atmosphere, bool showAtmosphere)
 {
     mRenderer.clear(cGroundColor);
 
@@ -92,7 +92,32 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
         }
     }
 
+    if(showAtmosphere)
+    {
+        size = atmosphere.size();
+        fea::TileMap tilemap({32, 32}, {1.0f, 1.0f});
+        tilemap.addTileDefinition(1, fea::TileDefinition({0, 0}));
 
+        for(int32_t y = 0; y < size.y; ++y)
+        {
+            for(int32_t x = 0; x < size.x; ++x)
+            {
+                const Gases& gases = atmosphere.at({x, y});
+                
+                tilemap.setTile({x, y}, 1);
+                tilemap.setTileColor({x, y}, 
+                    fea::Color(
+                     static_cast<float>(gases[CarbonDioxide]) / std::numeric_limits<int32_t>::max(),
+                     static_cast<float>(gases[Nitrogen]) / std::numeric_limits<int32_t>::max(),
+                     static_cast<float>(gases[Oxygen]) / std::numeric_limits<int32_t>::max(),
+                     0.3f
+                    )
+                );
+            }
+        }
+
+        mRenderer.render(tilemap);
+    }
 }
 
 void Renderer::renderImGui(ImDrawData& drawData)

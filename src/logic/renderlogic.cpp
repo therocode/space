@@ -2,17 +2,19 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, bool& showZones):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, bool& showZones, bool& showAtmosphere):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
     mWalls(walls),
     mZones(zones),
+    mAtmosphere(atmosphere),
     mTActorSprite(tActorSprite),
     mTPosition(tPosition),
     mTRoomTask(tRoomTask),
     mTWallTask(tWallTask),
-    mShowZones(showZones)
+    mShowZones(showZones),
+    mShowAtmosphere(showAtmosphere)
 {
 }
 
@@ -24,7 +26,7 @@ void RenderLogic::frameStart()
 void RenderLogic::update()
 {
     mRenderer.startFrame();
-    mRenderer.renderWorld(mWalls, mZones.zones, mShowZones);
+    mRenderer.renderWorld(mWalls, mZones.zones, mShowZones, mAtmosphere, mShowAtmosphere);
     renderTasks();
     renderSprites();
 }

@@ -10,6 +10,7 @@
 #include "data.hpp"
 #include "wallmap.hpp"
 #include "zones.hpp"
+#include "gases.hpp"
 #include "logic/interfacelogic.hpp"
 #include "logic/actorlogic.hpp"
 #include "logic/tasklogic.hpp"
@@ -55,6 +56,7 @@ class Space : public fea::Application,
         //system
         int32_t mGameSpeedMultiplier;
         bool mShowZones;
+        bool mShowAtmosphere;
 
         //game data
         ent::TPosition mTPosition = {"Position", "The positions of game entities"};
@@ -78,6 +80,7 @@ class Space : public fea::Application,
         //world
         WallMap mWalls;
         Zones mZones;
+        Grid<Gases> mAtmosphere;
 
         //gfx
         gfx::TActorSprite mTActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};

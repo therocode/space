@@ -9,6 +9,12 @@
 #include <imgui.h>
 
 const glm::ivec2 cMapSize(256, 256);
+const Gases cDefaultAtmosphere
+{{
+    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.0f  / 2), //oxygene
+    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 80.0f / 2), //nitrogen
+    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 4.0f  / 2), //carbondioxide
+}};
 
 #ifdef EMSCRIPTEN
 const fea::ContextSettings::Type contextType = fea::ContextSettings::Type::ES;
@@ -25,13 +31,15 @@ Space::Space() :
     mInputHandler(mBus, mFeaInputHandler),
     mGameSpeedMultiplier(4),
     mShowZones(false),
+    mShowAtmosphere(false),
     mWalls(cMapSize),
+    mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
     mZoneLogic(mWalls, mZones),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mShowZones),
-    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mShowZones, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mShowZones, mShowAtmosphere),
+    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
