@@ -12,8 +12,8 @@ const glm::ivec2 cMapSize(256, 256);
 const Gases cDefaultAtmosphere
 {{
     static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.0f  / 2), //oxygene
-    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 80.0f / 2), //nitrogen
-    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 4.0f  / 2), //carbondioxide
+    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.8f / 2), //nitrogen
+    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.04f  / 2), //carbondioxide
 }};
 
 #ifdef EMSCRIPTEN
