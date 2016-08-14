@@ -233,12 +233,13 @@ void Space::loop()
         mTaskLogic.update();
         auto wallChanges = wallDiff(mOldWalls, mWalls);
         mZoneLogic.update(wallChanges);
-        if(!atmosphereCounter)
+        if(atmosphereCounter == 0)
         {
             mAtmosphereLogic.update();
             atmosphereCounter = 3;
         }
-        --atmosphereCounter;
+        else
+            --atmosphereCounter;
         mOldWalls = mWalls;
     }
 	mOldWalls = mWalls;
