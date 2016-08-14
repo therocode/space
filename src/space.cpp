@@ -12,15 +12,21 @@ const glm::ivec2 cMapSize(256, 256);
 //50000 is standard air pressure
 const Gases cDefaultAtmosphere
 {{
-    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.0f  / 2), //oxygene
-    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.8f / 2), //nitrogen
-    static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.04f  / 2), //carbondioxide
+    static_cast<int32_t>(50000 * 0.0f), //oxygene
+    static_cast<int32_t>(50000 * 0.8f), //nitrogen
+    static_cast<int32_t>(50000 * 0.2f), //carbondioxide
 }};
 const Gases cHealthyAtmosphere
 {{
     static_cast<int32_t>(50000 * 0.209f), //oxygene
     static_cast<int32_t>(50000 * 0.78f), //nitrogen
     static_cast<int32_t>(50000 * 0.004f), //carbondioxide
+}};
+const Gases cWtfAtmosphere
+{{
+    static_cast<int32_t>(20000000 * 0.3f), //oxygene
+    static_cast<int32_t>(20000000 * 0.1f), //nitrogen
+    static_cast<int32_t>(20000000 * 0.9f), //carbondioxide
 }};
 
 #ifdef EMSCRIPTEN
@@ -46,6 +52,7 @@ Space::Space() :
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
     mZoneLogic(mWalls, mZones),
+    mAtmosphereLogic(mZones, mWalls, mAtmosphere),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mShowZones, mShowAtmosphere),
     mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
 {
@@ -202,6 +209,8 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(0, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
+
+    mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 }
 
 void Space::loop()
@@ -222,6 +231,7 @@ void Space::loop()
         mTaskLogic.update();
         auto wallChanges = wallDiff(mOldWalls, mWalls);
         mZoneLogic.update(wallChanges);
+        mAtmosphereLogic.update();
         mOldWalls = mWalls;
     }
 	mOldWalls = mWalls;
@@ -242,7 +252,8 @@ void Space::loop()
 }
 
 //TODO:
-//setup start room
+//make tile coords/wolrd coords of cursor show up in gui
+//create scenario clear tasks
 //atmosphere
 //simple choking/dying
 //wall collision

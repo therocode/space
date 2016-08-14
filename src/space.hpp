@@ -15,6 +15,7 @@
 #include "logic/actorlogic.hpp"
 #include "logic/tasklogic.hpp"
 #include "logic/zonelogic.hpp"
+#include "logic/atmospherelogic.hpp"
 #include "logic/renderlogic.hpp"
 
 class Space : public fea::Application,
@@ -100,6 +101,7 @@ class Space : public fea::Application,
         ActorLogic mActorLogic;
         TaskLogic mTaskLogic;
         ZoneLogic mZoneLogic;
+        AtmosphereLogic mAtmosphereLogic;
         RenderLogic mRenderLogic;
         InterfaceLogic mInterfaceLogic;
 

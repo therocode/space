@@ -11,7 +11,7 @@
 const float cTileWidth = 32.0f;
 const float cWallThickness = 8.0f;
 
-const fea::Color cGroundColor = {83, 75, 57};
+const fea::Color cGroundColor = {75, 75, 75};
 Renderer::Renderer(fea::Renderer2D& renderer, const std::vector<Texture>& textures):
     mRenderer(renderer),
     mTextures(textures)
@@ -112,9 +112,9 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
                 tilemap.setTile({x, y}, 1);
                 tilemap.setTileColor({x, y}, 
                     fea::Color(
-                     static_cast<float>(std::min(100000, gases[CarbonDioxide])) / 100000,
-                     static_cast<float>(std::min(100000, gases[Nitrogen])) / 100000,
-                     static_cast<float>(std::min(100000, gases[Oxygen])) / 100000,
+                     static_cast<float>(std::min(100000, gases[CarbonDioxide])) / 100000.0f,
+                     static_cast<float>(std::min(100000, gases[Nitrogen])) / 100000.0f,
+                     static_cast<float>(std::min(100000, gases[Oxygen])) / 100000.0f,
                      0.3f
                     )
                 );
