@@ -50,6 +50,8 @@ void AtmosphereLogic::update()
     {
         for(int32_t x = 0; x < mZones.zones.size().x; ++x)
         {
+            if(rand() % 2)
+                continue;
             Gases gasDifference;
             int32_t zoneId = mZones.zones.at({x, y});
             const Gases& currentGases = mAtmosphere.at({x, y});
@@ -71,8 +73,8 @@ void AtmosphereLogic::update()
 
             int32_t totalDifference = std::accumulate(neighborDifferences.begin(), neighborDifferences.end(), 0);
 
-            float transferRate = std::abs(totalDifference / 100000.0f) / neighborAmount;
-            transferRate = std::min(0.26f, std::max(0.01f, transferRate));
+            float transferRate = std::abs(totalDifference / 10000.0f) / neighborAmount;
+            transferRate = std::min(0.125f, std::max(0.05f, transferRate));
 
             if(totalDifference)
             {
@@ -111,11 +113,5 @@ void AtmosphereLogic::update()
                 gases[gasIndex] += gasDifference[gasIndex];
             }
         }
-    }
-
-    Gases& gases = mAtmosphere.at({9, 7});
-    for(size_t gasIndex = 0; gasIndex < gases.size(); ++gasIndex)
-    {
-        dbgPrint(gasIndex << " " << gases[gasIndex]);
     }
 }

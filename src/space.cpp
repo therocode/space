@@ -24,9 +24,9 @@ const Gases cHealthyAtmosphere
 }};
 const Gases cWtfAtmosphere
 {{
-    static_cast<int32_t>(20000000 * 0.3f), //oxygene
-    static_cast<int32_t>(20000000 * 0.1f), //nitrogen
-    static_cast<int32_t>(20000000 * 0.9f), //carbondioxide
+    static_cast<int32_t>(200000000 * 0.3f), //oxygene
+    static_cast<int32_t>(200000000 * 0.1f), //nitrogen
+    static_cast<int32_t>(200000000 * 0.9f), //carbondioxide
 }};
 
 #ifdef EMSCRIPTEN
