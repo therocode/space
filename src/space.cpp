@@ -60,6 +60,7 @@ Space::Space() :
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize.x = mWindowSize.x;
     io.DisplaySize.y = mWindowSize.y;
+    io.IniFilename = "data/imgui.ini";
     unsigned char* pixels;
     int width, height;
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
