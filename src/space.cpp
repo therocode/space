@@ -33,13 +33,14 @@ Space::Space() :
     mShowZones(false),
     mShowAtmosphere(false),
     mWalls(cMapSize),
+	mOldWalls(cMapSize),
     mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
     mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
     mZoneLogic(mWalls, mZones),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mShowZones, mShowAtmosphere),
-    mInterfaceLogic(mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
+    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -153,9 +154,43 @@ void Space::handleMessage(const MouseWheelMessage& message)
     io.MouseWheel = static_cast<float>(message.delta);
 }
 
+void Space::startScenario()
+{
+	std::vector<int32_t> toRemove;
+	forEach([&] (const int32_t id, const glm::vec2&)
+    {
+		toRemove.push_back(id);
+    }, mTPosition);
+	
+	for(int32_t id : toRemove)
+    {
+		mActorLogic.removeActor(id);
+        mActorIdPool.release(id);
+    }
+	
+	for(auto position : std::vector<glm::vec2>{{230.0f, 230.0f}, {250.0f, 230.0f}, {230.0f, 250.0f}, {250.0f, 250.0f} })
+    {
+        auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), position);
+        mActorLogic.addActor(std::move(actor));
+    }
+
+    mWalls.fill(0);
+    glm::ivec2 offset(7, 7);
+    mWalls.set(offset + glm::ivec2(0, 0), Orientation::Horizontal, 1);
+    mWalls.set(offset + glm::ivec2(1, 0), Orientation::Horizontal, 1);
+    mWalls.set(offset + glm::ivec2(2, 0), Orientation::Horizontal, 1);
+    mWalls.set(offset + glm::ivec2(0, 2), Orientation::Horizontal, 1);
+    mWalls.set(offset + glm::ivec2(1, 2), Orientation::Horizontal, 1);
+    mWalls.set(offset + glm::ivec2(2, 2), Orientation::Horizontal, 1);
+    mWalls.set(offset + glm::ivec2(0, 0), Orientation::Vertical, 1);
+    mWalls.set(offset + glm::ivec2(0, 1), Orientation::Vertical, 1);
+    mWalls.set(offset + glm::ivec2(3, 0), Orientation::Vertical, 1);
+    mWalls.set(offset + glm::ivec2(3, 1), Orientation::Vertical, 1);
+    mWalls.set(offset + glm::ivec2(2, 0), Orientation::Vertical, 1);
+}
+
 void Space::loop()
 {
-    WallMap oldWalls = mWalls;
     //grab input
     mInputHandler.process();
 
@@ -170,10 +205,11 @@ void Space::loop()
     {
         mActorLogic.update();
         mTaskLogic.update();
-        auto wallChanges = wallDiff(oldWalls, mWalls);
+        auto wallChanges = wallDiff(mOldWalls, mWalls);
         mZoneLogic.update(wallChanges);
-        oldWalls = mWalls;
+        mOldWalls = mWalls;
     }
+	mOldWalls = mWalls;
 
     ImGui::ShowTestWindow();
     auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
@@ -191,6 +227,7 @@ void Space::loop()
 }
 
 //TODO:
+//setup start room
 //atmosphere
 //simple choking/dying
 //wall collision

@@ -11,6 +11,7 @@ class WallMap
         int32_t at(const glm::ivec2& position, Orientation orientation) const;
         int32_t& at(const glm::ivec2& position, Orientation orientation);
         void set(const glm::ivec2& position, Orientation orientation, int32_t type);
+        void fill(int32_t type);
         const glm::ivec2& size() const;
         const std::vector<int32_t>& horizontalWalls() const;
         const std::vector<int32_t>& verticalWalls() const;

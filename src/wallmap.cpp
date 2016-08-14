@@ -35,6 +35,12 @@ void WallMap::set(const glm::ivec2& position, Orientation orientation, int32_t t
         mVerticalWalls[toIndex(position)] = type;
 }
 
+void WallMap::fill(int32_t type)
+{
+    std::fill(mHorizontalWalls.begin(), mHorizontalWalls.end(), type);
+    std::fill(mVerticalWalls.begin(), mVerticalWalls.end(), type);
+}
+
 const glm::ivec2& WallMap::size() const
 {
     return mSize;

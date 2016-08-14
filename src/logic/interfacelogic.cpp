@@ -1,10 +1,12 @@
 #include "interfacelogic.hpp"
 #include "../drawables/linerect.hpp"
 #include "../taskutil.hpp"
+#include "../space.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, IdSet& unassignedTasks):
+InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, IdSet& unassignedTasks):
     mState(IDLE),
+	mSpace(space),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
     mTaskIdPool(taskIdPool),
@@ -30,6 +32,11 @@ void InterfaceLogic::update()
 
     ImGui::Checkbox("Show zones", &mShowZones);
     ImGui::Checkbox("Show atmosphere", &mShowAtmosphere);
+
+    if(ImGui::SmallButton("Create scenario"))
+    {
+		mSpace.startScenario();
+    }
 
     ImGui::End();
 

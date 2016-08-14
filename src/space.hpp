@@ -35,6 +35,7 @@ class Space : public fea::Application,
         void handleMessage(const MouseReleaseMessage& message) override;
         void handleMessage(const MouseMoveMessage& message) override;
         void handleMessage(const MouseWheelMessage& message) override;
+		void startScenario();
     protected:
         void loop() override;
     private:
@@ -79,6 +80,7 @@ class Space : public fea::Application,
 
         //world
         WallMap mWalls;
+        WallMap mOldWalls;
         Zones mZones;
         Grid<Gases> mAtmosphere;
 
