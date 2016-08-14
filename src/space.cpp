@@ -9,11 +9,18 @@
 #include <imgui.h>
 
 const glm::ivec2 cMapSize(256, 256);
+//50000 is standard air pressure
 const Gases cDefaultAtmosphere
 {{
     static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.0f  / 2), //oxygene
     static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.8f / 2), //nitrogen
     static_cast<int32_t>(std::numeric_limits<int32_t>::max() * 0.04f  / 2), //carbondioxide
+}};
+const Gases cHealthyAtmosphere
+{{
+    static_cast<int32_t>(50000 * 0.209f), //oxygene
+    static_cast<int32_t>(50000 * 0.78f), //nitrogen
+    static_cast<int32_t>(50000 * 0.004f), //carbondioxide
 }};
 
 #ifdef EMSCRIPTEN
@@ -187,6 +194,13 @@ void Space::startScenario()
     mWalls.set(offset + glm::ivec2(3, 0), Orientation::Vertical, 1);
     mWalls.set(offset + glm::ivec2(3, 1), Orientation::Vertical, 1);
     mWalls.set(offset + glm::ivec2(2, 0), Orientation::Vertical, 1);
+
+    mAtmosphere.set(offset + glm::ivec2(0, 0), cHealthyAtmosphere);
+    mAtmosphere.set(offset + glm::ivec2(1, 0), cHealthyAtmosphere);
+    mAtmosphere.set(offset + glm::ivec2(2, 0), cHealthyAtmosphere);
+    mAtmosphere.set(offset + glm::ivec2(0, 1), cHealthyAtmosphere);
+    mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
+    mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 }
 
 void Space::loop()

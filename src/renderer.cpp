@@ -43,7 +43,7 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
             }
         }
 
-        size = atmosphere.size();
+        size = zones.size();
         fea::TileMap tilemap({32, 32}, {1.0f, 1.0f});
         tilemap.addTileDefinition(1, fea::TileDefinition({0, 0}));
 
@@ -112,9 +112,9 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
                 tilemap.setTile({x, y}, 1);
                 tilemap.setTileColor({x, y}, 
                     fea::Color(
-                     static_cast<float>(gases[CarbonDioxide]) / std::numeric_limits<int32_t>::max(),
-                     static_cast<float>(gases[Nitrogen]) / std::numeric_limits<int32_t>::max(),
-                     static_cast<float>(gases[Oxygen]) / std::numeric_limits<int32_t>::max(),
+                     static_cast<float>(std::min(100000, gases[CarbonDioxide])) / 100000,
+                     static_cast<float>(std::min(100000, gases[Nitrogen])) / 100000,
+                     static_cast<float>(std::min(100000, gases[Oxygen])) / 100000,
                      0.3f
                     )
                 );
