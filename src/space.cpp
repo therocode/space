@@ -225,13 +225,20 @@ void Space::loop()
 
     mRenderLogic.frameStart();
 
+    int32_t atmosphereCounter = 3;
+
     for(int32_t i = 0; i < mGameSpeedMultiplier; ++i)
     {
         mActorLogic.update();
         mTaskLogic.update();
         auto wallChanges = wallDiff(mOldWalls, mWalls);
         mZoneLogic.update(wallChanges);
-        mAtmosphereLogic.update();
+        if(!atmosphereCounter)
+        {
+            mAtmosphereLogic.update();
+            atmosphereCounter = 3;
+        }
+        --atmosphereCounter;
         mOldWalls = mWalls;
     }
 	mOldWalls = mWalls;
