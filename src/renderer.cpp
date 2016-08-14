@@ -43,6 +43,10 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
             }
         }
 
+        size = atmosphere.size();
+        fea::TileMap tilemap({32, 32}, {1.0f, 1.0f});
+        tilemap.addTileDefinition(1, fea::TileDefinition({0, 0}));
+
         for(int32_t y = 0; y < size.y; ++y)
         {
             for(int32_t x = 0; x < size.x; ++x)
@@ -50,12 +54,13 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
                 int32_t id = zones.at({x, y});
                 if(id)
                 {
-                    quad.setPosition(glm::vec2(x, y) * 32.0f);
-                    quad.setColor(fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
-                    mRenderer.render(quad);
+                    tilemap.setTile({x, y}, 1);
+                    tilemap.setTileColor({x, y}, fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
                 }
             }
         }
+
+        mRenderer.render(tilemap);
     }
 
     size = walls.size();
