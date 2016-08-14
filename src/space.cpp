@@ -119,12 +119,12 @@ void Space::handleMessage(const MouseClickMessage& message)
         {
             if(count(mTPosition))
             {
-                int32_t toDelete = rand() % count(mTPosition);
-                if(has(toDelete, mTPosition))
-                {
-                    mActorLogic.removeActor(toDelete);
-                    mActorIdPool.release(toDelete);
-                }
+                //int32_t toDelete = rand() % count(mTPosition);
+                //if(has(toDelete, mTPosition))
+                //{
+                //    mActorLogic.removeActor(toDelete);
+                //    mActorIdPool.release(toDelete);
+                //}
                 //mPositions[0].position = message.position;
                 //mPhysics[0].velocity = {};
             }
@@ -225,21 +225,13 @@ void Space::loop()
 
     mRenderLogic.frameStart();
 
-    int32_t atmosphereCounter = 3;
-
     for(int32_t i = 0; i < mGameSpeedMultiplier; ++i)
     {
         mActorLogic.update();
         mTaskLogic.update();
         auto wallChanges = wallDiff(mOldWalls, mWalls);
         mZoneLogic.update(wallChanges);
-        if(atmosphereCounter == 0)
-        {
-            mAtmosphereLogic.update();
-            atmosphereCounter = 3;
-        }
-        else
-            --atmosphereCounter;
+        mAtmosphereLogic.update();
         mOldWalls = mWalls;
     }
 	mOldWalls = mWalls;
