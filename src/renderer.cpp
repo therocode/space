@@ -14,11 +14,11 @@ const float cWallThickness = 8.0f;
 const fea::Color cGroundColor = {75, 75, 75};
 Renderer::Renderer(fea::Renderer2D& renderer, const std::vector<Texture>& textures):
     mRenderer(renderer),
-    mTextures(textures),
-    mTilemap({32, 32}, {1.0f, 1.0f})
+    mTextures(textures)
 {
-    mTilemap.addTileDefinition(1, fea::TileDefinition({0, 0}));
     DRen::initialize(mRenderer, mRenderer.getViewport().getCamera());
+
+    mMapTexture.create({256, 256}, fea::Color::Transparent);
 }
 
 void Renderer::startFrame()
@@ -34,6 +34,10 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
 
     auto size = zones.size();
 
+
+    fea::Quad colorMapQuad(glm::vec2(256.0f, 256.0f) * 32.0f);
+    colorMapQuad.setTexture(mMapTexture);
+
     if(showZones)
     {
         int32_t maxZoneId = 0;
@@ -47,7 +51,6 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
 
         size = zones.size();
 
-        mTilemap.clear();
         for(int32_t y = 0; y < size.y; ++y)
         {
             for(int32_t x = 0; x < size.x; ++x)
@@ -55,13 +58,15 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
                 int32_t id = zones.at({x, y});
                 if(id)
                 {
-                    mTilemap.setTile({x, y}, 1);
-                    mTilemap.setTileColor({x, y}, fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
+                    mMapTexture.setPixel({x, y}, fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
                 }
+                else
+                    mMapTexture.setPixel({x, y}, fea::Color::Transparent);
             }
         }
 
-        mRenderer.render(mTilemap);
+        mMapTexture.update();
+        mRenderer.render(colorMapQuad);
     }
 
     size = walls.size();
@@ -108,8 +113,7 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
             {
                 const Gases& gases = atmosphere.at({x, y});
                 
-                mTilemap.setTile({x, y}, 1);
-                mTilemap.setTileColor({x, y}, 
+                mMapTexture.setPixel({x, y}, 
                     fea::Color(
                      static_cast<float>(std::min(100000, gases[CarbonDioxide])) / 100000.0f,
                      static_cast<float>(std::min(100000, gases[Nitrogen])) / 100000.0f,
@@ -120,7 +124,8 @@ void Renderer::renderWorld(const WallMap& walls, const Grid<int32_t>& zones, boo
             }
         }
 
-        mRenderer.render(mTilemap);
+        mMapTexture.update();
+        mRenderer.render(colorMapQuad);
     }
 }
 

@@ -18,5 +18,5 @@ class Renderer
         fea::Renderer2D& mRenderer;
         
         const std::vector<Texture>& mTextures;
-        fea::TileMap mTilemap;
+        fea::Texture mMapTexture;
 };
