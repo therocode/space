@@ -21,7 +21,9 @@ InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t&
 
 void InterfaceLogic::update()
 {
+    mFrameTimer.sample();
     ImGui::Begin("Space");
+    ImGui::Text("%s", std::string(std::to_string(mFrameTimer.fps()) + " fps - " + std::to_string(mFrameTimer.avgFrameTime()) + " ms").c_str());
     ImGui::SliderInt("Game speed", &mGameSpeedMultiplier, 0, 16);
     ImGui::Text("%s", stateToString(mState).c_str());
 

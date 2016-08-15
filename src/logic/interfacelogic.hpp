@@ -7,6 +7,7 @@
 #include <data.hpp>
 #include "../util/numberpool.hpp"
 #include "../wallmap.hpp"
+#include <fea/util.hpp>
 
 class Space;
 
@@ -42,4 +43,5 @@ class InterfaceLogic
         IdSet& mUnassignedTasks;
         bool& mShowZones;
         bool& mShowAtmosphere;
+        fea::FrameTimer mFrameTimer;
 };
