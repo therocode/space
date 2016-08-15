@@ -57,13 +57,23 @@ namespace DebugGui
                     ImGui::Separator();
 
                     TextList debugTexts;
+                    bool colorPushed = false;
                     for(size_t i = 0; i < idSet.ids.size(); ++i)
                     {
+                        if(clickedId && *clickedId == idSet.ids[i])
+                        {
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f,1.0f,0.0f,1.0f));
+                            colorPushed = true;
+                        }
                         if(ImGui::SmallButton((std::to_string(idSet.ids[i]) + "##" + idSet.meta.name).c_str()))
                         {
-                            if(!clickedId)
-                                clickedId = idSet.ids[i];
+                            clickedId = idSet.ids[i];
                         }// ImGui::NextColumn();
+                        if(colorPushed)
+                        {
+                            ImGui::PopStyleColor(1);
+                            colorPushed = false;
+                        }
                     }
                 }
                 else

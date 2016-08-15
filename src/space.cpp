@@ -237,9 +237,9 @@ void Space::loop()
 	mOldWalls = mWalls;
 
     ImGui::ShowTestWindow();
-    auto clickedId = DebugGui::showDataTables(mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
-    if(clickedId)
-        dbg::set<int32_t>("selected_actor", *clickedId);
+    DebugGui::showDataTables(mClickedEntity, mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
+    if(mClickedEntity)
+        dbg::set<int32_t>("selected_actor", *mClickedEntity);
 
     mRenderLogic.update();
     mInterfaceLogic.update();

@@ -68,12 +68,17 @@ namespace DebugGui
                     ImGui::Separator();
 
                     TextList debugTexts;
+                    bool colorPushed = false;
                     for(size_t i = 0; i < table.ids.size(); ++i)
                     {
+                        if(clickedId && *clickedId == table.ids[i])
+                        {
+                            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f,1.0f,0.0f,1.0f));
+                            colorPushed = true;
+                        }
                         if(ImGui::SmallButton((std::to_string(table.ids[i]) + "##" + table.meta.name).c_str()))
                         {
-                            if(!clickedId)
-                                clickedId = table.ids[i];
+                            clickedId = table.ids[i];
                         } ImGui::NextColumn();
                         debugText(table.data[i], debugTexts);
 
@@ -102,6 +107,11 @@ namespace DebugGui
                                 ImGui::NextColumn();
                             }
                         }
+                        if(colorPushed)
+                        {
+                            ImGui::PopStyleColor(1);
+                            colorPushed = false;
+                        }
                     }
                 }
                 else
@@ -112,15 +122,12 @@ namespace DebugGui
     }
 
     template <typename... Tables>
-    th::Optional<int32_t> showDataTables(const Tables&... tables)
+    void showDataTables(th::Optional<int32_t>& clickedId, const Tables&... tables)
     {
         using swallow = int[];
 
-        th::Optional<int32_t> clickedId;
         ImGui::Begin("Data tables");
         (void)swallow{(addTableInfo(tables, clickedId), 0)...};
         ImGui::End();
-
-        return clickedId;
     }
 }
