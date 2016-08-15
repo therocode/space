@@ -12,8 +12,8 @@ const glm::ivec2 cMapSize(256, 256);
 const Gases cDefaultAtmosphere
 {{
     static_cast<int32_t>(50000 * 0.0f), //oxygene
-    static_cast<int32_t>(50000 * 0.8f), //nitrogen
-    static_cast<int32_t>(50000 * 0.2f), //carbondioxide
+    static_cast<int32_t>(50000 * 0.0f), //nitrogen
+    static_cast<int32_t>(50000 * 0.0f), //carbondioxide
 }};
 const Gases cHealthyAtmosphere
 {{
@@ -23,8 +23,8 @@ const Gases cHealthyAtmosphere
 }};
 const Gases cWtfAtmosphere
 {{
-    static_cast<int32_t>(200000000 * 0.3f), //oxygene
-    static_cast<int32_t>(200000000 * 0.1f), //nitrogen
+    static_cast<int32_t>(200000000 * 0.00f), //oxygene
+    static_cast<int32_t>(200000000 * 0.4f), //nitrogen
     static_cast<int32_t>(200000000 * 0.9f), //carbondioxide
 }};
 
