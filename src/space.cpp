@@ -9,7 +9,6 @@
 #include <imgui.h>
 
 const glm::ivec2 cMapSize(256, 256);
-//50000 is standard air pressure
 const Gases cDefaultAtmosphere
 {{
     static_cast<int32_t>(50000 * 0.0f), //oxygene
@@ -238,6 +237,7 @@ void Space::loop()
 
     ImGui::ShowTestWindow();
     DebugGui::showDataTables(mClickedEntity, mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
+    DebugGui::showInspector(io.MousePos, mZones, mAtmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);
 
@@ -246,13 +246,12 @@ void Space::loop()
 
     mRenderLogic.frameEnd();
 
-    //temp();
+    temp();
 
     mWindow.swapBuffers();
 }
 
 //TODO:
-//make tile coords/wolrd coords of cursor show up in gui
 //create scenario clear tasks
 //atmosphere
 //simple choking/dying
@@ -268,22 +267,4 @@ void Space::loop()
 
 void Space::temp()
 {
-    forEach([this] (int32_t id, const RoomTask& roomTask)
-    {
-        const auto& position = roomTask.position;
-        const auto& size = roomTask.size;
-
-        forEachWall(position, size, [this] (const glm::ivec2& coordinate, Orientation orientation)
-        {
-            mWalls.set(coordinate, orientation, 1);
-        });
-
-        forEachFloor(position, size, [&] (const glm::ivec2& coordinate)
-        {
-            set(coordinate, id+1, mZones); //+1 to make it not zero
-        });
-
-    }, mTRoomTask);
-
-    clear(mTRoomTask);
 }

@@ -6,6 +6,8 @@
 #include "data/memory.hpp"
 #include "data/accesspattern.hpp"
 #include <iostream>
+#include "zones.hpp"
+#include "gases.hpp"
 
 namespace DebugGui
 {
@@ -130,4 +132,6 @@ namespace DebugGui
         (void)swallow{(addTableInfo(tables, clickedId), 0)...};
         ImGui::End();
     }
+
+    void showInspector(const glm::vec2& position, const Zones& zones, const Grid<Gases>& atmosphere);
 }

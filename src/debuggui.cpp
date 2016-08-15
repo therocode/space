@@ -82,4 +82,24 @@ namespace DebugGui
             }
         }
     }
+
+    void showInspector(const glm::vec2& position, const Zones& zones, const Grid<Gases>& atmosphere)
+    {
+        glm::ivec2 tile = static_cast<glm::ivec2>(position/32.0f);
+        const Gases& gases = atmosphere.at(tile);
+        ImGui::Begin("Inspector");
+
+        text(std::to_string(position.x) + ", " + std::to_string(position.y) + " (" + std::to_string(tile.x) + ", " + std::to_string(tile.y) + std::string(")"));
+        ImGui::Separator();
+        text("Atmosphere");
+        text("Zone: " + std::to_string(zones.zones.at(tile)));
+        text("Pressure: " + std::to_string(pressurePercent(gases) * 100.0f) + "%");
+        text("Gases: " + std::to_string(zones.zones.at(tile)));
+        float total = static_cast<float>(pressure(gases));
+        ImGui::BulletText("%s", ("Nitrogen: " + std::to_string(gases[Nitrogen] / total * 100.0f) + "% - " + std::to_string(gases[Nitrogen])).c_str());
+        ImGui::BulletText("%s", ("Oxygen: " + std::to_string(gases[Oxygen] / total * 100.0f) + "% - " + std::to_string(gases[Oxygen])).c_str());
+        ImGui::BulletText("%s", ("Carbon Dioxide: " + std::to_string(gases[CarbonDioxide] / total * 100.0f) + "% - " + std::to_string(gases[CarbonDioxide])).c_str());
+
+        ImGui::End();
+    }
 }
