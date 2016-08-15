@@ -210,6 +210,13 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
     mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
+
+
+    clear(mTRoomTask);
+    clear(mTWallTask);
+    clear(mTDoorTask);
+    clear(mUnassignedTasks);
+    clear(mTAssignedTask);
 }
 
 void Space::loop()
@@ -252,8 +259,6 @@ void Space::loop()
 }
 
 //TODO:
-//create scenario clear tasks
-//atmosphere
 //simple choking/dying
 //wall collision
 //door on map
