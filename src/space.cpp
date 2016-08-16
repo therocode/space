@@ -48,11 +48,12 @@ Space::Space() :
 	mOldWalls(cMapSize),
     mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
-    mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
+    mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTBloodValues, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
+    mOrganismLogic(mTPosition, mTBloodValues, mAtmosphere),
     mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
     mZoneLogic(mWalls, mZones),
     mAtmosphereLogic(mZones, mWalls, mAtmosphere),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mShowZones, mShowAtmosphere),
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mTBloodValues, mShowZones, mShowAtmosphere),
     mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
 {
     mWindow.setVSyncEnabled(true);
@@ -234,6 +235,7 @@ void Space::loop()
     for(int32_t i = 0; i < mGameSpeedMultiplier; ++i)
     {
         mActorLogic.update();
+        mOrganismLogic.update();
         mTaskLogic.update();
         auto wallChanges = wallDiff(mOldWalls, mWalls);
         mZoneLogic.update(wallChanges);
@@ -243,7 +245,7 @@ void Space::loop()
 	mOldWalls = mWalls;
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTBloodValues, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
     DebugGui::showInspector(io.MousePos, mZones, mAtmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);

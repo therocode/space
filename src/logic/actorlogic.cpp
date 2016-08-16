@@ -4,12 +4,13 @@
 #include "../taskutil.hpp"
 #include "../debug.hpp"
 
-ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, IdSet& unassignedTasks, WallMap& walls):
+ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, ent::TBloodValues& tBloodValues, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, IdSet& unassignedTasks, WallMap& walls):
     mTPosition(tPosition),
     mTPhysics(tPhysics),
     mTMoveAbility(tMoveAbility),
     mTMoveIntention(tMoveIntention),
     mTWalkTarget(tWalkTarget),
+    mTBloodValues(tBloodValues),
     mTActorSprite(tActorSprite),
     mBuilders(builders),
     mFreeWorkers(freeWorkers),
@@ -28,6 +29,7 @@ int32_t ActorLogic::addActor(Actor actor)
     tableEmplaceOptional(id, std::move(actor.position), mTPosition);
     tableEmplaceOptional(id, std::move(actor.physics), mTPhysics);
     tableEmplaceOptional(id, std::move(actor.moveAbility), mTMoveAbility);
+    tableEmplaceOptional(id, std::move(actor.bloodValues), mTBloodValues);
 
     for(auto& sprite : actor.actorSprites)
     {   
@@ -50,6 +52,7 @@ void ActorLogic::removeActor(int32_t id)
     erase(id, mTMoveAbility);
     erase(id, mTMoveIntention);
     erase(id, mTWalkTarget);
+    erase(id, mTBloodValues);
 
     eraseIf([&] (int32_t actorSpriteId, const ActorSprite& actorSprite)
     {
@@ -146,6 +149,12 @@ void ActorLogic::calculateMoveIntention()
             intention.speedPercent = 0.0f;
         }
     }, mTMoveIntention);
+
+    forEach([&] (int32_t id, const BloodValues& bloodValues)
+    {
+        if(bloodValues.dead)
+            erase(id, mTWalkTarget);
+    }, mTBloodValues);
 
     join([&] (int32_t id, const glm::vec2& walkTarget, const glm::vec2& position)
     {

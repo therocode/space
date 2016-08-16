@@ -2,7 +2,7 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, bool& showZones, bool& showAtmosphere):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, const ent::TBloodValues& tBloodValues, bool& showZones, bool& showAtmosphere):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
@@ -13,6 +13,7 @@ RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRendere
     mTPosition(tPosition),
     mTRoomTask(tRoomTask),
     mTWallTask(tWallTask),
+    mTBloodValues(tBloodValues),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
 {
@@ -45,11 +46,13 @@ void RenderLogic::renderSprites()
     {
         const glm::vec2& position = get(sprite.actorId, mTPosition).data;
 
+        auto bloodValues = get(actorId, mTBloodValues);
+
         orders.emplace_back(
                 RenderOrder{
                 position,
                 sprite.textureId,
-                sprite.color,
+                (bloodValues.data.dead ? fea::Color::Green : sprite.color),
                 {},
                 FillType::Solid,
                 //sprite.rotation,

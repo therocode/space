@@ -3,6 +3,7 @@
         "name":"engineer",
         "position": {},
         "physics": {},
+        "blood_values": {},
         "move_ability":
         {
             "max_speed": 4.0,

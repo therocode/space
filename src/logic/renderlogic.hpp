@@ -10,7 +10,7 @@
 class RenderLogic
 {
     public:
-        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, bool& showZones, bool& showAtmospheres);
+        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, const ent::TBloodValues& tBloodValues, bool& showZones, bool& showAtmospheres);
         void frameStart();
         void update();
         void frameEnd();
@@ -29,6 +29,7 @@ class RenderLogic
         const ent::TPosition& mTPosition;
         const tsk::TRoomTask& mTRoomTask;
         const tsk::TWallTask& mTWallTask;
+        const ent::TBloodValues& mTBloodValues;
         bool& mShowZones;
         bool& mShowAtmosphere;
 };

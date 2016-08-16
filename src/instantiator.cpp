@@ -43,6 +43,13 @@ Instantiator::Instantiator(const ResourceManager& resources)
             };
         }
 
+        auto bloodValues = extractOptional(templateEntry, "blood_values");
+
+        if(bloodValues)
+        {
+            templateToStore.bloodValues = BloodValues{};
+        }
+
         templateToStore.worker = templateEntry["worker"];
 
         //auto walkSpeed = extractOptional(templateEntry, "walk_speed");

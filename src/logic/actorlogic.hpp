@@ -7,7 +7,7 @@
 class ActorLogic
 {
     public:
-        ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, IdSet& unassignedTasks, WallMap& walls);
+        ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, ent::TBloodValues& tBloodValues, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, IdSet& unassignedTasks, WallMap& walls);
         void removeActor(int32_t id);
         int32_t addActor(Actor actor);
         void update();
@@ -24,6 +24,7 @@ class ActorLogic
         ent::TMoveAbility& mTMoveAbility;
         ent::TMoveIntention& mTMoveIntention;
         ent::TWalkTarget& mTWalkTarget;
+        ent::TBloodValues& mTBloodValues;
         gfx::TActorSprite& mTActorSprite;
         IdSet& mBuilders;
         IdSet& mFreeWorkers;

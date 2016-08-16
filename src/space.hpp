@@ -13,6 +13,7 @@
 #include "gases.hpp"
 #include "logic/interfacelogic.hpp"
 #include "logic/actorlogic.hpp"
+#include "logic/organismlogic.hpp"
 #include "logic/tasklogic.hpp"
 #include "logic/zonelogic.hpp"
 #include "logic/atmospherelogic.hpp"
@@ -67,6 +68,7 @@ class Space : public fea::Application,
         ent::TWalkTarget mTWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
         ent::TMoveIntention mTMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
         ent::TMoveAbility mTMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
+        ent::TBloodValues mTBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
 
         ////worker stuff
         IdSet mBuilders = {{}, {"Builders", "All workers who are builders"}};
@@ -100,6 +102,7 @@ class Space : public fea::Application,
 
         //logic
         ActorLogic mActorLogic;
+        OrganismLogic mOrganismLogic;
         TaskLogic mTaskLogic;
         ZoneLogic mZoneLogic;
         AtmosphereLogic mAtmosphereLogic;

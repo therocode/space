@@ -74,6 +74,15 @@ struct BusyWorker
     int32_t taskId;
 };
 
+//http://members.shaw.ca/tfrisen/how_much_oxygen_for_a_person.htm
+//one ingame hour: 20s. time ratio: 0.005555555555555
+//need to use 2000 oxygene in 2 hours, 1000 in 1h, 1000/20 = 50 oxygene/s
+struct BloodValues
+{
+    int32_t oxygen = 600; //500 is max, this will make them choke to death after 10 real life seconds
+    bool dead = false; //temp
+};
+
 namespace ent
 {
     using TPosition  = DataTable<glm::vec2>;
@@ -82,6 +91,7 @@ namespace ent
     using TMoveIntention = DataTable<MoveIntention>;
     using TMoveAbility = DataTable<MoveAbility>;
     using TBusyWorker = DataTable<BusyWorker>;
+    using TBloodValues = DataTable<BloodValues>;
 }
 
 namespace tsk
