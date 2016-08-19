@@ -48,13 +48,13 @@ Space::Space() :
 	mOldWalls(cMapSize),
     mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
-    mActorLogic(mTPosition, mTPhysics, mTMoveAbility, mTMoveIntention, mTWalkTarget, mTBloodValues, mTActorSprite, mBuilders, mFreeWorkers, mTBusyWorker, mTAssignedTask, mTRoomTask, mTWallTask, mUnassignedTasks, mWalls),
-    mOrganismLogic(mTPosition, mTBloodValues, mAtmosphere),
-    mTaskLogic(mWalls, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask),
+    mActorLogic(mEnt, mGfx, mTsk, mWalls),
+    mOrganismLogic(mEnt, mAtmosphere),
+    mTaskLogic(mTsk, mEnt, mWalls),
     mZoneLogic(mWalls, mZones),
     mAtmosphereLogic(mZones, mWalls, mAtmosphere),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mTActorSprite, mTPosition, mTRoomTask, mTWallTask, mTBloodValues, mShowZones, mShowAtmosphere),
-    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTRoomTask, mTWallTask, mUnassignedTasks)
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mTsk, mShowZones, mShowAtmosphere),
+    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTsk, mEnt)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -117,7 +117,7 @@ void Space::handleMessage(const MouseClickMessage& message)
         }   
         else if(message.button == fea::Mouse::RIGHT)
         {
-            if(count(mTPosition))
+            if(count(mEnt.tPosition))
             {
                 //int32_t toDelete = rand() % count(mTPosition);
                 //if(has(toDelete, mTPosition))
@@ -175,7 +175,7 @@ void Space::startScenario()
 	forEach([&] (const int32_t id, const glm::vec2&)
     {
 		toRemove.push_back(id);
-    }, mTPosition);
+    }, mEnt.tPosition);
 	
 	for(int32_t id : toRemove)
     {
@@ -183,7 +183,7 @@ void Space::startScenario()
         mActorIdPool.release(id);
     }
 	
-	for(auto position : std::vector<glm::vec2>{{230.0f, 230.0f}, {250.0f, 230.0f}, {230.0f, 250.0f}, {250.0f, 250.0f} })
+	for(auto position : std::vector<glm::vec2>{{240.0f, 240.0f}, {260.0f, 240.0f}, {240.0f, 260.0f}, {260.0f, 260.0f} })
     {
         auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), position);
         mActorLogic.addActor(std::move(actor));
@@ -213,11 +213,11 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 
-    clear(mTRoomTask);
-    clear(mTWallTask);
-    clear(mTDoorTask);
-    clear(mUnassignedTasks);
-    clear(mTAssignedTask);
+    clear(mTsk.tRoomTask);
+    clear(mTsk.tWallTask);
+    clear(mTsk.tDoorTask);
+    clear(mTsk.unassignedTasks);
+    clear(mTsk.tAssignedTask);
 }
 
 void Space::loop()
@@ -245,7 +245,7 @@ void Space::loop()
 	mOldWalls = mWalls;
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mTPosition, mTPhysics, mTWalkTarget, mTMoveAbility, mTMoveIntention, mTBloodValues, mTRoomTask, mTWallTask, mTDoorTask, mUnassignedTasks, mTAssignedTask, mBuilders, mFreeWorkers, mTBusyWorker, mTActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mEnt.tPosition, mEnt.tPhysics, mEnt.tWalkTarget, mEnt.tMoveAbility, mEnt.tMoveIntention, mEnt.tBloodValues, mTsk.tRoomTask, mTsk.tWallTask, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask, mEnt.builders, mEnt.freeWorkers, mEnt.tBusyWorker, mGfx.tActorSprite);
     DebugGui::showInspector(io.MousePos, mZones, mAtmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);

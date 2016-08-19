@@ -74,7 +74,7 @@ void AtmosphereLogic::update()
             int32_t totalDifference = std::accumulate(neighborDifferences.begin(), neighborDifferences.end(), 0);
 
             float transferRate = std::abs(totalDifference / 10000.0f) / neighborAmount;
-            transferRate = std::min(0.125f, std::max(0.05f, transferRate));
+            transferRate = std::min(0.0625f, std::max(0.05f, transferRate));
 
             if(totalDifference)
             {

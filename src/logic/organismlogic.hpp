@@ -6,10 +6,9 @@
 class OrganismLogic
 {
     public:
-        OrganismLogic(const ent::TPosition& tPosition, ent::TBloodValues& tBloodValues, Grid<Gases>& atmosphere);
+        OrganismLogic(EntityData& ent, Grid<Gases>& atmosphere);
         void update();
     private:
-        const ent::TPosition& mTPosition;
-        ent::TBloodValues& mTBloodValues;
+        EntityData& mEnt;
         Grid<Gases>& mAtmosphere;
 };

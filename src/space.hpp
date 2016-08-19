@@ -62,25 +62,8 @@ class Space : public fea::Application,
         bool mShowAtmosphere;
         th::Optional<int32_t> mClickedEntity;
 
-        //game data
-        ent::TPosition mTPosition = {"Position", "The positions of game entities"};
-        ent::TPhysics mTPhysics = {"Physics", "The acceleration and velocities of game entities"};
-        ent::TWalkTarget mTWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
-        ent::TMoveIntention mTMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
-        ent::TMoveAbility mTMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
-        ent::TBloodValues mTBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
-
-        ////worker stuff
-        IdSet mBuilders = {{}, {"Builders", "All workers who are builders"}};
-        IdSet mFreeWorkers = {{}, {"Free workers", "All workers who are currently not working on any task"}};
-        ent::TBusyWorker mTBusyWorker = {"Busy Worker", "The workers who are working on a task"};
-
-        ////tasks
-        tsk::TRoomTask mTRoomTask = {"Room Task", "Represent all rooms that need to be built"};
-        tsk::TWallTask mTWallTask = {"Wall Task", "Represent all walls that need to be built"};
-        tsk::TDoorTask mTDoorTask = {"Door Task", "Represent all doors that need to be built"};
-        IdSet mUnassignedTasks = {{}, {"Unassigned tasks", "All tasks which no worker is currently on"}};
-        tsk::TAssignedTask mTAssignedTask = {"Assigned tasks", "All tasks which are assigned to a worker"};
+        EntityData mEnt;
+        TaskData mTsk;
 
         //world
         WallMap mWalls;
@@ -89,7 +72,7 @@ class Space : public fea::Application,
         Grid<Gases> mAtmosphere;
 
         //gfx
-        gfx::TActorSprite mTActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
+        GfxData mGfx;
 
         NumberPool<int32_t> mActorIdPool;
         NumberPool<int32_t> mTaskIdPool;

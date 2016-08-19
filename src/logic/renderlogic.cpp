@@ -2,18 +2,16 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const gfx::TActorSprite& tActorSprite, const ent::TPosition& tPosition, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, const ent::TBloodValues& tBloodValues, bool& showZones, bool& showAtmosphere):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GfxData& gfx, const EntityData& ent, const TaskData& tsk, bool& showZones, bool& showAtmosphere):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
     mWalls(walls),
     mZones(zones),
     mAtmosphere(atmosphere),
-    mTActorSprite(tActorSprite),
-    mTPosition(tPosition),
-    mTRoomTask(tRoomTask),
-    mTWallTask(tWallTask),
-    mTBloodValues(tBloodValues),
+    mGfx(gfx),
+    mEnt(ent),
+    mTsk(tsk),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
 {
@@ -44,9 +42,9 @@ void RenderLogic::renderSprites()
 
      forEach([&] (int32_t actorId, const ActorSprite& sprite)
     {
-        const glm::vec2& position = get(sprite.actorId, mTPosition).data;
+        const glm::vec2& position = get(sprite.actorId, mEnt.tPosition).data;
 
-        auto bloodValues = get(actorId, mTBloodValues);
+        auto bloodValues = get(actorId, mEnt.tBloodValues);
 
         orders.emplace_back(
                 RenderOrder{
@@ -70,7 +68,7 @@ void RenderLogic::renderSprites()
             rect.setColor(fea::Color::Yellow);
             mFeaRenderer.render(rect);
         }
-    }, mTActorSprite); 
+    }, mGfx.tActorSprite); 
 
     mRenderer.render(orders);
 }
@@ -96,7 +94,7 @@ void RenderLogic::renderTasks()
                 //sprite.flip,
                 }   
                 );  
-    }, mTRoomTask); 
+    }, mTsk.tRoomTask); 
 
     forEach([&] (int32_t taskId, const WallTask& wallTask)
     {   
@@ -118,7 +116,7 @@ void RenderLogic::renderTasks()
                 //sprite.flip,
                 }   
                 );  
-    }, mTWallTask); 
+    }, mTsk.tWallTask); 
 
     mRenderer.render(orders);
 }

@@ -4,21 +4,10 @@
 #include "../taskutil.hpp"
 #include "../debug.hpp"
 
-ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::TMoveAbility& tMoveAbility, ent::TMoveIntention& tMoveIntention, ent::TWalkTarget& tWalkTarget, ent::TBloodValues& tBloodValues, gfx::TActorSprite& tActorSprite, IdSet& builders, IdSet& freeWorkers, ent::TBusyWorker& tBusyWorker, tsk::TAssignedTask& tAssignedTask, const tsk::TRoomTask& tRoomTask, const tsk::TWallTask& tWallTask, IdSet& unassignedTasks, WallMap& walls):
-    mTPosition(tPosition),
-    mTPhysics(tPhysics),
-    mTMoveAbility(tMoveAbility),
-    mTMoveIntention(tMoveIntention),
-    mTWalkTarget(tWalkTarget),
-    mTBloodValues(tBloodValues),
-    mTActorSprite(tActorSprite),
-    mBuilders(builders),
-    mFreeWorkers(freeWorkers),
-    mTBusyWorker(tBusyWorker),
-    mTAssignedTask(tAssignedTask),
-    mTRoomTask(tRoomTask),
-    mTWallTask(tWallTask),
-    mUnassignedTasks(unassignedTasks),
+ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WallMap& walls):
+    mEnt(ent),
+    mGfx(gfx),
+    mTsk(tsk),
     mWalls(walls)
 {
 }
@@ -26,20 +15,20 @@ ActorLogic::ActorLogic(ent::TPosition& tPosition, ent::TPhysics& tPhysics, ent::
 int32_t ActorLogic::addActor(Actor actor)
 {
     int32_t id = actor.id;
-    tableEmplaceOptional(id, std::move(actor.position), mTPosition);
-    tableEmplaceOptional(id, std::move(actor.physics), mTPhysics);
-    tableEmplaceOptional(id, std::move(actor.moveAbility), mTMoveAbility);
-    tableEmplaceOptional(id, std::move(actor.bloodValues), mTBloodValues);
+    tableEmplaceOptional(id, std::move(actor.position), mEnt.tPosition);
+    tableEmplaceOptional(id, std::move(actor.physics), mEnt.tPhysics);
+    tableEmplaceOptional(id, std::move(actor.moveAbility), mEnt.tMoveAbility);
+    tableEmplaceOptional(id, std::move(actor.bloodValues), mEnt.tBloodValues);
 
     for(auto& sprite : actor.actorSprites)
     {   
-        tableEmplaceOptional(mActorSpriteIdPool.next(), std::move(sprite), mTActorSprite);
+        tableEmplaceOptional(mActorSpriteIdPool.next(), std::move(sprite), mGfx.tActorSprite);
     }   
 
     if(actor.worker)
     {
-        insert(id, mBuilders);
-        insert(id, mFreeWorkers);
+        insert(id, mEnt.builders);
+        insert(id, mEnt.freeWorkers);
     }
 
     return id;
@@ -47,12 +36,12 @@ int32_t ActorLogic::addActor(Actor actor)
 
 void ActorLogic::removeActor(int32_t id)
 {
-    erase(id, mTPosition);
-    erase(id, mTPhysics);
-    erase(id, mTMoveAbility);
-    erase(id, mTMoveIntention);
-    erase(id, mTWalkTarget);
-    erase(id, mTBloodValues);
+    erase(id, mEnt.tPosition);
+    erase(id, mEnt.tPhysics);
+    erase(id, mEnt.tMoveAbility);
+    erase(id, mEnt.tMoveIntention);
+    erase(id, mEnt.tWalkTarget);
+    erase(id, mEnt.tBloodValues);
 
     eraseIf([&] (int32_t actorSpriteId, const ActorSprite& actorSprite)
     {
@@ -62,9 +51,9 @@ void ActorLogic::removeActor(int32_t id)
             return true;
         }
         return false;
-    }, mTActorSprite);
-    erase(id, mBuilders);
-    erase(id, mFreeWorkers);
+    }, mGfx.tActorSprite);
+    erase(id, mEnt.builders);
+    erase(id, mEnt.freeWorkers);
 }
 
 void ActorLogic::update()
@@ -86,43 +75,43 @@ void ActorLogic::updateWorkers()
         if(!findOne([&](int32_t taskId, const AssignedTask& assignedTask)
         {
             return assignedTask.assigneeId == id;
-        }, mTAssignedTask))
+        }, mTsk.tAssignedTask))
         {
             erase = true;
-            insert(id, mFreeWorkers);
+            insert(id, mEnt.freeWorkers);
         }
 
         return erase;
-    }, mTBusyWorker);
+    }, mEnt.tBusyWorker);
 
     //assign free workers to unassigned tasks
     eraseIf([&] (int32_t id)
     {
         bool erase = false;
-        if(count(mUnassignedTasks) > 0)
+        if(count(mTsk.unassignedTasks) > 0)
         {
-            int32_t taskId = extractOne(mUnassignedTasks);
-            assignTask(taskId, id, mTAssignedTask);
-            insert(id, {taskId}, mTBusyWorker);
+            int32_t taskId = extractOne(mTsk.unassignedTasks);
+            assignTask(taskId, id, mTsk.tAssignedTask);
+            insert(id, {taskId}, mEnt.tBusyWorker);
             erase = true;
         }
 
         return erase;
-    }, mFreeWorkers);
+    }, mEnt.freeWorkers);
 }
 
 void ActorLogic::updateTaskWork()
 {
     forEach([&](const int32_t workerId, const BusyWorker& worker)
     {
-        if(auto wallTask = findOne(worker.taskId, mTWallTask))
+        if(auto wallTask = findOne(worker.taskId, mTsk.tWallTask))
         {
             glm::vec2 taskPosition = wallTask->data.position * 32;
-            const glm::vec2& workerPosition = get(workerId, mTPosition).data;
+            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition).data;
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
             {
-                erase(workerId, mTWalkTarget);
+                erase(workerId, mEnt.tWalkTarget);
 
                 if(rand() % 100 == 0)
                 {
@@ -131,38 +120,38 @@ void ActorLogic::updateTaskWork()
             }
             else
             {
-                set(workerId, {taskPosition}, mTWalkTarget);
+                set(workerId, {taskPosition}, mEnt.tWalkTarget);
             }
         }
-        else if(auto roomTask = findOne(worker.taskId, mTRoomTask))
+        else if(auto roomTask = findOne(worker.taskId, mTsk.tRoomTask))
         {
         }
-    }, mTBusyWorker);
+    }, mEnt.tBusyWorker);
 }
 
 void ActorLogic::calculateMoveIntention()
 {
     forEach([&] (int32_t id, MoveIntention& intention)
     {
-        if(!has(id, mTWalkTarget))
+        if(!has(id, mEnt.tWalkTarget))
         {
             intention.speedPercent = 0.0f;
         }
-    }, mTMoveIntention);
+    }, mEnt.tMoveIntention);
 
     forEach([&] (int32_t id, const BloodValues& bloodValues)
     {
         if(bloodValues.dead)
-            erase(id, mTWalkTarget);
-    }, mTBloodValues);
+            erase(id, mEnt.tWalkTarget);
+    }, mEnt.tBloodValues);
 
     join([&] (int32_t id, const glm::vec2& walkTarget, const glm::vec2& position)
     {
         MoveIntention moveIntention;
         moveIntention.direction = glm::normalize(walkTarget - position);
         moveIntention.speedPercent = 0.5f;
-        set(id, std::move(moveIntention), mTMoveIntention);
-    }, mTWalkTarget, mTPosition);
+        set(id, std::move(moveIntention), mEnt.tMoveIntention);
+    }, mEnt.tWalkTarget, mEnt.tPosition);
 }
 
 void ActorLogic::applyMoveIntention()
@@ -173,7 +162,7 @@ void ActorLogic::applyMoveIntention()
 
         physics.acceleration = Accelerator::get(moveIntention.direction, maxSpeed, physics.velocity, moveAbility.maxAcceleration);
 
-    }, mTMoveIntention, mTMoveAbility, mTPhysics);
+    }, mEnt.tMoveIntention, mEnt.tMoveAbility, mEnt.tPhysics);
 }
 
 void ActorLogic::applyPhysics()
@@ -182,5 +171,5 @@ void ActorLogic::applyPhysics()
     {
         physics.velocity += physics.acceleration;
         position += physics.velocity;
-    }, mTPosition, mTPhysics);
+    }, mEnt.tPosition, mEnt.tPhysics);
 }

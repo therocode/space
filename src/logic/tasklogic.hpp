@@ -6,17 +6,13 @@
 class TaskLogic
 {
     public:
-        TaskLogic(const WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, tsk::TDoorTask& tDoorTask, IdSet& unassignedTasks, tsk::TAssignedTask& tAssignedTask);
+        TaskLogic(TaskData& tsk, EntityData& ent, const WallMap& walls);
         void update();
     private:
         void updateRoomTasks();
         void updateWallTasks();
 
+        TaskData& mTsk;
+        EntityData& mEnt;
         const WallMap& mWalls;
-        tsk::TRoomTask& mTRoomTask;
-        tsk::TWallTask& mTWallTask;
-        tsk::TDoorTask& mTDoorTask;
-
-        IdSet& mUnassignedTasks;
-        tsk::TAssignedTask& mTAssignedTask;
 };

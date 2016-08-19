@@ -94,6 +94,22 @@ namespace ent
     using TBloodValues = DataTable<BloodValues>;
 }
 
+struct EntityData
+{
+    //game data
+    ent::TPosition tPosition = {"Position", "The positions of game entities"};
+    ent::TPhysics tPhysics = {"Physics", "The acceleration and velocities of game entities"};
+    ent::TWalkTarget tWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
+    ent::TMoveIntention tMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
+    ent::TMoveAbility tMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
+    ent::TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
+
+    //worker stuff
+    IdSet builders = {{}, {"Builders", "All workers who are builders"}};
+    IdSet freeWorkers = {{}, {"Free workers", "All workers who are currently not working on any task"}};
+    ent::TBusyWorker tBusyWorker = {"Busy Worker", "The workers who are working on a task"};
+};
+
 namespace tsk
 {
     using TRoomTask = DataTable<RoomTask>;
@@ -102,7 +118,23 @@ namespace tsk
     using TAssignedTask = DataTable<AssignedTask>;
 }
 
+struct TaskData 
+{
+    //tasks
+    tsk::TRoomTask tRoomTask = {"Room Task", "Represent all rooms that need to be built"};
+    tsk::TWallTask tWallTask = {"Wall Task", "Represent all walls that need to be built"};
+    tsk::TDoorTask tDoorTask = {"Door Task", "Represent all doors that need to be built"};
+    IdSet unassignedTasks = {{}, {"Unassigned tasks", "All tasks which no worker is currently on"}};
+    tsk::TAssignedTask tAssignedTask = {"Assigned tasks", "All tasks which are assigned to a worker"};
+};
+
 namespace gfx
 {
     using TActorSprite = DataTable<ActorSprite>;
 }
+
+struct GfxData
+{
+    //gfx
+    gfx::TActorSprite tActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
+};

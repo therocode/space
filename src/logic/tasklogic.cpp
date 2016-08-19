@@ -2,15 +2,12 @@
 #include "../roomutil.hpp"
 #include "../taskutil.hpp"
 
-TaskLogic::TaskLogic(const WallMap& walls, tsk::TRoomTask& tRoomTask, tsk::TWallTask& tWallTask, tsk::TDoorTask& tDoorTask, IdSet& unassignedTasks, tsk::TAssignedTask& tAssignedTask):
-    mWalls(walls),
-    mTRoomTask(tRoomTask),
-    mTWallTask(tWallTask),
-    mTDoorTask(tDoorTask),
-    mUnassignedTasks(unassignedTasks),
-    mTAssignedTask(tAssignedTask)
+TaskLogic::TaskLogic(TaskData& tsk, EntityData& ent, const WallMap& walls):
+    mTsk(tsk),
+    mEnt(ent),
+    mWalls(walls)
 {
-    (void)mTDoorTask;
+    (void)mEnt;
 }
 
 void TaskLogic::update()
@@ -38,10 +35,10 @@ void TaskLogic::updateRoomTasks()
         {
             toErase.push_back(id);
         }
-    }, mTRoomTask);
+    }, mTsk.tRoomTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mTRoomTask, mUnassignedTasks, mTAssignedTask);
+        eraseTask(id, mTsk.tRoomTask, mTsk.unassignedTasks, mTsk.tAssignedTask);
 }
 
 void TaskLogic::updateWallTasks()
@@ -55,8 +52,8 @@ void TaskLogic::updateWallTasks()
         {
             toErase.push_back(id);
         }
-    }, mTWallTask);
+    }, mTsk.tWallTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mTWallTask, mUnassignedTasks, mTAssignedTask);
+        eraseTask(id, mTsk.tWallTask, mTsk.unassignedTasks, mTsk.tAssignedTask);
 }

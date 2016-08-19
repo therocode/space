@@ -199,6 +199,7 @@ void Renderer::render(const std::vector<RenderOrder>& orders) const
             //quad.setRotation(renderOrder.rotation - pi / 2.0f); //take away pi/2.0f which is a quarter of a full turn because featherkit expects 0 degrees to be --> but in the game, it is downwards
             //quad.setHFlip(renderOrder.flip);
             quad.setColor(renderOrder.color);
+            quad.setOrigin(quad.getSize() / 2.0f);
 
             mRenderer.render(quad);
         }

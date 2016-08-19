@@ -1,8 +1,7 @@
 #include "organismlogic.hpp"
 
-OrganismLogic::OrganismLogic(const ent::TPosition& tPosition, ent::TBloodValues& tBloodValues, Grid<Gases>& atmosphere):
-    mTPosition(tPosition),
-    mTBloodValues(tBloodValues),
+OrganismLogic::OrganismLogic(EntityData& ent, Grid<Gases>& atmosphere):
+    mEnt(ent),
     mAtmosphere(atmosphere)
 {
 }
@@ -20,6 +19,7 @@ void OrganismLogic::update()
 		    int32_t amount = std::max(0, std::min(5, gases[Oxygen]));
 		    bloodValue.oxygen += amount;
 		    gases[Oxygen] -= amount;
+		    gases[CarbonDioxide] += amount;
         }
 
         if(bloodValue.oxygen > 0)
@@ -31,5 +31,5 @@ void OrganismLogic::update()
             bloodValue.dead = true;
         }
 
-    }, mTPosition, mTBloodValues);
+    }, mEnt.tPosition, mEnt.tBloodValues);
 }
