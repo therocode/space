@@ -20,22 +20,22 @@ void AtmosphereLogic::update()
     {
         size_t count = 0;
 
-        if(x > 0 && mZones.zones.at(index - 1) == id && mWalls.at(index, Orientation::Vertical) == 0)
+        if(x > 0 && mZones.zones.at(index - 1) == id && mWalls.at({x, y}, Orientation::Vertical) == 0)
         {
             out[count] = index - 1;
             ++count;
         }
-        if(x < static_cast<int32_t>(nextRowIndexSkip) - 1 && mZones.zones.at(index + 1) == id && mWalls.at(index + 1, Orientation::Vertical) == 0)
+        if(x < static_cast<int32_t>(nextRowIndexSkip) - 1 && mZones.zones.at(index + 1) == id && mWalls.at({x + 1, y}, Orientation::Vertical) == 0)
         {
             out[count] = index + 1;
             ++count;
         }
-        if(y > 0 && mZones.zones.at(index - nextRowIndexSkip) == id && mWalls.at(index, Orientation::Horizontal) == 0)
+        if(y > 0 && mZones.zones.at(index - nextRowIndexSkip) == id && mWalls.at({x, y}, Orientation::Horizontal) == 0)
         {
             out[count] = index - nextRowIndexSkip;
             ++count;
         }
-        if(y < mZones.zones.size().y - 1 && mZones.zones.at(index + nextRowIndexSkip) == id && mWalls.at(index + nextRowIndexSkip, Orientation::Horizontal) == 0)
+        if(y < mZones.zones.size().y - 1 && mZones.zones.at(index + nextRowIndexSkip) == id && mWalls.at({x, y + 1}, Orientation::Horizontal) == 0)
         {
             out[count] = index + nextRowIndexSkip;
             ++count;
@@ -77,10 +77,10 @@ void AtmosphereLogic::update()
 
             if(totalDifference)
             {
+                auto& sourceGasesDifference = mAtmosphereDifference.at(currentTileIndex);
                 for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
                 {
                     size_t neighbor = neighbors[neighborIndex];
-                    auto& sourceGasesDifference = mAtmosphereDifference.at(currentTileIndex);
                     auto& targetGasesDifference = mAtmosphereDifference.at(neighbor);
                     const Gases& neighborGases = mAtmosphere.at(neighbor);
 
