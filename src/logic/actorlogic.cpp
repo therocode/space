@@ -58,11 +58,19 @@ void ActorLogic::removeActor(int32_t id)
 
 void ActorLogic::update()
 {
+    updateDeath();
     updateWorkers();
     updateTaskWork();
     calculateMoveIntention();
     applyMoveIntention();
     applyPhysics();
+}
+
+void ActorLogic::updateDeath()
+{
+    forEach([&] (int32_t id)
+    {
+    }, mEnt.died);
 }
 
 void ActorLogic::updateWorkers()
@@ -139,11 +147,9 @@ void ActorLogic::calculateMoveIntention()
         }
     }, mEnt.tMoveIntention);
 
-    forEach([&] (int32_t id, const BloodValues& bloodValues)
+    forEach([&] (int32_t id)
     {
-        if(bloodValues.dead)
-            erase(id, mEnt.tWalkTarget);
-    }, mEnt.tBloodValues);
+    }, mEnt.died);
 
     join([&] (int32_t id, const glm::vec2& walkTarget, const glm::vec2& position)
     {

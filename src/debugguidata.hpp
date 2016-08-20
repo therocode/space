@@ -18,6 +18,9 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const ent::TBloodValues& table);
     void debugText(const BloodValues& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const ent::TChoking& table);
+    void debugText(const Choking& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const ent::TBusyWorker& table);
     void debugText(const BusyWorker& data, std::vector<std::vector<std::string>>& outText);
 

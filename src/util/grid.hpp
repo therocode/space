@@ -28,6 +28,18 @@ class Grid
             return mCells[toIndex(position)];
         }
 
+        const Type& at(size_t index) const
+        {
+            TH_ASSERT(index < mCells.size(), "index '" + std::to_string(index) + "' out of bounds");
+            return mCells[index];
+        }
+
+        Type& at(size_t index)
+        {
+            TH_ASSERT(index < mCells.size(), "index '" + std::to_string(index) + "' out of bounds");
+            return mCells[index];
+        }
+
         void set(const glm::ivec2& position, Type value)
         {
             TH_ASSERT(toIndex(position) < mCells.size(), "index '" + glm::to_string(position) + "' out of bounds");

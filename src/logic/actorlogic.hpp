@@ -12,6 +12,7 @@ class ActorLogic
         int32_t addActor(Actor actor);
         void update();
     private:
+        void updateDeath();
         void updateWorkers();
         void updateTaskWork();
         void calculateMoveIntention();

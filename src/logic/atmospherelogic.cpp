@@ -13,57 +13,54 @@ void AtmosphereLogic::update()
 {
     mAtmosphereDifference.fill(Gases{});
 
-    std::vector<glm::ivec2> neighbors;
+    std::array<size_t, 4> neighbors;
 
-    auto fetchNeighbors = [&] (int32_t id, const glm::ivec2& coordinate, std::vector<glm::ivec2>& out)
+    size_t nextRowIndexSkip = static_cast<size_t>(mZones.zones.size().x);
+    auto fetchNeighbors = [&] (int32_t id, size_t index, int32_t x, int32_t y, std::array<size_t, 4>& out)
     {
-        out.resize(4);
         size_t count = 0;
 
-        if(coordinate.x > 0 && mZones.zones.at(coordinate + glm::ivec2(-1, 0)) == id && mWalls.at(coordinate, Orientation::Vertical) == 0)
+        if(x > 0 && mZones.zones.at(index - 1) == id && mWalls.at(index, Orientation::Vertical) == 0)
         {
-            out[count] = coordinate + glm::ivec2(-1, 0);
+            out[count] = index - 1;
             ++count;
         }
-        if(coordinate.x < mZones.zones.size().x - 1 && mZones.zones.at(coordinate + glm::ivec2(1, 0)) == id && mWalls.at(coordinate + glm::ivec2(1, 0), Orientation::Vertical) == 0)
+        if(x < static_cast<int32_t>(nextRowIndexSkip) - 1 && mZones.zones.at(index + 1) == id && mWalls.at(index + 1, Orientation::Vertical) == 0)
         {
-            out[count] = coordinate + glm::ivec2(1, 0);
+            out[count] = index + 1;
             ++count;
         }
-        if(coordinate.y > 0 && mZones.zones.at(coordinate + glm::ivec2(0, -1)) == id && mWalls.at(coordinate, Orientation::Horizontal) == 0)
+        if(y > 0 && mZones.zones.at(index - nextRowIndexSkip) == id && mWalls.at(index, Orientation::Horizontal) == 0)
         {
-            out[count] = coordinate + glm::ivec2(0, -1);
+            out[count] = index - nextRowIndexSkip;
             ++count;
         }
-        if(coordinate.y < mZones.zones.size().y - 1 && mZones.zones.at(coordinate + glm::ivec2(0, 1)) == id && mWalls.at(coordinate + glm::ivec2(0, 1), Orientation::Horizontal) == 0)
+        if(y < mZones.zones.size().y - 1 && mZones.zones.at(index + nextRowIndexSkip) == id && mWalls.at(index + nextRowIndexSkip, Orientation::Horizontal) == 0)
         {
-            out[count] = coordinate + glm::ivec2(0, 1);
+            out[count] = index + nextRowIndexSkip;
             ++count;
         }
 
-        out.resize(count);
+        return count;
     };
 
-    std::vector<int32_t> neighborDifferences;
+    std::array<int32_t, 4> neighborDifferences;
 
+    size_t currentTileIndex = 0;
     for(int32_t y = 0; y < mZones.zones.size().y; ++y)
     {
         for(int32_t x = 0; x < mZones.zones.size().x; ++x)
         {
-            if(rand() % 2)
-                continue;
             Gases gasDifference;
-            int32_t zoneId = mZones.zones.at({x, y});
-            const Gases& currentGases = mAtmosphere.at({x, y});
-            fetchNeighbors(zoneId, {x, y}, neighbors);
-            size_t neighborAmount = neighbors.size();
-            neighborDifferences.resize(neighborAmount);
+            int32_t zoneId = mZones.zones.at(currentTileIndex);
+            const Gases& currentGases = mAtmosphere.at(currentTileIndex);
+            size_t neighborAmount = fetchNeighbors(zoneId, currentTileIndex, x, y, neighbors);
             std::fill(neighborDifferences.begin(), neighborDifferences.end(), 0);
 
             for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
             {
-                const auto& neighborCoordinate = neighbors[neighborIndex];
-                const Gases& neighborGases = mAtmosphere.at(neighborCoordinate);
+                size_t neighbor = neighbors[neighborIndex];
+                const Gases& neighborGases = mAtmosphere.at(neighbor);
 
                 for(size_t gasIndex = 0; gasIndex < currentGases.size(); ++gasIndex)
                 {
@@ -71,7 +68,9 @@ void AtmosphereLogic::update()
                 }
             }
 
-            int32_t totalDifference = std::accumulate(neighborDifferences.begin(), neighborDifferences.end(), 0);
+            int32_t totalDifference = 0;
+            for(size_t i = 0; i < neighborAmount; ++i)
+                totalDifference += neighborDifferences[i];
 
             float transferRate = std::abs(totalDifference / 10000.0f) / neighborAmount;
             transferRate = std::min(0.0625f, std::max(0.05f, transferRate));
@@ -80,10 +79,10 @@ void AtmosphereLogic::update()
             {
                 for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
                 {
-                    const auto& neighborCoordinate = neighbors[neighborIndex];
-                    auto& sourceGasesDifference = mAtmosphereDifference.at({x, y});
-                    auto& targetGasesDifference = mAtmosphereDifference.at(neighbors[neighborIndex]);
-                    const Gases& neighborGases = mAtmosphere.at(neighborCoordinate);
+                    size_t neighbor = neighbors[neighborIndex];
+                    auto& sourceGasesDifference = mAtmosphereDifference.at(currentTileIndex);
+                    auto& targetGasesDifference = mAtmosphereDifference.at(neighbor);
+                    const Gases& neighborGases = mAtmosphere.at(neighbor);
 
                     if(neighborDifferences[neighborIndex])
                     {
@@ -99,19 +98,23 @@ void AtmosphereLogic::update()
                     }
                 }
             }
+
+            ++currentTileIndex;
         }
     }
 
+    currentTileIndex = 0;
     for(int32_t y = 0; y < mZones.zones.size().y; ++y)
     {
         for(int32_t x = 0; x < mZones.zones.size().x; ++x)
         {
-            const Gases& gasDifference = mAtmosphereDifference.at({x, y});
-            Gases& gases = mAtmosphere.at({x, y});
+            const Gases& gasDifference = mAtmosphereDifference.at(currentTileIndex);
+            Gases& gases = mAtmosphere.at(currentTileIndex);
             for(size_t gasIndex = 0; gasIndex < gasDifference.size(); ++gasIndex)
             {
                 gases[gasIndex] += gasDifference[gasIndex];
             }
+            ++currentTileIndex;
         }
     }
 }

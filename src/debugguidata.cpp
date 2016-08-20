@@ -101,6 +101,21 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const ent::TChoking& table)
+    {
+        return {"Choking"};
+    }
+
+    void debugText(const Choking& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.breathingCapability * 100) + "%",
+            },
+        };
+    }
+
     std::vector<std::string> debugHeaders(const ent::TBusyWorker& table)
     {
         return {"Task ID",};

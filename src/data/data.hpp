@@ -74,13 +74,17 @@ struct BusyWorker
     int32_t taskId;
 };
 
+struct Choking
+{
+    float breathingCapability;
+};
+
 //http://members.shaw.ca/tfrisen/how_much_oxygen_for_a_person.htm
 //one ingame hour: 20s. time ratio: 0.005555555555555
 //need to use 2000 oxygene in 2 hours, 1000 in 1h, 1000/20 = 50 oxygene/s
 struct BloodValues
 {
     int32_t oxygen = 600; //500 is max, this will make them choke to death after 10 real life seconds
-    bool dead = false; //temp
 };
 
 namespace ent
@@ -92,6 +96,7 @@ namespace ent
     using TMoveAbility = DataTable<MoveAbility>;
     using TBusyWorker = DataTable<BusyWorker>;
     using TBloodValues = DataTable<BloodValues>;
+    using TChoking = DataTable<Choking>;
 }
 
 struct EntityData
@@ -102,12 +107,17 @@ struct EntityData
     ent::TWalkTarget tWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
     ent::TMoveIntention tMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
     ent::TMoveAbility tMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
-    ent::TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
 
     //worker stuff
     IdSet builders = {{}, {"Builders", "All workers who are builders"}};
     IdSet freeWorkers = {{}, {"Free workers", "All workers who are currently not working on any task"}};
+    IdSet deadWorkers = {{}, {"Dead workers", "All workers who are no longer alive"}};
     ent::TBusyWorker tBusyWorker = {"Busy Worker", "The workers who are working on a task"};
+
+    //organism stuff
+    ent::TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
+    ent::TChoking tChoking = {"Choking", "Lists the impaired breathing capabilities of organisms that are currently not able to absorb oxygen to 100%"};
+    IdSet died = {{}, {"Died", "The organisms that have just died, will only be set for one frame"}};
 };
 
 namespace tsk

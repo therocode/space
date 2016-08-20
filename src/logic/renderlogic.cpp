@@ -50,7 +50,7 @@ void RenderLogic::renderSprites()
                 RenderOrder{
                 position,
                 sprite.textureId,
-                (bloodValues.data.dead ? fea::Color::Green : sprite.color),
+                sprite.color,
                 {},
                 FillType::Solid,
                 //sprite.rotation,
