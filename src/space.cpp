@@ -265,12 +265,12 @@ void Space::loop()
 }
 
 //TODO:
-//simple choking/dying
-//wall collision
 //door on map
 //door opening
+//wall collision
 //task dependencies
 //option for internal/external book keeping in tables
+//pathfinding
 
 //refact:
 //get rid of double rendering layer

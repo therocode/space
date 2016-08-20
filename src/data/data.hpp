@@ -62,6 +62,7 @@ struct WallTask
 struct DoorTask
 {
     glm::ivec2 position;
+    Orientation orientation;
 };
 
 struct AssignedTask
