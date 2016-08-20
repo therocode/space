@@ -70,6 +70,26 @@ void ActorLogic::updateDeath()
 {
     forEach([&] (int32_t id)
     {
+        erase(id, mEnt.tPhysics);
+        erase(id, mEnt.tWalkTarget);
+        erase(id, mEnt.tMoveIntention);
+        erase(id, mEnt.tMoveAbility);
+
+        erase(id, mEnt.builders);
+        erase(id, mEnt.freeWorkers);
+
+        if(auto busyWorker = findOne(id, mEnt.tBusyWorker))
+        {
+            int32_t taskId = busyWorker->data.taskId;
+            erase(taskId, mTsk.tAssignedTask);
+            insert(taskId, mTsk.unassignedTasks);
+            erase(id, mEnt.tBusyWorker);
+        }
+
+        erase(id, mEnt.tBloodValues);
+        erase(id, mEnt.tChoking);
+
+        insert(id, mEnt.deadWorkers);
     }, mEnt.died);
 }
 

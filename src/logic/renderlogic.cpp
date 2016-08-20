@@ -44,8 +44,6 @@ void RenderLogic::renderSprites()
     {
         const glm::vec2& position = get(sprite.actorId, mEnt.tPosition).data;
 
-        auto bloodValues = get(actorId, mEnt.tBloodValues);
-
         orders.emplace_back(
                 RenderOrder{
                 position,

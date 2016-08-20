@@ -159,6 +159,10 @@ void Space::handleMessage(const MouseMoveMessage& message)
     ImGuiIO& io = ImGui::GetIO();
     io.MousePos = (glm::vec2)message.position;
 
+    auto position = message.position / 32;
+    position.x = std::max(position.x, 0);
+    position.y = std::max(position.y, 0);
+
     if(message.drag)
         mInterfaceLogic.worldMouseDrag(message.position, message.position / 32, fea::Mouse::LEFT);
 }
@@ -245,7 +249,7 @@ void Space::loop()
 	mOldWalls = mWalls;
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mEnt.tPosition, mEnt.tPhysics, mEnt.tWalkTarget, mEnt.tMoveAbility, mEnt.tMoveIntention, mEnt.tBloodValues, mEnt.tChoking, mTsk.tRoomTask, mTsk.tWallTask, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask, mEnt.builders, mEnt.freeWorkers, mEnt.tBusyWorker, mGfx.tActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mEnt.tPosition, mEnt.tPhysics, mEnt.tWalkTarget, mEnt.tMoveAbility, mEnt.tMoveIntention, mEnt.tBloodValues, mEnt.tChoking, mTsk.tRoomTask, mTsk.tWallTask, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask, mEnt.builders, mEnt.freeWorkers, mEnt.tBusyWorker, mEnt.deadWorkers, mGfx.tActorSprite);
     DebugGui::showInspector(io.MousePos, mZones, mAtmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);
