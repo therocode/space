@@ -88,6 +88,12 @@ void ActorLogic::updateDeath()
         erase(id, mEnt.tBloodValues);
         erase(id, mEnt.tChoking);
 
+        forEach([&] (int32_t spriteId, ActorSprite& sprite)
+        {
+            if(sprite.actorId == id)
+                sprite.color = fea::Color(60, 70, 40);
+        }, mGfx.tActorSprite);
+
         insert(id, mEnt.deadWorkers);
     }, mEnt.died);
 }

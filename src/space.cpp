@@ -269,7 +269,6 @@ void Space::loop()
 //door opening
 //wall collision
 //task dependencies
-//option for internal/external book keeping in tables
 //pathfinding
 
 //refact:
