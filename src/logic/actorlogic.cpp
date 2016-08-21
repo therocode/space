@@ -2,12 +2,14 @@
 #include "../util/accelerator.hpp"
 #include "../tableutil.hpp"
 #include "../taskutil.hpp"
+#include "../doorutil.hpp"
 #include "../debug.hpp"
 
-ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WallMap& walls):
+ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WorldData& wld, WallMap& walls):
     mEnt(ent),
     mGfx(gfx),
     mTsk(tsk),
+    mWld(wld),
     mWalls(walls)
 {
 }
@@ -140,7 +142,7 @@ void ActorLogic::updateTaskWork()
         if(auto wallTask = findOne(worker.taskId, mTsk.tWallTask))
         {
             glm::vec2 taskPosition = wallTask->data.position * 32;
-            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition).data;
+            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
             {
@@ -162,7 +164,7 @@ void ActorLogic::updateTaskWork()
         else if(auto doorTask = findOne(worker.taskId, mTsk.tDoorTask))
         {
             glm::vec2 taskPosition = doorTask->data.position * 32;
-            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition).data;
+            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
             {
@@ -170,8 +172,8 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    //mWalls.set(wallTask->data.position, wallTask->data.orientation, 1);
-                    //insert(mWld.tDoor
+                    int32_t doorId = insert(Door{doorTask->data.position, doorTask->data.orientation}, mWld.tDoor);
+                    closeDoor(doorId, mWld.tDoor, mWld.openDoors, mWalls);
                 }
             }
             else

@@ -42,7 +42,7 @@ void RenderLogic::renderSprites()
 
      forEach([&] (int32_t actorId, const ActorSprite& sprite)
     {
-        const glm::vec2& position = get(sprite.actorId, mEnt.tPosition).data;
+        const glm::vec2& position = get(sprite.actorId, mEnt.tPosition);
 
         orders.emplace_back(
                 RenderOrder{

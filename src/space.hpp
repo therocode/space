@@ -70,6 +70,7 @@ class Space : public fea::Application,
         WallMap mOldWalls;
         Zones mZones;
         Grid<Gases> mAtmosphere;
+        WorldData mWld;
 
         //gfx
         GfxData mGfx;

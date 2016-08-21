@@ -20,12 +20,12 @@ void AtmosphereLogic::update()
     {
         size_t count = 0;
 
-        if(x > 0 && mZones.zones.at(index - 1) == id && mWalls.at({x, y}, Orientation::Vertical) == 0)
+        if(x > 0 && mZones.zones.at(index - 1) == id && mWalls.atV({x, y}) == 0)
         {
             out[count] = index - 1;
             ++count;
         }
-        if(x < static_cast<int32_t>(nextRowIndexSkip) - 1 && mZones.zones.at(index + 1) == id && mWalls.at({x + 1, y}, Orientation::Vertical) == 0)
+        if(x < static_cast<int32_t>(nextRowIndexSkip) - 1 && mZones.zones.at(index + 1) == id && mWalls.atV({x + 1, y}) == 0)
         {
             out[count] = index + 1;
             ++count;

@@ -10,8 +10,12 @@ class WallMap
         WallMap(glm::ivec2 tileCount);
         int32_t at(const glm::ivec2& position, Orientation orientation) const;
         int32_t& at(const glm::ivec2& position, Orientation orientation);
+        int32_t atH(const glm::ivec2& position) const;
+        int32_t atV(const glm::ivec2& position) const;
         int32_t at(size_t index, Orientation orientation) const;
         int32_t& at(size_t index, Orientation orientation);
+        int32_t atH(size_t index) const;
+        int32_t atV(size_t index) const;
         void set(const glm::ivec2& position, Orientation orientation, int32_t type);
         void fill(int32_t type);
         const glm::ivec2& size() const;

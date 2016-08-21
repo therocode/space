@@ -7,7 +7,7 @@
 class ActorLogic
 {
     public:
-        ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WallMap& walls);
+        ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WorldData& wld, WallMap& walls);
         void removeActor(int32_t id);
         int32_t addActor(Actor actor);
         void update();
@@ -22,5 +22,6 @@ class ActorLogic
         EntityData& mEnt;
         GfxData& mGfx;
         TaskData& mTsk;
+        WorldData& mWld;
         WallMap& mWalls;
 };

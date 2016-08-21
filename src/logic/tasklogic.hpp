@@ -6,13 +6,15 @@
 class TaskLogic
 {
     public:
-        TaskLogic(TaskData& tsk, EntityData& ent, const WallMap& walls);
+        TaskLogic(TaskData& tsk, EntityData& ent, WorldData& wld, const WallMap& walls);
         void update();
     private:
         void updateRoomTasks();
         void updateWallTasks();
+        void updateDoorTasks();
 
         TaskData& mTsk;
         EntityData& mEnt;
+        WorldData& mWld;
         const WallMap& mWalls;
 };
