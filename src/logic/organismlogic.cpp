@@ -37,9 +37,9 @@ void OrganismLogic::update()
 		    gases[Oxygen] -= amount;
         }
 
-        if(bloodValue.oxygen > 0)
+        if(bloodValue.oxygen > 1)
         {
-            --bloodValue.oxygen;
+            bloodValue.oxygen -= 2;
 		    ++gases[CarbonDioxide];
         }
         else

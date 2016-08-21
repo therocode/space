@@ -296,6 +296,7 @@ void Space::loop()
 //pathfinding
 //door opening
 //task dependencies
+//ambient gas transfer
 
 //refact:
 //make wall changes something universal for setting walls
