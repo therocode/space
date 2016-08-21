@@ -8,12 +8,11 @@
 class ZoneLogic
 {
     public:
-        ZoneLogic(const WallMap& walls, Zones& zones);
-        void update(const std::vector<WallChange>& changedWalls);
+        ZoneLogic(Zones& zones);
+        void update(WallMap walls, const std::vector<WallChange>& changedWalls);
     private:
-        void updateZones(const std::vector<WallChange>& changedWalls);
+        void updateZones(WallMap walls, const std::vector<WallChange>& changedWalls);
 
-        const WallMap& mWalls;
         Zones& mZones;
         NumberPool<int32_t> mZoneIds;
 };

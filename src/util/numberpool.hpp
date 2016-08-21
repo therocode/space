@@ -32,7 +32,8 @@ class NumberPool
 
         void release(IntegralType value)
         {
-            TH_ASSERT(value < mNext && mReturned.count(value) == 0, "Returning invalid value " + std::to_string(value));
+            TH_ASSERT(value < mNext, "Returning value " + std::to_string(value) + " which has never been given out");
+            TH_ASSERT(mReturned.count(value) == 0, "Returning value " + std::to_string(value) + " which has already been returned");
             mReturned.emplace(value);
         }
     private:

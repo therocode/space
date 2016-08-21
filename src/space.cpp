@@ -52,7 +52,7 @@ Space::Space() :
     mActorLogic(mEnt, mGfx, mTsk, mWld, mWalls),
     mOrganismLogic(mEnt, mAtmosphere),
     mTaskLogic(mTsk, mEnt, mWld, mWalls),
-    mZoneLogic(mWalls, mZones),
+    mZoneLogic(mZones),
     mAtmosphereLogic(mZones, mWalls, mAtmosphere),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mTsk, mWld, mShowZones, mShowAtmosphere),
     mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTsk, mEnt)
@@ -227,6 +227,11 @@ void Space::startScenario()
     mWalls.set(glm::ivec2(13, 8), Orientation::Horizontal, 1);
     mWalls.set(glm::ivec2(14, 7), Orientation::Horizontal, 1);
     mWalls.set(glm::ivec2(14, 8), Orientation::Horizontal, 1);
+    mAtmosphere.set(glm::ivec2(10, 7), cHealthyAtmosphere);
+    mAtmosphere.set(glm::ivec2(11, 7), cHealthyAtmosphere);
+    mAtmosphere.set(glm::ivec2(12, 7), cHealthyAtmosphere);
+    mAtmosphere.set(glm::ivec2(13, 7), cHealthyAtmosphere);
+    mAtmosphere.set(glm::ivec2(14, 7), cHealthyAtmosphere);
     //endtemp
 
     mAtmosphere.set(offset + glm::ivec2(0, 0), cHealthyAtmosphere);
@@ -235,6 +240,7 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(0, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
+
 
     //mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
@@ -260,11 +266,12 @@ void Space::loop()
 
     for(int32_t i = 0; i < mGameSpeedMultiplier; ++i)
     {
+        temp();
         mActorLogic.update();
         mOrganismLogic.update();
         mTaskLogic.update();
         auto wallChanges = wallDiff(mOldWalls, mWalls);
-        mZoneLogic.update(wallChanges);
+        mZoneLogic.update(mOldWalls, wallChanges);
         mAtmosphereLogic.update();
         mOldWalls = mWalls;
     }
@@ -280,8 +287,6 @@ void Space::loop()
     mInterfaceLogic.update();
 
     mRenderLogic.frameEnd();
-
-    temp();
 
     mWindow.swapBuffers();
 }

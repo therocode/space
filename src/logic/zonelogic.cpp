@@ -3,31 +3,30 @@
 #include <fea/util.hpp>
 #include "../debug.hpp"
 
-ZoneLogic::ZoneLogic(const WallMap& walls, Zones& zones):
-    mWalls(walls),
+ZoneLogic::ZoneLogic(Zones& zones):
     mZones(zones)
 {
     mZoneIds.next(); //occupy 0 as it will never be free
 }
 
-void ZoneLogic::update(const std::vector<WallChange>& changedWalls)
+void ZoneLogic::update(WallMap walls, const std::vector<WallChange>& changedWalls)
 {
-    updateZones(changedWalls);
+    updateZones(std::move(walls), changedWalls);
 }
 
-void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
+void ZoneLogic::updateZones(WallMap walls, const std::vector<WallChange>& changedWalls)
 {
     auto neighbors = [&] (const glm::ivec2& node, const std::unordered_set<glm::ivec2>& ignoreNodes, int32_t ignoreId)
     {
         std::vector<glm::ivec2> result;
 
-        if(node.y > 0 && !mWalls.at(node, Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, -1)) == 0 && at(node + glm::ivec2(0, -1), mZones) != ignoreId)
+        if(node.y > 0 &&                   !walls.at(node, Orientation::Horizontal) &&                    ignoreNodes.count(node + glm::ivec2(0, -1)) == 0 && at(node + glm::ivec2(0, -1), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(0, -1));
-        if(node.x > 0 && !mWalls.at(node, Orientation::Vertical) && ignoreNodes.count(node + glm::ivec2(-1, 0)) == 0 && at(node + glm::ivec2(-1, 0), mZones) != ignoreId)
+        if(node.x > 0 &&                   !walls.at(node, Orientation::Vertical) &&                      ignoreNodes.count(node + glm::ivec2(-1, 0)) == 0 && at(node + glm::ivec2(-1, 0), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(-1, 0));
-        if(node.y < mWalls.size().y - 2 && !mWalls.at(node + glm::ivec2(0, 1), Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, 1)) == 0 && at(node + glm::ivec2(0, 1), mZones) != ignoreId)
+        if(node.y < walls.size().y - 2 && !walls.at(node + glm::ivec2(0, 1), Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, 1)) == 0 && at(node + glm::ivec2(0, 1), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(0, 1));
-        if(node.x < mWalls.size().x - 2 && !mWalls.at(node + glm::ivec2(1, 0), Orientation::Vertical) && ignoreNodes.count(node + glm::ivec2(1, 0)) == 0 && at(node + glm::ivec2(1, 0), mZones) != ignoreId)
+        if(node.x < walls.size().x - 2 && !walls.at(node + glm::ivec2(1, 0), Orientation::Vertical) &&   ignoreNodes.count(node + glm::ivec2(1, 0)) == 0 && at(node + glm::ivec2(1, 0), mZones) != ignoreId)
             result.push_back(node + glm::ivec2(1, 0));
 
         return result;
@@ -40,7 +39,8 @@ void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
 
         while(!toFill.empty())
         {
-            glm::ivec2 current = std::move(*toFill.begin()); toFill.erase(toFill.begin());
+            glm::ivec2 current = std::move(*toFill.begin());
+            toFill.erase(toFill.begin());
 
             auto currentNeighbors = neighbors(current, filled, id);
             toFill.insert(currentNeighbors.begin(), currentNeighbors.end());
@@ -51,7 +51,7 @@ void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
     };
 
     fea::Pathfinder<WallPathAdaptor> pathfinder;
-    WallPathAdaptor pathAdaptor(mWalls);
+    WallPathAdaptor pathAdaptor(walls);
     auto tryPath = [&] (const glm::ivec2& start, const glm::ivec2& end, int32_t limit)
     {
         auto path = pathfinder.findPath(pathAdaptor, start, end, static_cast<uint32_t>(limit));
@@ -65,6 +65,7 @@ void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
 
     for(const auto& changedWall : changedWalls)
     {
+        walls.set(changedWall.position, changedWall.orientation, changedWall.id);
         glm::ivec2 start = changedWall.position;
         glm::ivec2 end = changedWall.position + (changedWall.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
         int32_t startId = at(start, mZones);
@@ -128,11 +129,13 @@ void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
 
                 if(startIsSmaller)
                 {
-                    zoneFill(start, mZoneIds.next());
+                    auto id = mZoneIds.next();
+                    zoneFill(start, id);
                 }
                 else
                 {
-                    zoneFill(end, mZoneIds.next());
+                    auto id = mZoneIds.next();
+                    zoneFill(end, id);
                 }
             }
         }
@@ -140,6 +143,8 @@ void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
         {
             if(changedWall.id != 0) //skip early if the change in wall type can't have any effect
                 continue;
+
+            auto old = mZones.zones;
             
             if(startId < endId)
             {
@@ -154,8 +159,4 @@ void ZoneLogic::updateZones(const std::vector<WallChange>& changedWalls)
 
         }
     }
-    //grab wall change list and operate on it. maybe grab it by diffing walls? 
-    //pathfind opposite tiles of the wall. if they can't meet, new zone is made
-
-    //lower number has priority in taking over zones
 }
