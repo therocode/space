@@ -17,7 +17,7 @@ namespace std
   {
     size_t operator()(const WallPosition& wallPos) const
     {
-        return (hash<glm::ivec2>()(wallPos.position) << 32) | static_cast<size_t>(wallPos.orientation);
+        return (hash<glm::ivec2>()(wallPos.position) << 16) | static_cast<size_t>(wallPos.orientation);
     }
   };
 }
