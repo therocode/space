@@ -19,7 +19,6 @@ class ActorLogic
         void applyMoveIntention();
         void applyPhysics();
 
-        NumberPool<int32_t> mActorSpriteIdPool;
         EntityData& mEnt;
         GfxData& mGfx;
         TaskData& mTsk;

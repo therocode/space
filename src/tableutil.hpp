@@ -2,9 +2,20 @@
 #include <thero/optional.hpp>
 #include "insert.hpp"
 
-template <typename Table>
-void tableEmplaceOptional(int32_t id, th::Optional<typename Table::Type> data, Table& table)
+template <typename DataType>
+th::Optional<int32_t> tableEmplaceOptional(int32_t id, th::Optional<DataType> data, DataTable<DataType, true>& table)
 {
     if(data)
-        insert(id, std::move(*data), table);
+        return insert(id, std::move(*data), table);
+    else
+        return {};
+}
+
+template <typename DataType>
+th::Optional<int32_t> tableEmplaceOptional(th::Optional<DataType> data, DataTable<DataType, false>& table)
+{
+    if(data)
+        return insert(std::move(*data), table);
+    else
+        return {};
 }

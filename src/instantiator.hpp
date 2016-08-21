@@ -10,8 +10,8 @@ class Instantiator
 {
     public:
         Instantiator(const ResourceManager& resources);
-        Actor instantiate(int32_t instanceId, int32_t actorId, const glm::vec2& position = glm::vec2());
-        Actor instantiate(const std::string& name, int32_t actorId, const glm::vec2& position = glm::vec2());
+        Actor instantiate(int32_t instanceId, const glm::vec2& position = glm::vec2());
+        Actor instantiate(const std::string& name, const glm::vec2& position = glm::vec2());
         int32_t id(const std::string& name);
     private:
         std::unordered_map<int32_t, Actor> mTemplates; 

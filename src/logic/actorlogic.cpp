@@ -14,15 +14,15 @@ ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WallMap& wa
 
 int32_t ActorLogic::addActor(Actor actor)
 {
-    int32_t id = actor.id;
-    tableEmplaceOptional(id, std::move(actor.position), mEnt.tPosition);
+    int32_t id = *tableEmplaceOptional(std::move(actor.position), mEnt.tPosition);
     tableEmplaceOptional(id, std::move(actor.physics), mEnt.tPhysics);
     tableEmplaceOptional(id, std::move(actor.moveAbility), mEnt.tMoveAbility);
     tableEmplaceOptional(id, std::move(actor.bloodValues), mEnt.tBloodValues);
 
     for(auto& sprite : actor.actorSprites)
     {   
-        tableEmplaceOptional(mActorSpriteIdPool.next(), std::move(sprite), mGfx.tActorSprite);
+        sprite.actorId = id;
+        insert(std::move(sprite), mGfx.tActorSprite);
     }   
 
     if(actor.worker)
@@ -47,7 +47,6 @@ void ActorLogic::removeActor(int32_t id)
     {
         if(actorSprite.actorId == id)
         {
-            mActorSpriteIdPool.release(actorSpriteId);
             return true;
         }
         return false;
@@ -153,6 +152,26 @@ void ActorLogic::updateTaskWork()
         }
         else if(auto roomTask = findOne(worker.taskId, mTsk.tRoomTask))
         {
+        }
+        else if(auto doorTask = findOne(worker.taskId, mTsk.tDoorTask))
+        {
+            glm::vec2 taskPosition = doorTask->data.position * 32;
+            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition).data;
+
+            if(glm::distance(taskPosition, workerPosition) <= 32.0f)
+            {
+                erase(workerId, mEnt.tWalkTarget);
+
+                if(rand() % 100 == 0)
+                {
+                    //mWalls.set(wallTask->data.position, wallTask->data.orientation, 1);
+                    //insert(mWld.tDoor
+                }
+            }
+            else
+            {
+                set(workerId, {taskPosition}, mEnt.tWalkTarget);
+            }
         }
     }, mEnt.tBusyWorker);
 }

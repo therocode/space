@@ -74,7 +74,6 @@ class Space : public fea::Application,
         //gfx
         GfxData mGfx;
 
-        NumberPool<int32_t> mActorIdPool;
         NumberPool<int32_t> mTaskIdPool;
         //AudioPlayer mAudioPlayer;
         

@@ -80,6 +80,12 @@ struct Choking
     float breathingCapability;
 };
 
+struct Door
+{
+    glm::ivec2 position;
+    Orientation orientation;
+};
+
 //http://members.shaw.ca/tfrisen/how_much_oxygen_for_a_person.htm
 //one ingame hour: 20s. time ratio: 0.005555555555555
 //need to use 2000 oxygene in 2 hours, 1000 in 1h, 1000/20 = 50 oxygene/s
@@ -90,14 +96,14 @@ struct BloodValues
 
 namespace ent
 {
-    using TPosition  = DataTable<glm::vec2>;
-    using TPhysics  = DataTable<Physics>;
-    using TWalkTarget = DataTable<glm::vec2>;
-    using TMoveIntention = DataTable<MoveIntention>;
-    using TMoveAbility = DataTable<MoveAbility>;
-    using TBusyWorker = DataTable<BusyWorker>;
-    using TBloodValues = DataTable<BloodValues>;
-    using TChoking = DataTable<Choking>;
+    using TPosition  = DataTable<glm::vec2, false>;
+    using TPhysics  = DataTable<Physics, true>;
+    using TWalkTarget = DataTable<glm::vec2, true>;
+    using TMoveIntention = DataTable<MoveIntention, true>;
+    using TMoveAbility = DataTable<MoveAbility, true>;
+    using TBusyWorker = DataTable<BusyWorker, true>;
+    using TBloodValues = DataTable<BloodValues, true>;
+    using TChoking = DataTable<Choking, true>;
 }
 
 struct EntityData
@@ -123,25 +129,36 @@ struct EntityData
 
 namespace tsk
 {
-    using TRoomTask = DataTable<RoomTask>;
-    using TWallTask = DataTable<WallTask>;
-    using TDoorTask = DataTable<DoorTask>;
-    using TAssignedTask = DataTable<AssignedTask>;
+    using TRoomTask = DataTable<RoomTask, true>;
+    using TWallTask = DataTable<WallTask, true>;
+    using TDoorTask = DataTable<DoorTask, true>;
+    using TAssignedTask = DataTable<AssignedTask, true>;
 }
 
 struct TaskData 
 {
     //tasks
-    tsk::TRoomTask tRoomTask = {"Room Task", "Represent all rooms that need to be built"};
-    tsk::TWallTask tWallTask = {"Wall Task", "Represent all walls that need to be built"};
-    tsk::TDoorTask tDoorTask = {"Door Task", "Represent all doors that need to be built"};
+    tsk::TRoomTask tRoomTask = {"Room Task", "Represents all rooms that need to be built"};
+    tsk::TWallTask tWallTask = {"Wall Task", "Represents all walls that need to be built"};
+    tsk::TDoorTask tDoorTask = {"Door Task", "Represents all doors that need to be built"};
     IdSet unassignedTasks = {{}, {"Unassigned tasks", "All tasks which no worker is currently on"}};
     tsk::TAssignedTask tAssignedTask = {"Assigned tasks", "All tasks which are assigned to a worker"};
 };
 
+namespace wld
+{
+    using TDoor = DataTable<Door, false>;
+};
+
+struct WorldData
+{
+    wld::TDoor tDoor = {"Door", "Represents all doors"};
+    IdSet openDoors = {{}, {"Open doors", "All doors that are open"}};
+};
+
 namespace gfx
 {
-    using TActorSprite = DataTable<ActorSprite>;
+    using TActorSprite = DataTable<ActorSprite, false>;
 }
 
 struct GfxData

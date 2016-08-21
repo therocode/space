@@ -113,7 +113,7 @@ void Space::handleMessage(const MouseClickMessage& message)
 
         if(message.button == fea::Mouse::MIDDLE)
         {   
-            auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), message.position);
+            auto actor = mInstantiator.instantiate("engineer", message.position);
             int32_t added = mActorLogic.addActor(std::move(actor));
         }   
         else if(message.button == fea::Mouse::RIGHT)
@@ -185,12 +185,11 @@ void Space::startScenario()
 	for(int32_t id : toRemove)
     {
 		mActorLogic.removeActor(id);
-        mActorIdPool.release(id);
     }
 	
 	for(auto position : std::vector<glm::vec2>{{240.0f, 240.0f}, {260.0f, 240.0f}, {240.0f, 260.0f}, {260.0f, 260.0f} })
     {
-        auto actor = mInstantiator.instantiate("engineer", mActorIdPool.next(), position);
+        auto actor = mInstantiator.instantiate("engineer", position);
         mActorLogic.addActor(std::move(actor));
     }
 

@@ -94,13 +94,9 @@ Instantiator::Instantiator(const ResourceManager& resources)
     }   
 }
 
-Actor Instantiator::instantiate(int32_t instanceId, int32_t actorId, const glm::vec2& position)
+Actor Instantiator::instantiate(int32_t instanceId, const glm::vec2& position)
 {
     auto newActor = mTemplates.at(instanceId);
-    newActor.id = actorId;
-
-    for(auto& sprite : newActor.actorSprites)
-        sprite.actorId = actorId;
 
     if(newActor.position)
         newActor.position = position;
@@ -108,9 +104,9 @@ Actor Instantiator::instantiate(int32_t instanceId, int32_t actorId, const glm::
     return newActor;
 }
 
-Actor Instantiator::instantiate(const std::string& name, int32_t actorId, const glm::vec2& position)
+Actor Instantiator::instantiate(const std::string& name, const glm::vec2& position)
 {
-    return instantiate(mTemplateNames.at(name), actorId, position);
+    return instantiate(mTemplateNames.at(name), position);
 }
 
 int32_t Instantiator::id(const std::string& name)

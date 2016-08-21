@@ -5,8 +5,8 @@
 
 void erase(int32_t id, IdSet& idSet);
 
-template <typename DataTable>
-void erase(int32_t id, DataTable& table)
+template <typename DataType>
+void erase(int32_t id, DataTable<DataType, true>& table)
 {
     ++table.meta.metrics[AccessType::Deletion];
     auto toErase = std::find(table.ids.begin(), table.ids.end(), id);
@@ -15,6 +15,22 @@ void erase(int32_t id, DataTable& table)
     {
         table.data.erase(table.data.begin() + std::distance(table.ids.begin(), toErase));
         table.ids.erase(toErase);
+    }
+
+    table.meta.sorted = false;
+}
+
+template <typename DataType>
+void erase(int32_t id, DataTable<DataType, false>& table)
+{
+    ++table.meta.metrics[AccessType::Deletion];
+    auto toErase = std::find(table.ids.begin(), table.ids.end(), id);
+
+    if(toErase != table.ids.end())
+    {
+        table.data.erase(table.data.begin() + std::distance(table.ids.begin(), toErase));
+        table.ids.erase(toErase);
+        table.meta.idPool.release(id);
     }
 
     table.meta.sorted = false;
@@ -43,8 +59,8 @@ void eraseIf(Functor f, IdSet& idSet)
         idSet.meta.sorted = false;
 }
 
-template <typename Functor, typename DataTable>
-void eraseIf(Functor f, DataTable& table)
+template <typename Functor, typename DataType>
+void eraseIf(Functor f, DataTable<DataType, true>& table)
 {
     ++table.meta.metrics[AccessType::Iteration];
     auto idIter = table.ids.begin();
@@ -56,6 +72,34 @@ void eraseIf(Functor f, DataTable& table)
         if(f(*idIter, *dataIter))
         {
             ++table.meta.metrics[AccessType::Deletion];
+            idIter = table.ids.erase(idIter);
+            dataIter = table.data.erase(dataIter);
+        }
+        else
+        {
+            ++idIter;
+            ++dataIter;
+        }
+    }
+
+    if(beforeSize != table.ids.size())
+        table.meta.sorted = false;
+}
+
+template <typename Functor, typename DataType>
+void eraseIf(Functor f, DataTable<DataType, false>& table)
+{
+    ++table.meta.metrics[AccessType::Iteration];
+    auto idIter = table.ids.begin();
+    auto dataIter = table.data.begin();
+
+    size_t beforeSize = table.ids.size();
+    for(; idIter != table.ids.end();)
+    {
+        if(f(*idIter, *dataIter))
+        {
+            ++table.meta.metrics[AccessType::Deletion];
+            table.meta.idPool.release(*idIter);
             idIter = table.ids.erase(idIter);
             dataIter = table.data.erase(dataIter);
         }

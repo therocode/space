@@ -6,8 +6,8 @@
 
 bool has(int32_t id, const IdSet& idSet);
 
-template <typename DataType>
-bool has(int32_t id, const DataTable<DataType>& table)
+template <typename Table>
+bool has(int32_t id, const Table& table)
 {
     ++table.meta.metrics[AccessType::RandomAccess];
     if(!table.meta.sorted)
@@ -37,8 +37,8 @@ bool has(Functor f, const IdSet& idSet)
     return std::find_if(idSet.ids.begin(), idSet.ids.end(), f) != idSet.ids.end();
 }
 
-template <typename Functor, typename DataType>
-bool has(Functor f, const DataTable<DataType>& table)
+template <typename Functor, typename Table>
+bool has(Functor f, const Table& table)
 {
     ++table.meta.metrics[AccessType::RandomAccess];
     if(!table.sorted)

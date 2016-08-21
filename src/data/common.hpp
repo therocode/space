@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <vector>
 #include "metrics.hpp"
+#include "../util/numberpool.hpp"
 
 template<typename DataType>
 struct TableEntry
@@ -18,6 +19,7 @@ struct TableMeta
 {
     std::string name;
     th::Optional<std::string> description;
+    NumberPool<int32_t> idPool;
     //sort
     mutable bool sorted = true;
     mutable std::vector<size_t> permutationCache;
@@ -27,12 +29,13 @@ struct TableMeta
     mutable Metrics metrics = {};
 };
 
-template<typename DataType>
+template<typename DataType, bool externalId>
 struct DataTable
 {
     DataTable(std::string name) { meta.name = name;}
     DataTable(std::string name, std::string description) { meta.name = std::move(name); meta.description = std::move(description); }
     using Type = DataType;
+    using ExternalId = std::integral_constant<bool, externalId>;
     std::vector<int32_t> ids;
     std::vector<DataType> data;
     TableMeta<DataType> meta;
