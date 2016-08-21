@@ -36,6 +36,7 @@ class InterfaceLogic
         void worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseRelease(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
+        void keyPressed(int32_t code);
     private:
         std::string stateToString(State state) const;
         void reset();

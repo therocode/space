@@ -93,6 +93,7 @@ void Space::handleMessage(const KeyPressedMessage& message)
         mGameSpeedMultiplier = 4;
     if(message.key == fea::Keyboard::NUM4)
         mGameSpeedMultiplier = 8;
+    mInterfaceLogic.keyPressed(message.key);
 }
 
 void Space::handleMessage(const ResizeMessage& message)

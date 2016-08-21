@@ -105,12 +105,12 @@ void InterfaceLogic::update()
                         {x, mDragStart->y},
                         Orientation::Horizontal,
                     }, mTsk.tWallTask, mTsk.unassignedTasks);
-                if(hasDoor({{x, mDragStart->y + 1}, Orientation::Horizontal}))
-                    addTask(mTaskIdPool.next(), WallTask
+                if(hasDoor({{x, mDragEnd->y + 1}, Orientation::Horizontal}))
+                    addTask(mTaskIdPool.next(), DoorTask
                     {
                             {x, mDragEnd->y + 1},
                             Orientation::Horizontal,
-                    }, mTsk.tWallTask, mTsk.unassignedTasks);
+                    }, mTsk.tDoorTask, mTsk.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
@@ -124,7 +124,7 @@ void InterfaceLogic::update()
                 if(hasDoor({{mDragStart->x, y}, Orientation::Vertical}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
-                            {mDragEnd->x, y},
+                            {mDragStart->x, y},
                             Orientation::Vertical,
                     }, mTsk.tDoorTask, mTsk.unassignedTasks);
                 else
@@ -133,7 +133,7 @@ void InterfaceLogic::update()
                             {mDragStart->x, y},
                             Orientation::Vertical,
                     }, mTsk.tWallTask, mTsk.unassignedTasks);
-                if(hasDoor({{mDragStart->x + 1, y}, Orientation::Vertical}))
+                if(hasDoor({{mDragEnd->x + 1, y}, Orientation::Vertical}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
                             {mDragEnd->x + 1, y},
@@ -164,7 +164,7 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
     }
     else
     {
-        if(mState == DRAGGING_ROOM || (mState == PLANNING_ROOM && (!mDragStart || tile.x < mDragStart->x || tile.y < mDragStart->y || tile.x > mDragEnd->x || tile.y > mDragEnd->y)))
+        if(mState == DRAGGING_ROOM || (mState == PLANNING_ROOM && (!mDragStart || tile.x + 1 < mDragStart->x || tile.y + 1 < mDragStart->y || tile.x - 1 > mDragEnd->x || tile.y - 1 > mDragEnd->y)))
         {
             mDragStart = mDragEnd = tile;
             mState = DRAGGING_ROOM;
@@ -182,19 +182,19 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
                     mRoomPlan->doors.emplace(WallPosition{doorTile, orientation});
             };
 
-            if(tile.x >= mDragStart->x && tile.y >= mDragStart->y && tile.x <= mDragEnd->x && tile.y <= mDragEnd->y)
+            if(tile.x + 1 >= mDragStart->x && tile.y + 1 >= mDragStart->y && tile.x - 1 <= mDragEnd->x && tile.y - 1 <= mDragEnd->y)
             {
                 glm::ivec2 start = *mDragStart * 32;
                 glm::ivec2 end = *mDragEnd * 32;
 
                 if(std::abs(position.x - start.x) < 10)
-                    toggleDoor(position, Orientation::Vertical);
+                    toggleDoor(position + glm::ivec2(16, 0), Orientation::Vertical);
                 else if(std::abs(position.x - end.x - 32) < 10)
-                    toggleDoor(position + glm::ivec2(32, 0), Orientation::Vertical);
+                    toggleDoor(position + glm::ivec2(16, 0), Orientation::Vertical);
                 else if(std::abs(position.y - start.y) < 10)
-                    toggleDoor(position, Orientation::Horizontal);
+                    toggleDoor(position + glm::ivec2(0, 16), Orientation::Horizontal);
                 else if(std::abs(position.y - end.y - 32) < 10)
-                    toggleDoor(position + glm::ivec2(0, 32), Orientation::Horizontal);
+                    toggleDoor(position + glm::ivec2(0, 16), Orientation::Horizontal);
             }
         }
         //TEMP
@@ -232,12 +232,21 @@ void InterfaceLogic::worldMouseRelease(const glm::ivec2& position, const glm::iv
     if(mState == DRAGGING_ROOM)
     {
         mState = PLANNING_ROOM;
-        mRoomPlan = RoomPlanInfo{*mDragStart, *mDragEnd, *mDragStart * 32, {}};
+        mRoomPlan = RoomPlanInfo{*mDragStart, *mDragEnd, *mDragEnd * 32 + glm::ivec2(32, 32), {}};
 
         if(mDragStart->x > mDragEnd->x)
             std::swap(mDragStart->x, mDragEnd->x);
         if(mDragStart->y > mDragEnd->y)
             std::swap(mDragStart->y, mDragEnd->y);
+    }
+}
+
+void InterfaceLogic::keyPressed(int32_t code)
+{
+    if(mState == IDLE)
+    {
+        if(code == fea::Keyboard::B)
+            mState = DRAGGING_ROOM;
     }
 }
 

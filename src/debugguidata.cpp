@@ -151,7 +151,7 @@ namespace DebugGui
 
     std::vector<std::string> debugHeaders(const tsk::TWallTask& table)
     {
-        return {"Position"};
+        return {"Position", "Orientation"};
     }
 
     void debugText(const WallTask& data, std::vector<std::vector<std::string>>& outText)
@@ -161,12 +161,15 @@ namespace DebugGui
             {
                 vec2ToStringList(data.position),
             },
+            {
+                to_string(data.orientation),
+            },
         };
     }
 
     std::vector<std::string> debugHeaders(const tsk::TDoorTask& table)
     {
-        return {"Position"};
+        return {"Position", "Orientation"};
     }
 
     void debugText(const DoorTask& data, std::vector<std::vector<std::string>>& outText)
@@ -175,6 +178,9 @@ namespace DebugGui
         {
             {
                 vec2ToStringList(data.position),
+            },
+            {
+                to_string(data.orientation),
             },
         };
     }

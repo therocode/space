@@ -116,5 +116,27 @@ void RenderLogic::renderTasks()
                 );  
     }, mTsk.tWallTask); 
 
+    forEach([&] (int32_t taskId, const DoorTask& doorTask)
+    {   
+        Orientation orientation = doorTask.orientation;
+        const glm::vec2& position = static_cast<glm::vec2>(doorTask.position * 32) - 
+            (orientation == Orientation::Horizontal ? glm::vec2{0.0f, 4.0f} : glm::vec2{4.0f, 0.0f});
+
+        glm::vec2 size = orientation == Orientation::Horizontal ? glm::vec2{32.0f, 8.0f} : glm::vec2{8.0f, 32.0f};
+
+        orders.emplace_back(
+                RenderOrder{
+                position,
+                {},
+                fea::Color(170, 200, 0, 200),
+                size,
+                FillType::Hollow,
+                //sprite.rotation,
+                //sprite.animationProgress,
+                //sprite.flip,
+                }   
+                );  
+    }, mTsk.tDoorTask); 
+
     mRenderer.render(orders);
 }
