@@ -298,6 +298,7 @@ void Space::loop()
 //task dependencies
 
 //refact:
+//make wall changes something universal for setting walls
 //get rid of double rendering layer
 //group up system variables
 
