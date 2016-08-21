@@ -2,7 +2,7 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GfxData& gfx, const EntityData& ent, const TaskData& tsk, bool& showZones, bool& showAtmosphere):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GfxData& gfx, const EntityData& ent, const TaskData& tsk, const WorldData& wld, bool& showZones, bool& showAtmosphere):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
@@ -12,6 +12,7 @@ RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRendere
     mGfx(gfx),
     mEnt(ent),
     mTsk(tsk),
+    mWld(wld),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
 {
@@ -25,7 +26,7 @@ void RenderLogic::frameStart()
 void RenderLogic::update()
 {
     mRenderer.startFrame();
-    mRenderer.renderWorld(mWalls, mZones.zones, mShowZones, mAtmosphere, mShowAtmosphere);
+    mRenderer.renderWorld(mWalls, mWld, mZones.zones, mShowZones, mAtmosphere, mShowAtmosphere);
     renderTasks();
     renderSprites();
 }

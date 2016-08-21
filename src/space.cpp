@@ -6,6 +6,7 @@
 #include "debug.hpp"
 #include "roomutil.hpp"
 #include "wallutil.hpp"
+#include "doorutil.hpp"
 #include <imgui.h>
 
 const glm::ivec2 cMapSize(256, 256);
@@ -53,7 +54,7 @@ Space::Space() :
     mTaskLogic(mTsk, mEnt, mWld, mWalls),
     mZoneLogic(mWalls, mZones),
     mAtmosphereLogic(mZones, mWalls, mAtmosphere),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mTsk, mShowZones, mShowAtmosphere),
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mTsk, mWld, mShowZones, mShowAtmosphere),
     mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTsk, mEnt)
 {
     mWindow.setVSyncEnabled(true);
@@ -194,6 +195,7 @@ void Space::startScenario()
     }
 
     mWalls.fill(0);
+    mAtmosphere.fill(cDefaultAtmosphere);
     glm::ivec2 offset(7, 7);
     mWalls.set(offset + glm::ivec2(0, 0), Orientation::Horizontal, 1);
     mWalls.set(offset + glm::ivec2(1, 0), Orientation::Horizontal, 1);
@@ -207,6 +209,26 @@ void Space::startScenario()
     mWalls.set(offset + glm::ivec2(3, 1), Orientation::Vertical, 1);
     mWalls.set(offset + glm::ivec2(2, 0), Orientation::Vertical, 1);
 
+    createDoor(Door{{9, 8}, Orientation::Horizontal}, mWld.tDoor, mWld.openDoors, mWalls);
+    createDoor(Door{{10, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
+    createDoor(Door{{11, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
+    createDoor(Door{{12, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
+    createDoor(Door{{13, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
+    createDoor(Door{{14, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
+
+    //temp
+    mWalls.set(glm::ivec2(10, 7), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(10, 8), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(11, 7), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(11, 8), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(12, 7), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(12, 8), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(13, 7), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(13, 8), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(14, 7), Orientation::Horizontal, 1);
+    mWalls.set(glm::ivec2(14, 8), Orientation::Horizontal, 1);
+    //endtemp
+
     mAtmosphere.set(offset + glm::ivec2(0, 0), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(1, 0), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(2, 0), cHealthyAtmosphere);
@@ -214,7 +236,7 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
-    mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
+    //mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 
     clear(mTsk.tRoomTask);
@@ -265,11 +287,10 @@ void Space::loop()
 }
 
 //TODO:
-//door on map
-//door opening
 //wall collision
-//task dependencies
 //pathfinding
+//door opening
+//task dependencies
 
 //refact:
 //get rid of double rendering layer
@@ -277,4 +298,11 @@ void Space::loop()
 
 void Space::temp()
 {
+    forEach([&] (int32_t id, const Door& door)
+    {
+        if(!(rand() % 60))
+        {
+            toggleDoor(id, mWld.tDoor, mWld.openDoors, mWalls);
+        }
+    }, mWld.tDoor);
 }

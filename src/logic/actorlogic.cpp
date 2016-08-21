@@ -172,8 +172,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    int32_t doorId = insert(Door{doorTask->data.position, doorTask->data.orientation}, mWld.tDoor);
-                    closeDoor(doorId, mWld.tDoor, mWld.openDoors, mWalls);
+                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mWld.tDoor, mWld.openDoors, mWalls);
                 }
             }
             else
