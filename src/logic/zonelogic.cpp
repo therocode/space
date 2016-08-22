@@ -9,12 +9,12 @@ ZoneLogic::ZoneLogic(Zones& zones):
     mZoneIds.next(); //occupy 0 as it will never be free
 }
 
-void ZoneLogic::update(WallMap walls, const std::vector<WallChange>& changedWalls)
+void ZoneLogic::update(WallMap walls, const WallChanges& changedWalls)
 {
     updateZones(std::move(walls), changedWalls);
 }
 
-void ZoneLogic::updateZones(WallMap walls, const std::vector<WallChange>& changedWalls)
+void ZoneLogic::updateZones(WallMap walls, const WallChanges& changedWalls)
 {
     auto neighbors = [&] (const glm::ivec2& node, const std::unordered_set<glm::ivec2>& ignoreNodes, int32_t ignoreId)
     {
@@ -34,6 +34,7 @@ void ZoneLogic::updateZones(WallMap walls, const std::vector<WallChange>& change
 
     auto zoneFill = [&] (const glm::ivec2& start, int32_t id)
     {
+        int32_t oldId = mZones.zones.at(start);
         std::unordered_set<glm::ivec2> toFill{start};
         std::unordered_set<glm::ivec2> filled;
 
@@ -50,6 +51,14 @@ void ZoneLogic::updateZones(WallMap walls, const std::vector<WallChange>& change
         }
     };
 
+    //1. pass around only const wall, and set() works on walldiff
+    //2. pass wall and walldiff to zone logic without changes
+    //3. apply walldiff to walls after zone logic
+    //---zones functioning---
+    //4. make structure for valid tile neighbours + walldiff
+    //5. pass tile neighbours to atmosphere, and loop thorugh that instead
+    //---fast atmosphere---
+
     fea::Pathfinder<WallPathAdaptor> pathfinder;
     WallPathAdaptor pathAdaptor(walls);
     auto tryPath = [&] (const glm::ivec2& start, const glm::ivec2& end, int32_t limit)
@@ -65,15 +74,15 @@ void ZoneLogic::updateZones(WallMap walls, const std::vector<WallChange>& change
 
     for(const auto& changedWall : changedWalls)
     {
-        walls.set(changedWall.position, changedWall.orientation, changedWall.id);
-        glm::ivec2 start = changedWall.position;
-        glm::ivec2 end = changedWall.position + (changedWall.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
+        glm::ivec2 start = changedWall.first.position;
+        glm::ivec2 end = changedWall.first.position + (changedWall.first.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
         int32_t startId = at(start, mZones);
         int32_t endId = at(end, mZones);
 
+        std::cout << changedWall.first.position << " " << to_string(changedWall.first.orientation) << "\n";
         if(startId == endId)
         {
-            if(changedWall.id == 0) //skip early if the change in wall type can't have any effect
+            if(changedWall.second.newValue == 0) //skip early if the change in wall type can't have any effect
                 continue;
 
             auto path = tryPath(start, end, 5);
@@ -141,7 +150,7 @@ void ZoneLogic::updateZones(WallMap walls, const std::vector<WallChange>& change
         }
         else
         {
-            if(changedWall.id != 0) //skip early if the change in wall type can't have any effect
+            if(changedWall.second.newValue != 0) //skip early if the change in wall type can't have any effect
                 continue;
 
             auto old = mZones.zones;

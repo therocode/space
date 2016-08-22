@@ -71,10 +71,24 @@ int32_t WallMap::atV(size_t index) const
 void WallMap::set(const glm::ivec2& position, Orientation orientation, int32_t type)
 {
     TH_ASSERT(position.x >= 0 && position.y >= 0 && position.x < mSize.x && position.y < mSize.y, "Invalid coordinate " << position << " given to map of size " << mSize);
+    int32_t* valuePtr;
     if(orientation == Orientation::Horizontal)
-        mHorizontalWalls[toIndex(position)] = type;
+        valuePtr = &mHorizontalWalls[toIndex(position)];
     else
-        mVerticalWalls[toIndex(position)] = type;
+        valuePtr = &mVerticalWalls[toIndex(position)];
+
+    int32_t oldValue = *valuePtr;
+
+    if(oldValue != type)
+    {
+        *valuePtr = type;
+
+        auto iter = mChanges.find({position, orientation});
+        if(iter != mChanges.end())
+            iter->second.newValue = type;
+        else
+            mChanges[{position, orientation}] = {oldValue, type};
+    }
 }
 
 void WallMap::fill(int32_t type)
@@ -101,4 +115,11 @@ const std::vector<int32_t>& WallMap::verticalWalls() const
 size_t WallMap::toIndex(const glm::ivec2& position) const
 {
     return static_cast<size_t>(position.x + position.y * mSize.x);
+}
+
+WallChanges WallMap::fetchchanges()
+{
+    WallChanges changes;
+    std::swap(changes, mChanges);
+    return changes;
 }

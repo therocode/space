@@ -3,6 +3,15 @@
 #include <vector>
 #include "glm.hpp"
 #include "orientation.hpp"
+#include "wallposition.hpp"
+
+struct WallChange
+{
+    int32_t oldValue;
+    int32_t newValue;
+};
+
+using WallChanges = std::unordered_map<WallPosition, WallChange>;
 
 class WallMap
 {
@@ -22,8 +31,10 @@ class WallMap
         const std::vector<int32_t>& horizontalWalls() const;
         const std::vector<int32_t>& verticalWalls() const;
         size_t toIndex(const glm::ivec2& position) const;
+        WallChanges fetchchanges();
     private:
         glm::ivec2 mSize;
         std::vector<int32_t> mHorizontalWalls;
         std::vector<int32_t> mVerticalWalls;
+        WallChanges mChanges;
 };

@@ -5,7 +5,6 @@
 #include "debuggui.hpp"
 #include "debug.hpp"
 #include "roomutil.hpp"
-#include "wallutil.hpp"
 #include "doorutil.hpp"
 #include <imgui.h>
 
@@ -46,7 +45,6 @@ Space::Space() :
     mShowZones(false),
     mShowAtmosphere(false),
     mWalls(cMapSize),
-	mOldWalls(cMapSize),
     mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
     mActorLogic(mEnt, mGfx, mTsk, mWld, mWalls),
@@ -270,12 +268,10 @@ void Space::loop()
         mActorLogic.update();
         mOrganismLogic.update();
         mTaskLogic.update();
-        auto wallChanges = wallDiff(mOldWalls, mWalls);
-        mZoneLogic.update(mOldWalls, wallChanges);
+        auto wallChanges = mWalls.fetchchanges();
+        mZoneLogic.update(mWalls, wallChanges);
         mAtmosphereLogic.update();
-        mOldWalls = mWalls;
     }
-	mOldWalls = mWalls;
 
     ImGui::ShowTestWindow();
     DebugGui::showDataTables(mClickedEntity, mEnt.tPosition, mEnt.tPhysics, mEnt.tWalkTarget, mEnt.tMoveAbility, mEnt.tMoveIntention, mEnt.tBloodValues, mEnt.tChoking, mTsk.tRoomTask, mTsk.tWallTask, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask, mEnt.builders, mEnt.freeWorkers, mEnt.tBusyWorker, mEnt.deadWorkers, mGfx.tActorSprite);
