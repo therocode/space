@@ -31,10 +31,10 @@ class WallMap
         const std::vector<int32_t>& horizontalWalls() const;
         const std::vector<int32_t>& verticalWalls() const;
         size_t toIndex(const glm::ivec2& position) const;
-        WallChanges fetchchanges();
     private:
         glm::ivec2 mSize;
         std::vector<int32_t> mHorizontalWalls;
         std::vector<int32_t> mVerticalWalls;
-        WallChanges mChanges;
 };
+
+void set(const WallPosition& position, int32_t type, const WallMap& walls, WallChanges& changes);

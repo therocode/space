@@ -4,13 +4,14 @@
 #include "../space.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, WallMap& walls, TaskData& tsk, EntityData& ent):
+InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, const WallMap& walls, WallChanges& wallChanges, TaskData& tsk, EntityData& ent):
     mState(IDLE),
 	mSpace(space),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
     mTaskIdPool(taskIdPool),
     mWalls(walls),
+    mWallChanges(wallChanges),
     mTsk(tsk),
     mEnt(ent),
     mShowZones(showZones),
@@ -202,7 +203,7 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
         {
             glm::ivec2 offset = button == fea::Mouse::LEFT ? glm::ivec2(16, 0) : glm::ivec2(0, 16);
             int32_t idToSet = mWalls.at((position + offset) / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal) ? 0 : 1;
-            mWalls.set((position + offset) / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal, idToSet);
+            set({(position + offset) / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal}, idToSet, mWalls, mWallChanges);
         }
         //ENDTEMP
     }

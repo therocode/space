@@ -9,12 +9,12 @@ ZoneLogic::ZoneLogic(Zones& zones):
     mZoneIds.next(); //occupy 0 as it will never be free
 }
 
-void ZoneLogic::update(WallMap walls, const WallChanges& changedWalls)
+void ZoneLogic::update(WallMap& walls, const WallChanges& changedWalls)
 {
-    updateZones(std::move(walls), changedWalls);
+    updateZones(walls, changedWalls);
 }
 
-void ZoneLogic::updateZones(WallMap walls, const WallChanges& changedWalls)
+void ZoneLogic::updateZones(WallMap& walls, const WallChanges& changedWalls)
 {
     auto neighbors = [&] (const glm::ivec2& node, const std::unordered_set<glm::ivec2>& ignoreNodes, int32_t ignoreId)
     {
@@ -51,10 +51,6 @@ void ZoneLogic::updateZones(WallMap walls, const WallChanges& changedWalls)
         }
     };
 
-    //1. pass around only const wall, and set() works on walldiff
-    //2. pass wall and walldiff to zone logic without changes
-    //3. apply walldiff to walls after zone logic
-    //---zones functioning---
     //4. make structure for valid tile neighbours + walldiff
     //5. pass tile neighbours to atmosphere, and loop thorugh that instead
     //---fast atmosphere---
@@ -74,12 +70,12 @@ void ZoneLogic::updateZones(WallMap walls, const WallChanges& changedWalls)
 
     for(const auto& changedWall : changedWalls)
     {
+        walls.set(changedWall.first.position, changedWall.first.orientation, changedWall.second.newValue);
         glm::ivec2 start = changedWall.first.position;
         glm::ivec2 end = changedWall.first.position + (changedWall.first.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
         int32_t startId = at(start, mZones);
         int32_t endId = at(end, mZones);
 
-        std::cout << changedWall.first.position << " " << to_string(changedWall.first.orientation) << "\n";
         if(startId == endId)
         {
             if(changedWall.second.newValue == 0) //skip early if the change in wall type can't have any effect

@@ -5,12 +5,13 @@
 #include "../doorutil.hpp"
 #include "../debug.hpp"
 
-ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WorldData& wld, WallMap& walls):
+ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WorldData& wld, const WallMap& walls, WallChanges& wallChanges):
     mEnt(ent),
     mGfx(gfx),
     mTsk(tsk),
     mWld(wld),
-    mWalls(walls)
+    mWalls(walls),
+    mWallChanges(wallChanges)
 {
 }
 
@@ -150,7 +151,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    mWalls.set(wallTask->data.position, wallTask->data.orientation, 1);
+                    set({wallTask->data.position, wallTask->data.orientation}, 1, mWalls, mWallChanges);
                 }
             }
             else
@@ -172,7 +173,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mWld.tDoor, mWld.openDoors, mWalls);
+                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
                 }
             }
             else

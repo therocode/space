@@ -7,42 +7,12 @@ AtmosphereLogic::AtmosphereLogic(const Zones& zones, const WallMap& walls, Grid<
     mAtmosphere(atmosphere),
     mAtmosphereDifference(mAtmosphere.size(), Gases{})
 {
+    (void)mWalls;
 }
 
-void AtmosphereLogic::update()
+void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
 {
     mAtmosphereDifference.fill(Gases{});
-
-    std::array<size_t, 4> neighbors;
-
-    size_t nextRowIndexSkip = static_cast<size_t>(mZones.zones.size().x);
-    auto fetchNeighbors = [&] (int32_t id, size_t index, int32_t x, int32_t y, std::array<size_t, 4>& out)
-    {
-        size_t count = 0;
-
-        if(x > 0 && mZones.zones.at(index - 1) == id && mWalls.atV({x, y}) == 0)
-        {
-            out[count] = index - 1;
-            ++count;
-        }
-        if(x < static_cast<int32_t>(nextRowIndexSkip) - 1 && mZones.zones.at(index + 1) == id && mWalls.atV({x + 1, y}) == 0)
-        {
-            out[count] = index + 1;
-            ++count;
-        }
-        if(y > 0 && mZones.zones.at(index - nextRowIndexSkip) == id && mWalls.at({x, y}, Orientation::Horizontal) == 0)
-        {
-            out[count] = index - nextRowIndexSkip;
-            ++count;
-        }
-        if(y < mZones.zones.size().y - 1 && mZones.zones.at(index + nextRowIndexSkip) == id && mWalls.at({x, y + 1}, Orientation::Horizontal) == 0)
-        {
-            out[count] = index + nextRowIndexSkip;
-            ++count;
-        }
-
-        return count;
-    };
 
     std::array<int32_t, 4> neighborDifferences;
 
@@ -51,16 +21,16 @@ void AtmosphereLogic::update()
     {
         for(int32_t x = 0; x < mZones.zones.size().x; ++x)
         {
+            const GridNeighbors<Gases>& neighbors = allNeighbors.at({x, y});
             Gases gasDifference;
             int32_t zoneId = mZones.zones.at(currentTileIndex);
             const Gases& currentGases = mAtmosphere.at(currentTileIndex);
-            size_t neighborAmount = fetchNeighbors(zoneId, currentTileIndex, x, y, neighbors);
+            size_t neighborAmount = neighbors.neighborCount;
             std::fill(neighborDifferences.begin(), neighborDifferences.end(), 0);
 
             for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
             {
-                size_t neighbor = neighbors[neighborIndex];
-                const Gases& neighborGases = mAtmosphere.at(neighbor);
+                const Gases& neighborGases = *neighbors.neighbors[neighborIndex].second;
 
                 for(size_t gasIndex = 0; gasIndex < currentGases.size(); ++gasIndex)
                 {
@@ -80,9 +50,8 @@ void AtmosphereLogic::update()
                 auto& sourceGasesDifference = mAtmosphereDifference.at(currentTileIndex);
                 for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
                 {
-                    size_t neighbor = neighbors[neighborIndex];
-                    auto& targetGasesDifference = mAtmosphereDifference.at(neighbor);
-                    const Gases& neighborGases = mAtmosphere.at(neighbor);
+                    auto& targetGasesDifference = mAtmosphereDifference.at(neighbors.neighbors[neighborIndex].first);
+                    const Gases& neighborGases = *neighbors.neighbors[neighborIndex].second;
 
                     if(neighborDifferences[neighborIndex])
                     {

@@ -6,6 +6,7 @@
 #include "debug.hpp"
 #include "roomutil.hpp"
 #include "doorutil.hpp"
+#include "gridneighbors.hpp"
 #include <imgui.h>
 
 const glm::ivec2 cMapSize(256, 256);
@@ -47,13 +48,13 @@ Space::Space() :
     mWalls(cMapSize),
     mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
-    mActorLogic(mEnt, mGfx, mTsk, mWld, mWalls),
+    mActorLogic(mEnt, mGfx, mTsk, mWld, mWalls, mWallChanges),
     mOrganismLogic(mEnt, mAtmosphere),
     mTaskLogic(mTsk, mEnt, mWld, mWalls),
     mZoneLogic(mZones),
     mAtmosphereLogic(mZones, mWalls, mAtmosphere),
     mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mTsk, mWld, mShowZones, mShowAtmosphere),
-    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mTsk, mEnt)
+    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mWallChanges, mTsk, mEnt)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -195,36 +196,36 @@ void Space::startScenario()
     mWalls.fill(0);
     mAtmosphere.fill(cDefaultAtmosphere);
     glm::ivec2 offset(7, 7);
-    mWalls.set(offset + glm::ivec2(0, 0), Orientation::Horizontal, 1);
-    mWalls.set(offset + glm::ivec2(1, 0), Orientation::Horizontal, 1);
-    mWalls.set(offset + glm::ivec2(2, 0), Orientation::Horizontal, 1);
-    mWalls.set(offset + glm::ivec2(0, 2), Orientation::Horizontal, 1);
-    mWalls.set(offset + glm::ivec2(1, 2), Orientation::Horizontal, 1);
-    mWalls.set(offset + glm::ivec2(2, 2), Orientation::Horizontal, 1);
-    mWalls.set(offset + glm::ivec2(0, 0), Orientation::Vertical, 1);
-    mWalls.set(offset + glm::ivec2(0, 1), Orientation::Vertical, 1);
-    mWalls.set(offset + glm::ivec2(3, 0), Orientation::Vertical, 1);
-    mWalls.set(offset + glm::ivec2(3, 1), Orientation::Vertical, 1);
-    mWalls.set(offset + glm::ivec2(2, 0), Orientation::Vertical, 1);
+    set({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(2, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(0, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(0, 1), Orientation::Vertical}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(3, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
 
-    createDoor(Door{{9, 8}, Orientation::Horizontal}, mWld.tDoor, mWld.openDoors, mWalls);
-    createDoor(Door{{10, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
-    createDoor(Door{{11, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
-    createDoor(Door{{12, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
-    createDoor(Door{{13, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
-    createDoor(Door{{14, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls);
+    createDoor(Door{{9, 8}, Orientation::Horizontal}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{10, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{11, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{12, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{13, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{14, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
 
     //temp
-    mWalls.set(glm::ivec2(10, 7), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(10, 8), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(11, 7), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(11, 8), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(12, 7), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(12, 8), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(13, 7), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(13, 8), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(14, 7), Orientation::Horizontal, 1);
-    mWalls.set(glm::ivec2(14, 8), Orientation::Horizontal, 1);
+    set({glm::ivec2(10, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(10, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(11, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(11, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(12, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(12, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(13, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(13, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(14, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({glm::ivec2(14, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
     mAtmosphere.set(glm::ivec2(10, 7), cHealthyAtmosphere);
     mAtmosphere.set(glm::ivec2(11, 7), cHealthyAtmosphere);
     mAtmosphere.set(glm::ivec2(12, 7), cHealthyAtmosphere);
@@ -268,9 +269,9 @@ void Space::loop()
         mActorLogic.update();
         mOrganismLogic.update();
         mTaskLogic.update();
-        auto wallChanges = mWalls.fetchchanges();
-        mZoneLogic.update(mWalls, wallChanges);
-        mAtmosphereLogic.update();
+        mZoneLogic.update(mWalls, mWallChanges);
+        auto neighbors = findAllNeighbors(mAtmosphere, mWalls);
+        mAtmosphereLogic.update(neighbors);
     }
 
     ImGui::ShowTestWindow();
@@ -305,7 +306,7 @@ void Space::temp()
     {
         if(!(rand() % 60))
         {
-            toggleDoor(id, mWld.tDoor, mWld.openDoors, mWalls);
+            toggleDoor(id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
         }
     }, mWld.tDoor);
 }

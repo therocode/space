@@ -67,6 +67,7 @@ class Space : public fea::Application,
 
         //world
         WallMap mWalls;
+        WallChanges mWallChanges;
         Zones mZones;
         Grid<Gases> mAtmosphere;
         WorldData mWld;
