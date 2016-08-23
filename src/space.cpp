@@ -73,6 +73,8 @@ Space::Space() :
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
     mImguiFontTexture.create({width, height}, pixels);
     io.Fonts->TexID = reinterpret_cast<void*>(mImguiFontTexture.getId());
+
+    mAtmosphereNeighbors = findAllNeighbors(mAtmosphere, mWalls);
 }
 
 void Space::handleMessage(const QuitMessage& message)
@@ -270,8 +272,8 @@ void Space::loop()
         mOrganismLogic.update();
         mTaskLogic.update();
         mZoneLogic.update(mWalls, mWallChanges);
-        auto neighbors = findAllNeighbors(mAtmosphere, mWalls);
-        mAtmosphereLogic.update(neighbors);
+        updateNeighbors(mAtmosphereNeighbors, mAtmosphere, mWalls, mWallChanges);
+        mAtmosphereLogic.update(mAtmosphereNeighbors);
     }
 
     ImGui::ShowTestWindow();

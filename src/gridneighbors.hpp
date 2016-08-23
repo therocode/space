@@ -52,3 +52,78 @@ Grid<GridNeighbors<T>> findAllNeighbors(Grid<T>& grid, const WallMap& walls)
 
     return result;
 }
+
+template <typename T>
+void updateNeighbors(Grid<GridNeighbors<T>>& neighbors, Grid<T>& grid, const WallMap& walls, const WallChanges& changes)
+{
+    auto size = grid.size();
+
+    for(const auto& change : changes)
+    {
+        int32_t x = change.first.position.x;
+        int32_t y = change.first.position.y;
+
+        uint8_t count = 0;
+
+        if(x > 0 && walls.atV({x, y}) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x - 1, y});
+            neighbors.at({x, y}).neighbors[count].first = {x - 1, y};
+            ++count;
+        }
+        if(x < size.x - 1 && walls.atV({x + 1, y}) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x + 1, y});
+            neighbors.at({x, y}).neighbors[count].first = {x + 1, y};
+            ++count;
+        }
+        if(y > 0 && walls.at({x, y}, Orientation::Horizontal) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y - 1});
+            neighbors.at({x, y}).neighbors[count].first = {x, y - 1};
+            ++count;
+        }
+        if(y < size.y - 1 && walls.at({x, y + 1}, Orientation::Horizontal) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y + 1});
+            neighbors.at({x, y}).neighbors[count].first = {x, y + 1};
+            ++count;
+        }
+
+        neighbors.at({x, y}).neighborCount = count;
+
+        if(change.first.orientation == Orientation::Vertical)
+            --y;
+        else
+            --x;
+
+        count = 0;
+
+        if(x > 0 && walls.atV({x, y}) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x - 1, y});
+            neighbors.at({x, y}).neighbors[count].first = {x - 1, y};
+            ++count;
+        }
+        if(x < size.x - 1 && walls.atV({x + 1, y}) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x + 1, y});
+            neighbors.at({x, y}).neighbors[count].first = {x + 1, y};
+            ++count;
+        }
+        if(y > 0 && walls.at({x, y}, Orientation::Horizontal) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y - 1});
+            neighbors.at({x, y}).neighbors[count].first = {x, y - 1};
+            ++count;
+        }
+        if(y < size.y - 1 && walls.at({x, y + 1}, Orientation::Horizontal) == 0)
+        {
+            neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y + 1});
+            neighbors.at({x, y}).neighbors[count].first = {x, y + 1};
+            ++count;
+        }
+
+        neighbors.at({x, y}).neighborCount = count;
+    }
+}

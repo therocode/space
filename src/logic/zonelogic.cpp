@@ -51,10 +51,6 @@ void ZoneLogic::updateZones(WallMap& walls, const WallChanges& changedWalls)
         }
     };
 
-    //4. make structure for valid tile neighbours + walldiff
-    //5. pass tile neighbours to atmosphere, and loop thorugh that instead
-    //---fast atmosphere---
-
     fea::Pathfinder<WallPathAdaptor> pathfinder;
     WallPathAdaptor pathAdaptor(walls);
     auto tryPath = [&] (const glm::ivec2& start, const glm::ivec2& end, int32_t limit)
