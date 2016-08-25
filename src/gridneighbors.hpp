@@ -5,7 +5,7 @@
 template <typename T>
 struct GridNeighbors
 {
-    std::array<std::pair<glm::ivec2, T*>, 4> neighbors;
+    std::array<std::pair<size_t, T*>, 4> neighbors;
     uint8_t neighborCount;
 };
 
@@ -19,30 +19,31 @@ Grid<GridNeighbors<T>> findAllNeighbors(Grid<T>& grid, const WallMap& walls)
     {
         for(int32_t x = 0; x < size.x; ++x)
         {
+            size_t thisIndex = static_cast<size_t>(x + y * size.x);
             uint8_t count = 0;
 
             if(x > 0 && walls.atV({x, y}) == 0)
             {
                 result.at({x, y}).neighbors[count].second = &grid.at({x - 1, y});
-                result.at({x, y}).neighbors[count].first = {x - 1, y};
+                result.at({x, y}).neighbors[count].first = thisIndex - 1;
                 ++count;
             }
             if(x < size.x - 1 && walls.atV({x + 1, y}) == 0)
             {
                 result.at({x, y}).neighbors[count].second = &grid.at({x + 1, y});
-                result.at({x, y}).neighbors[count].first = {x + 1, y};
+                result.at({x, y}).neighbors[count].first = thisIndex + 1;
                 ++count;
             }
             if(y > 0 && walls.at({x, y}, Orientation::Horizontal) == 0)
             {
                 result.at({x, y}).neighbors[count].second = &grid.at({x, y - 1});
-                result.at({x, y}).neighbors[count].first = {x, y - 1};
+                result.at({x, y}).neighbors[count].first = thisIndex - static_cast<size_t>(size.x);
                 ++count;
             }
             if(y < size.y - 1 && walls.at({x, y + 1}, Orientation::Horizontal) == 0)
             {
                 result.at({x, y}).neighbors[count].second = &grid.at({x, y + 1});
-                result.at({x, y}).neighbors[count].first = {x, y + 1};
+                result.at({x, y}).neighbors[count].first = thisIndex + static_cast<size_t>(size.x);
                 ++count;
             }
 
@@ -63,30 +64,32 @@ void updateNeighbors(Grid<GridNeighbors<T>>& neighbors, Grid<T>& grid, const Wal
         int32_t x = change.first.position.x;
         int32_t y = change.first.position.y;
 
+        size_t thisIndex = static_cast<size_t>(x + y * size.x);
+
         uint8_t count = 0;
 
         if(x > 0 && walls.atV({x, y}) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x - 1, y});
-            neighbors.at({x, y}).neighbors[count].first = {x - 1, y};
+            neighbors.at({x, y}).neighbors[count].first = thisIndex - 1;
             ++count;
         }
         if(x < size.x - 1 && walls.atV({x + 1, y}) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x + 1, y});
-            neighbors.at({x, y}).neighbors[count].first = {x + 1, y};
+            neighbors.at({x, y}).neighbors[count].first = thisIndex + 1;
             ++count;
         }
         if(y > 0 && walls.at({x, y}, Orientation::Horizontal) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y - 1});
-            neighbors.at({x, y}).neighbors[count].first = {x, y - 1};
+            neighbors.at({x, y}).neighbors[count].first = thisIndex - static_cast<size_t>(size.x);
             ++count;
         }
         if(y < size.y - 1 && walls.at({x, y + 1}, Orientation::Horizontal) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y + 1});
-            neighbors.at({x, y}).neighbors[count].first = {x, y + 1};
+            neighbors.at({x, y}).neighbors[count].first = thisIndex + static_cast<size_t>(size.x);
             ++count;
         }
 
@@ -102,25 +105,25 @@ void updateNeighbors(Grid<GridNeighbors<T>>& neighbors, Grid<T>& grid, const Wal
         if(x > 0 && walls.atV({x, y}) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x - 1, y});
-            neighbors.at({x, y}).neighbors[count].first = {x - 1, y};
+            neighbors.at({x, y}).neighbors[count].first = thisIndex - 1;
             ++count;
         }
         if(x < size.x - 1 && walls.atV({x + 1, y}) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x + 1, y});
-            neighbors.at({x, y}).neighbors[count].first = {x + 1, y};
+            neighbors.at({x, y}).neighbors[count].first = thisIndex + 1;
             ++count;
         }
         if(y > 0 && walls.at({x, y}, Orientation::Horizontal) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y - 1});
-            neighbors.at({x, y}).neighbors[count].first = {x, y - 1};
+            neighbors.at({x, y}).neighbors[count].first = {thisIndex - static_cast<size_t>(size.x)};
             ++count;
         }
         if(y < size.y - 1 && walls.at({x, y + 1}, Orientation::Horizontal) == 0)
         {
             neighbors.at({x, y}).neighbors[count].second = &grid.at({x, y + 1});
-            neighbors.at({x, y}).neighbors[count].first = {x, y + 1};
+            neighbors.at({x, y}).neighbors[count].first = {thisIndex + static_cast<size_t>(size.x)};
             ++count;
         }
 

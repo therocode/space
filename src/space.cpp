@@ -298,7 +298,7 @@ void Space::loop()
 //ambient gas transfer
 
 //refact:
-//make wall changes something universal for setting walls
+//replace .at in atmosphere code with iterator
 //get rid of double rendering layer
 //group up system variables
 
