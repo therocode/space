@@ -35,6 +35,11 @@ struct Physics
     glm::vec2 velocity;
 };
 
+struct CollisionBox
+{
+    glm::vec2 size;
+};
+
 struct MoveIntention
 {
     glm::vec2 direction;
@@ -98,6 +103,7 @@ namespace ent
 {
     using TPosition  = DataTable<glm::vec2, false>;
     using TPhysics  = DataTable<Physics, true>;
+    using TCollisionBox  = DataTable<CollisionBox, true>;
     using TWalkTarget = DataTable<glm::vec2, true>;
     using TMoveIntention = DataTable<MoveIntention, true>;
     using TMoveAbility = DataTable<MoveAbility, true>;
@@ -111,6 +117,7 @@ struct EntityData
     //game data
     ent::TPosition tPosition = {"Position", "The positions of game entities"};
     ent::TPhysics tPhysics = {"Physics", "The acceleration and velocities of game entities"};
+    ent::TCollisionBox tCollisionBox = {"Collision Box", "The box used to calculate the physical presence of entities"};
     ent::TWalkTarget tWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
     ent::TMoveIntention tMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
     ent::TMoveAbility tMoveAbility = {"Move Ability", "How well game entities are capable of moving"};

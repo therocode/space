@@ -3,6 +3,10 @@
         "name":"engineer",
         "position": {},
         "physics": {},
+        "collision_box":
+        {
+            "size": {"x": 20, "y": 20}
+        },
         "blood_values": {},
         "move_ability":
         {

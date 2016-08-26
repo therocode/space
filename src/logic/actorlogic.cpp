@@ -19,6 +19,7 @@ int32_t ActorLogic::addActor(Actor actor)
 {
     int32_t id = *tableEmplaceOptional(std::move(actor.position), mEnt.tPosition);
     tableEmplaceOptional(id, std::move(actor.physics), mEnt.tPhysics);
+    tableEmplaceOptional(id, std::move(actor.collisionBox), mEnt.tCollisionBox);
     tableEmplaceOptional(id, std::move(actor.moveAbility), mEnt.tMoveAbility);
     tableEmplaceOptional(id, std::move(actor.bloodValues), mEnt.tBloodValues);
 
@@ -41,6 +42,7 @@ void ActorLogic::removeActor(int32_t id)
 {
     erase(id, mEnt.tPosition);
     erase(id, mEnt.tPhysics);
+    erase(id, mEnt.tCollisionBox);
     erase(id, mEnt.tMoveAbility);
     erase(id, mEnt.tMoveIntention);
     erase(id, mEnt.tWalkTarget);
@@ -66,6 +68,7 @@ void ActorLogic::update()
     calculateMoveIntention();
     applyMoveIntention();
     applyPhysics();
+    applyCollisions();
 }
 
 void ActorLogic::updateDeath()
@@ -73,6 +76,7 @@ void ActorLogic::updateDeath()
     forEach([&] (int32_t id)
     {
         erase(id, mEnt.tPhysics);
+        erase(id, mEnt.tCollisionBox);
         erase(id, mEnt.tWalkTarget);
         erase(id, mEnt.tMoveIntention);
         erase(id, mEnt.tMoveAbility);
@@ -225,4 +229,55 @@ void ActorLogic::applyPhysics()
         physics.velocity += physics.acceleration;
         position += physics.velocity;
     }, mEnt.tPosition, mEnt.tPhysics);
+}
+
+void ActorLogic::applyCollisions()
+{
+    join([&] (int32_t id, glm::vec2& position, Physics& physics, const CollisionBox& collisionBox)
+    {
+        glm::ivec2 currentTile = position / 32.0f;
+
+        glm::vec2 min = position - collisionBox.size / 2.0f;
+        glm::vec2 max = position + collisionBox.size / 2.0f;
+
+        int32_t tileL = static_cast<int32_t>(min.x / 32.0f);
+        int32_t tileR = static_cast<int32_t>(max.x / 32.0f);
+        int32_t tileT = static_cast<int32_t>(min.y / 32.0f);
+        int32_t tileB = static_cast<int32_t>(max.y / 32.0f);
+
+        if(physics.velocity.x < 0.0f && tileL != currentTile.x)
+        {
+            if(mWalls.at(currentTile, Orientation::Vertical) != 0)
+            {
+                physics.velocity.x = 0.0f;
+                position.x = currentTile.x * 32.0f + collisionBox.size.x / 2.0f + 0.001f;
+            }
+        }
+        else if(physics.velocity.x > 0.0f && tileR != currentTile.x)
+        {
+            if(mWalls.at({currentTile.x + 1, currentTile.y}, Orientation::Vertical) != 0)
+            {
+                physics.velocity.x = 0.0f;
+                position.x = (currentTile.x + 1) * 32.0f - collisionBox.size.x / 2.0f - 0.001f;
+            }
+        }
+
+        if(physics.velocity.y < 0.0f && tileT != currentTile.y)
+        {
+            if(mWalls.at(currentTile, Orientation::Horizontal) != 0)
+            {
+                physics.velocity.y = 0.0f;
+                position.y = currentTile.y * 32.0f + collisionBox.size.y / 2.0f + 0.001f;
+            }
+        }
+        else if(physics.velocity.y > 0.0f && tileB != currentTile.y)
+        {
+            if(mWalls.at({currentTile.x, currentTile.y + 1}, Orientation::Horizontal) != 0)
+            {
+                physics.velocity.y = 0.0f;
+                position.y = (currentTile.y + 1) * 32.0f - collisionBox.size.y / 2.0f - 0.001f;
+            }
+        }
+
+    }, mEnt.tPosition, mEnt.tPhysics, mEnt.tCollisionBox);
 }

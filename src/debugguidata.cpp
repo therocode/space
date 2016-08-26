@@ -52,6 +52,19 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const ent::TCollisionBox& table)
+    {
+        return {"Size",};
+    }
+
+    void debugText(const CollisionBox& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            vec2ToStringList(data.size),
+        };
+    }
+
     std::vector<std::string> debugHeaders(const ent::TMoveIntention& table)
     {
         return {"Direction", "Speed Percent"};

@@ -18,6 +18,7 @@ class ActorLogic
         void calculateMoveIntention();
         void applyMoveIntention();
         void applyPhysics();
+        void applyCollisions();
 
         EntityData& mEnt;
         GfxData& mGfx;

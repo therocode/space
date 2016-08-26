@@ -62,16 +62,16 @@ Instantiator::Instantiator(const ResourceManager& resources)
         //    };            
         //}
 
-        //auto collisionBox = extractOptional(templateEntry, "collision_box");
+        auto collisionBox = extractOptional(templateEntry, "collision_box");
 
-        //if(collisionBox)
-        //{
-        //    templateToStore.collisionBox = CollisionBox
-        //    {
-        //        extractVec2(*collisionBox, "start"),
-        //        extractVec2(*collisionBox, "size"),
-        //    };
-        //}
+        if(collisionBox)
+        {
+            templateToStore.collisionBox = CollisionBox
+            {
+                //extractVec2(*collisionBox, "start"),
+                extractVec2(*collisionBox, "size"),
+            };
+        }
 
         auto sprites = extractOptional(templateEntry, "sprites");
 
