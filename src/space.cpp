@@ -291,14 +291,12 @@ void Space::loop()
 }
 
 //TODO:
-//wall collision
 //pathfinding
 //door opening
 //task dependencies
 //ambient gas transfer
 
 //refact:
-//replace .at in atmosphere code with iterator
 //get rid of double rendering layer
 //group up system variables
 
@@ -308,7 +306,7 @@ void Space::temp()
     {
         if(!(rand() % 60))
         {
-            toggleDoor(id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+            closeDoor(id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
         }
     }, mWld.tDoor);
 }

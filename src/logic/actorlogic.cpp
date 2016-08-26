@@ -249,16 +249,40 @@ void ActorLogic::applyCollisions()
         {
             if(mWalls.at(currentTile, Orientation::Vertical) != 0)
             {
-                physics.velocity.x = 0.0f;
-                position.x = currentTile.x * 32.0f + collisionBox.size.x / 2.0f + 0.001f;
+                auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
+                {
+                    return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Vertical;
+                }, mWld.tDoor);
+
+                if(!collidedDoor)
+                {
+                    physics.velocity.x = 0.0f;
+                    position.x = currentTile.x * 32.0f + collisionBox.size.x / 2.0f + 0.001f;
+                }
+                else
+                {
+                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                }
             }
         }
         else if(physics.velocity.x > 0.0f && tileR != currentTile.x)
         {
             if(mWalls.at({currentTile.x + 1, currentTile.y}, Orientation::Vertical) != 0)
             {
-                physics.velocity.x = 0.0f;
-                position.x = (currentTile.x + 1) * 32.0f - collisionBox.size.x / 2.0f - 0.001f;
+                auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
+                {
+                    return door.position == glm::ivec2(currentTile.x + 1, currentTile.y) && door.orientation == Orientation::Vertical;
+                }, mWld.tDoor);
+
+                if(!collidedDoor)
+                {
+                    physics.velocity.x = 0.0f;
+                    position.x = (currentTile.x + 1) * 32.0f - collisionBox.size.x / 2.0f - 0.001f;
+                }
+                else
+                {
+                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                }
             }
         }
 
@@ -266,16 +290,40 @@ void ActorLogic::applyCollisions()
         {
             if(mWalls.at(currentTile, Orientation::Horizontal) != 0)
             {
-                physics.velocity.y = 0.0f;
-                position.y = currentTile.y * 32.0f + collisionBox.size.y / 2.0f + 0.001f;
+                auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
+                {
+                    return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Horizontal;
+                }, mWld.tDoor);
+
+                if(!collidedDoor)
+                {
+                    physics.velocity.y = 0.0f;
+                    position.y = currentTile.y * 32.0f + collisionBox.size.y / 2.0f + 0.001f;
+                }
+                else
+                {
+                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                }
             }
         }
         else if(physics.velocity.y > 0.0f && tileB != currentTile.y)
         {
             if(mWalls.at({currentTile.x, currentTile.y + 1}, Orientation::Horizontal) != 0)
             {
-                physics.velocity.y = 0.0f;
-                position.y = (currentTile.y + 1) * 32.0f - collisionBox.size.y / 2.0f - 0.001f;
+                auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
+                {
+                    return door.position == glm::ivec2(currentTile.x, currentTile.y + 1) && door.orientation == Orientation::Horizontal;
+                }, mWld.tDoor);
+
+                if(!collidedDoor)
+                {
+                    physics.velocity.y = 0.0f;
+                    position.y = (currentTile.y + 1) * 32.0f - collisionBox.size.y / 2.0f - 0.001f;
+                }
+                else
+                {
+                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                }
             }
         }
 
