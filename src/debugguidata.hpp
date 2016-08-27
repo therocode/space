@@ -24,6 +24,12 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const ent::TChoking& table);
     void debugText(const Choking& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const str::TStructure& table);
+    void debugText(const Structure& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const str::TStructureType& table);
+    void debugText(const StructureType& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const ent::TBusyWorker& table);
     void debugText(const BusyWorker& data, std::vector<std::vector<std::string>>& outText);
 

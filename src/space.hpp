@@ -14,6 +14,7 @@
 #include "logic/interfacelogic.hpp"
 #include "logic/actorlogic.hpp"
 #include "logic/organismlogic.hpp"
+#include "logic/structurelogic.hpp"
 #include "logic/tasklogic.hpp"
 #include "logic/zonelogic.hpp"
 #include "logic/atmospherelogic.hpp"
@@ -64,6 +65,7 @@ class Space : public fea::Application,
 
         EntityData mEnt;
         TaskData mTsk;
+        StructureData mStr;
 
         //world
         WallMap mWalls;
@@ -87,6 +89,7 @@ class Space : public fea::Application,
         //logic
         ActorLogic mActorLogic;
         OrganismLogic mOrganismLogic;
+        StructureLogic mStructureLogic;
         TaskLogic mTaskLogic;
         ZoneLogic mZoneLogic;
         AtmosphereLogic mAtmosphereLogic;

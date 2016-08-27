@@ -99,6 +99,18 @@ struct BloodValues
     int32_t oxygen = 600; //500 is max, this will make them choke to death after 10 real life seconds
 };
 
+struct StructureType
+{
+    std::string name;
+    int32_t texture;
+};
+
+struct Structure
+{
+    glm::ivec2 position;
+    int32_t structureType;
+};
+
 namespace ent
 {
     using TPosition  = DataTable<glm::vec2, false>;
@@ -161,6 +173,18 @@ struct WorldData
 {
     wld::TDoor tDoor = {"Door", "Represents all doors"};
     IdSet openDoors = {{}, {"Open doors", "All doors that are open"}};
+};
+
+namespace str
+{
+    using TStructure = DataTable<Structure, false>;
+    using TStructureType = DataTable<StructureType, false>;
+};
+
+struct StructureData
+{
+    str::TStructure tStructure = {"Structure", "All existing structures"};
+    str::TStructureType tStructureType = {"Structure Type", "All types of structures"};
 };
 
 namespace gfx

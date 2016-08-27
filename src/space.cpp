@@ -50,10 +50,11 @@ Space::Space() :
     mGuiBlocksMouse(false),
     mActorLogic(mEnt, mGfx, mTsk, mWld, mWalls, mWallChanges),
     mOrganismLogic(mEnt, mAtmosphere),
+    mStructureLogic(mStr, mResources),
     mTaskLogic(mTsk, mEnt, mWld, mWalls),
     mZoneLogic(mZones),
     mAtmosphereLogic(mZones, mWalls, mAtmosphere),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mTsk, mWld, mShowZones, mShowAtmosphere),
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mStr, mTsk, mWld, mShowZones, mShowAtmosphere),
     mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mWallChanges, mTsk, mEnt)
 {
     mWindow.setVSyncEnabled(true);
@@ -242,7 +243,11 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
-
+    insert(Structure{offset + glm::ivec2(2, 0), 0}, mStr.tStructure);
+    insert(Structure{offset + glm::ivec2(0, 0), 1}, mStr.tStructure);
+    insert(Structure{offset + glm::ivec2(0, 1), 1}, mStr.tStructure);
+    insert(Structure{offset + glm::ivec2(1, 1), 2}, mStr.tStructure);
+    insert(Structure{offset + glm::ivec2(1, 0), 3}, mStr.tStructure);
     //mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 
@@ -270,6 +275,7 @@ void Space::loop()
         temp();
         mActorLogic.update();
         mOrganismLogic.update();
+        mStructureLogic.update();
         mTaskLogic.update();
         mZoneLogic.update(mWalls, mWallChanges);
         updateNeighbors(mAtmosphereNeighbors, mAtmosphere, mWalls, mWallChanges);
@@ -277,7 +283,7 @@ void Space::loop()
     }
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mEnt.tPosition, mEnt.tPhysics, mEnt.tCollisionBox, mEnt.tWalkTarget, mEnt.tMoveAbility, mEnt.tMoveIntention, mEnt.tBloodValues, mEnt.tChoking, mTsk.tRoomTask, mTsk.tWallTask, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask, mEnt.builders, mEnt.freeWorkers, mEnt.tBusyWorker, mEnt.deadWorkers, mGfx.tActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mEnt.tPosition, mEnt.tPhysics, mEnt.tCollisionBox, mEnt.tWalkTarget, mEnt.tMoveAbility, mEnt.tMoveIntention, mEnt.tBloodValues, mEnt.tChoking, mStr.tStructureType, mStr.tStructure, mTsk.tRoomTask, mTsk.tWallTask, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask, mEnt.builders, mEnt.freeWorkers, mEnt.tBusyWorker, mEnt.deadWorkers, mGfx.tActorSprite);
     DebugGui::showInspector(io.MousePos, mZones, mAtmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);
@@ -291,8 +297,8 @@ void Space::loop()
 }
 
 //TODO:
+//airlocks
 //pathfinding
-//door opening
 //task dependencies
 //ambient gas transfer
 

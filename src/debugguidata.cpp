@@ -129,6 +129,39 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const str::TStructure& table)
+    {
+        return {"Type", "Position"};
+    }
+
+    void debugText(const Structure& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.structureType),
+            },
+            {
+                vec2ToStringList(data.position),
+            }
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const str::TStructureType& table)
+    {
+        return {"Name"};
+    }
+
+    void debugText(const StructureType& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                data.name
+            },
+        };
+    }
+
     std::vector<std::string> debugHeaders(const ent::TBusyWorker& table)
     {
         return {"Task ID",};

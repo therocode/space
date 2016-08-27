@@ -2,7 +2,7 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GfxData& gfx, const EntityData& ent, const TaskData& tsk, const WorldData& wld, bool& showZones, bool& showAtmosphere):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GfxData& gfx, const EntityData& ent, const StructureData& str, const TaskData& tsk, const WorldData& wld, bool& showZones, bool& showAtmosphere):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
@@ -11,6 +11,7 @@ RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRendere
     mAtmosphere(atmosphere),
     mGfx(gfx),
     mEnt(ent),
+    mStr(str),
     mTsk(tsk),
     mWld(wld),
     mShowZones(showZones),
@@ -27,6 +28,7 @@ void RenderLogic::update()
 {
     mRenderer.startFrame();
     mRenderer.renderWorld(mWalls, mWld, mZones.zones, mShowZones, mAtmosphere, mShowAtmosphere);
+    renderStructures();
     renderTasks();
     renderSprites();
 }
@@ -68,6 +70,32 @@ void RenderLogic::renderSprites()
             mFeaRenderer.render(rect);
         }
     }, mGfx.tActorSprite); 
+
+    mRenderer.render(orders);
+}
+
+void RenderLogic::renderStructures()
+{
+    std::vector<RenderOrder> orders;
+
+     forEach([&] (int32_t structureId, const Structure& structure)
+    {
+        const StructureType& type = get(structure.structureType, mStr.tStructureType);
+        const glm::vec2& position = structure.position * 32 + glm::ivec2(16, 16);
+
+        orders.emplace_back(
+                RenderOrder{
+                position,
+                type.texture,
+                fea::Color::White,
+                {},
+                FillType::Solid,
+                //sprite.rotation,
+                //sprite.animationProgress,
+                //sprite.flip,
+                }   
+                );  
+    }, mStr.tStructure); 
 
     mRenderer.render(orders);
 }

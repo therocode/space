@@ -9,5 +9,49 @@
         },
         "texture": "dude",
         "animation": ""
+    },
+    {
+        "name": "airlock",
+        "size": { "x": 32.0, "y": 32.0 },
+        "offset":
+        {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "texture": "airlock",
+        "animation": ""
+    },
+    {
+        "name": "cryopods",
+        "size": { "x": 32.0, "y": 32.0 },
+        "offset":
+        {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "texture": "cryopods",
+        "animation": ""
+    },
+    {
+        "name": "battery",
+        "size": { "x": 32.0, "y": 32.0 },
+        "offset":
+        {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "texture": "battery",
+        "animation": ""
+    },
+    {
+        "name": "crate",
+        "size": { "x": 32.0, "y": 32.0 },
+        "offset":
+        {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "texture": "crate",
+        "animation": ""
     }
 ]

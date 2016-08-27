@@ -2,5 +2,21 @@
     {
         "name": "dude",
         "path": "data/textures/dude.png"
+    },
+    {
+        "name": "airlock",
+        "path": "data/textures/airlock.png"
+    },
+    {
+        "name": "cryopods",
+        "path": "data/textures/cryopods.png"
+    },
+    {
+        "name": "battery",
+        "path": "data/textures/battery.png"
+    },
+    {
+        "name": "crate",
+        "path": "data/textures/crate.png"
     }
 ]
