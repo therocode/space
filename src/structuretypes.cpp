@@ -1,6 +1,6 @@
 #include "structuretypes.hpp"
 
-void loadStructureTypes(str::TStructureType& types, const ResourceManager& resources)
+void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
 {
     insert(StructureType
     {

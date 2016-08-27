@@ -111,89 +111,64 @@ struct Structure
     int32_t structureType;
 };
 
-namespace ent
-{
-    using TPosition  = DataTable<glm::vec2, false>;
-    using TPhysics  = DataTable<Physics, true>;
-    using TCollisionBox  = DataTable<CollisionBox, true>;
-    using TWalkTarget = DataTable<glm::vec2, true>;
-    using TMoveIntention = DataTable<MoveIntention, true>;
-    using TMoveAbility = DataTable<MoveAbility, true>;
-    using TBusyWorker = DataTable<BusyWorker, true>;
-    using TBloodValues = DataTable<BloodValues, true>;
-    using TChoking = DataTable<Choking, true>;
-}
+//entity
+using TPosition  = DataTable<glm::vec2, false>;
+using TPhysics  = DataTable<Physics, true>;
+using TCollisionBox  = DataTable<CollisionBox, true>;
+using TWalkTarget = DataTable<glm::vec2, true>;
+using TMoveIntention = DataTable<MoveIntention, true>;
+using TMoveAbility = DataTable<MoveAbility, true>;
+using TBusyWorker = DataTable<BusyWorker, true>;
+using TBloodValues = DataTable<BloodValues, true>;
+using TChoking = DataTable<Choking, true>;
+//tasks
+using TRoomTask = DataTable<RoomTask, true>;
+using TWallTask = DataTable<WallTask, true>;
+using TDoorTask = DataTable<DoorTask, true>;
+using TAssignedTask = DataTable<AssignedTask, true>;
+//world
+using TDoor = DataTable<Door, false>;
+//structure
+using TStructure = DataTable<Structure, false>;
+using TStructureType = DataTable<StructureType, false>;
+using TActorSprite = DataTable<ActorSprite, false>;
 
-struct EntityData
+struct GameData
 {
     //game data
-    ent::TPosition tPosition = {"Position", "The positions of game entities"};
-    ent::TPhysics tPhysics = {"Physics", "The acceleration and velocities of game entities"};
-    ent::TCollisionBox tCollisionBox = {"Collision Box", "The box used to calculate the physical presence of entities"};
-    ent::TWalkTarget tWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
-    ent::TMoveIntention tMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
-    ent::TMoveAbility tMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
+    TPosition tPosition = {"Position", "The positions of game entities"};
+    TPhysics tPhysics = {"Physics", "The acceleration and velocities of game entities"};
+    TCollisionBox tCollisionBox = {"Collision Box", "The box used to calculate the physical presence of entities"};
+    TWalkTarget tWalkTarget = {"Walk Target", "The positions that game entities seek to move to"};
+    TMoveIntention tMoveIntention = {"Move Intention", "The directions and speeds that game entities which to attain"};
+    TMoveAbility tMoveAbility = {"Move Ability", "How well game entities are capable of moving"};
 
     //worker stuff
     IdSet builders = {{}, {"Builders", "All workers who are builders"}};
     IdSet freeWorkers = {{}, {"Free workers", "All workers who are currently not working on any task"}};
     IdSet deadWorkers = {{}, {"Dead workers", "All workers who are no longer alive"}};
-    ent::TBusyWorker tBusyWorker = {"Busy Worker", "The workers who are working on a task"};
+    TBusyWorker tBusyWorker = {"Busy Worker", "The workers who are working on a task"};
 
     //organism stuff
-    ent::TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
-    ent::TChoking tChoking = {"Choking", "Lists the impaired breathing capabilities of organisms that are currently not able to absorb oxygen to 100%"};
+    TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
+    TChoking tChoking = {"Choking", "Lists the impaired breathing capabilities of organisms that are currently not able to absorb oxygen to 100%"};
     IdSet died = {{}, {"Died", "The organisms that have just died, will only be set for one frame"}};
-};
-
-namespace tsk
-{
-    using TRoomTask = DataTable<RoomTask, true>;
-    using TWallTask = DataTable<WallTask, true>;
-    using TDoorTask = DataTable<DoorTask, true>;
-    using TAssignedTask = DataTable<AssignedTask, true>;
-}
-
-struct TaskData 
-{
+    
     //tasks
-    tsk::TRoomTask tRoomTask = {"Room Task", "Represents all rooms that need to be built"};
-    tsk::TWallTask tWallTask = {"Wall Task", "Represents all walls that need to be built"};
-    tsk::TDoorTask tDoorTask = {"Door Task", "Represents all doors that need to be built"};
+    TRoomTask tRoomTask = {"Room Task", "Represents all rooms that need to be built"};
+    TWallTask tWallTask = {"Wall Task", "Represents all walls that need to be built"};
+    TDoorTask tDoorTask = {"Door Task", "Represents all doors that need to be built"};
     IdSet unassignedTasks = {{}, {"Unassigned tasks", "All tasks which no worker is currently on"}};
-    tsk::TAssignedTask tAssignedTask = {"Assigned tasks", "All tasks which are assigned to a worker"};
-};
+    TAssignedTask tAssignedTask = {"Assigned tasks", "All tasks which are assigned to a worker"};
 
-namespace wld
-{
-    using TDoor = DataTable<Door, false>;
-};
-
-struct WorldData
-{
-    wld::TDoor tDoor = {"Door", "Represents all doors"};
+    //world
+    TDoor tDoor = {"Door", "Represents all doors"};
     IdSet openDoors = {{}, {"Open doors", "All doors that are open"}};
-};
 
-namespace str
-{
-    using TStructure = DataTable<Structure, false>;
-    using TStructureType = DataTable<StructureType, false>;
-};
+    //structure
+    TStructure tStructure = {"Structure", "All existing structures"};
+    TStructureType tStructureType = {"Structure Type", "All types of structures"};
 
-struct StructureData
-{
-    str::TStructure tStructure = {"Structure", "All existing structures"};
-    str::TStructureType tStructureType = {"Structure Type", "All types of structures"};
-};
-
-namespace gfx
-{
-    using TActorSprite = DataTable<ActorSprite, false>;
-}
-
-struct GfxData
-{
     //gfx
-    gfx::TActorSprite tActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
+    ::TActorSprite tActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
 };

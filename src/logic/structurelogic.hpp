@@ -5,8 +5,8 @@
 class StructureLogic
 {
     public:
-        StructureLogic(StructureData& str, const ResourceManager& resources);
+        StructureLogic(GameData& data, const ResourceManager& resources);
         void update();
     private:
-        StructureData& mStr;
+        GameData& mData;
 };

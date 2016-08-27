@@ -1,10 +1,10 @@
 #include "structurelogic.hpp"
 #include "../structuretypes.hpp"
 
-StructureLogic::StructureLogic(StructureData& str, const ResourceManager& resources):
-    mStr(str)
+StructureLogic::StructureLogic(GameData& data, const ResourceManager& resources):
+    mData(data)
 {
-    loadStructureTypes(mStr.tStructureType, resources);
+    loadStructureTypes(mData.tStructureType, resources);
 }
 
 void StructureLogic::update()

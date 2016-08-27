@@ -4,7 +4,7 @@
 #include "../space.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, const WallMap& walls, WallChanges& wallChanges, TaskData& tsk, EntityData& ent):
+InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, const WallMap& walls, WallChanges& wallChanges, GameData& data):
     mState(IDLE),
 	mSpace(space),
     mRenderer(renderer),
@@ -12,12 +12,11 @@ InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t&
     mTaskIdPool(taskIdPool),
     mWalls(walls),
     mWallChanges(wallChanges),
-    mTsk(tsk),
-    mEnt(ent),
+    mData(data),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
 {
-    (void)mEnt;
+    (void)mData;
 }
 
 void InterfaceLogic::update()
@@ -85,7 +84,7 @@ void InterfaceLogic::update()
             {
                 *mDragStart,
                 *mDragEnd - *mDragStart + glm::ivec2(1, 1),
-            }, mTsk.tRoomTask, mTsk.unassignedTasks);
+            }, mData.tRoomTask, mData.unassignedTasks);
 
             auto hasDoor = [&] (const WallPosition& pos)
             {
@@ -99,25 +98,25 @@ void InterfaceLogic::update()
                     {
                         {x, mDragStart->y},
                         Orientation::Horizontal,
-                    }, mTsk.tDoorTask, mTsk.unassignedTasks);
+                    }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
                         {x, mDragStart->y},
                         Orientation::Horizontal,
-                    }, mTsk.tWallTask, mTsk.unassignedTasks);
+                    }, mData.tWallTask, mData.unassignedTasks);
                 if(hasDoor({{x, mDragEnd->y + 1}, Orientation::Horizontal}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
                             {x, mDragEnd->y + 1},
                             Orientation::Horizontal,
-                    }, mTsk.tDoorTask, mTsk.unassignedTasks);
+                    }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
                             {x, mDragEnd->y + 1},
                             Orientation::Horizontal,
-                    }, mTsk.tWallTask, mTsk.unassignedTasks);
+                    }, mData.tWallTask, mData.unassignedTasks);
             }
 
             for(int32_t y = mDragStart->y; y <= mDragEnd->y; ++y)
@@ -127,25 +126,25 @@ void InterfaceLogic::update()
                     {
                             {mDragStart->x, y},
                             Orientation::Vertical,
-                    }, mTsk.tDoorTask, mTsk.unassignedTasks);
+                    }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
                             {mDragStart->x, y},
                             Orientation::Vertical,
-                    }, mTsk.tWallTask, mTsk.unassignedTasks);
+                    }, mData.tWallTask, mData.unassignedTasks);
                 if(hasDoor({{mDragEnd->x + 1, y}, Orientation::Vertical}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
                             {mDragEnd->x + 1, y},
                             Orientation::Vertical,
-                    }, mTsk.tDoorTask, mTsk.unassignedTasks);
+                    }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
                             {mDragEnd->x + 1, y},
                             Orientation::Vertical,
-                    }, mTsk.tWallTask, mTsk.unassignedTasks);
+                    }, mData.tWallTask, mData.unassignedTasks);
             }
 
             reset();

@@ -6,9 +6,9 @@
 class OrganismLogic
 {
     public:
-        OrganismLogic(EntityData& ent, Grid<Gases>& atmosphere);
+        OrganismLogic(GameData& data, Grid<Gases>& atmosphere);
         void update();
     private:
-        EntityData& mEnt;
+        GameData& mData;
         Grid<Gases>& mAtmosphere;
 };

@@ -26,7 +26,7 @@ void Renderer::startFrame()
     mRenderer.clear();
 }
 
-void Renderer::renderWorld(const WallMap& walls, const WorldData& wld, const Grid<int32_t>& zones, bool showZones, const Grid<Gases>& atmosphere, bool showAtmosphere)
+void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Grid<int32_t>& zones, bool showZones, const Grid<Gases>& atmosphere, bool showAtmosphere)
 {
     mRenderer.clear(cGroundColor);
 
@@ -116,7 +116,7 @@ void Renderer::renderWorld(const WallMap& walls, const WorldData& wld, const Gri
             quad.setPosition(static_cast<glm::vec2>(door.position) * 32.0f - glm::vec2(cWallThickness / 2.0f, 0.0f));
         }
 
-        if(has(id, wld.openDoors))
+        if(has(id, data.openDoors))
         {
             quad.setColor(fea::Color(0, 80, 190, 40));
         }
@@ -126,7 +126,7 @@ void Renderer::renderWorld(const WallMap& walls, const WorldData& wld, const Gri
         }
 
         mRenderer.render(quad);
-    }, wld.tDoor);
+    }, data.tDoor);
 
     if(showAtmosphere)
     {

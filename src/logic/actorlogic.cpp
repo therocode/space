@@ -5,11 +5,8 @@
 #include "../doorutil.hpp"
 #include "../debug.hpp"
 
-ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WorldData& wld, const WallMap& walls, WallChanges& wallChanges):
-    mEnt(ent),
-    mGfx(gfx),
-    mTsk(tsk),
-    mWld(wld),
+ActorLogic::ActorLogic(GameData& data, const WallMap& walls, WallChanges& wallChanges):
+    mData(data),
     mWalls(walls),
     mWallChanges(wallChanges)
 {
@@ -17,22 +14,22 @@ ActorLogic::ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WorldData& 
 
 int32_t ActorLogic::addActor(Actor actor)
 {
-    int32_t id = *tableEmplaceOptional(std::move(actor.position), mEnt.tPosition);
-    tableEmplaceOptional(id, std::move(actor.physics), mEnt.tPhysics);
-    tableEmplaceOptional(id, std::move(actor.collisionBox), mEnt.tCollisionBox);
-    tableEmplaceOptional(id, std::move(actor.moveAbility), mEnt.tMoveAbility);
-    tableEmplaceOptional(id, std::move(actor.bloodValues), mEnt.tBloodValues);
+    int32_t id = *tableEmplaceOptional(std::move(actor.position), mData.tPosition);
+    tableEmplaceOptional(id, std::move(actor.physics), mData.tPhysics);
+    tableEmplaceOptional(id, std::move(actor.collisionBox), mData.tCollisionBox);
+    tableEmplaceOptional(id, std::move(actor.moveAbility), mData.tMoveAbility);
+    tableEmplaceOptional(id, std::move(actor.bloodValues), mData.tBloodValues);
 
     for(auto& sprite : actor.actorSprites)
     {   
         sprite.actorId = id;
-        insert(std::move(sprite), mGfx.tActorSprite);
+        insert(std::move(sprite), mData.tActorSprite);
     }   
 
     if(actor.worker)
     {
-        insert(id, mEnt.builders);
-        insert(id, mEnt.freeWorkers);
+        insert(id, mData.builders);
+        insert(id, mData.freeWorkers);
     }
 
     return id;
@@ -40,13 +37,13 @@ int32_t ActorLogic::addActor(Actor actor)
 
 void ActorLogic::removeActor(int32_t id)
 {
-    erase(id, mEnt.tPosition);
-    erase(id, mEnt.tPhysics);
-    erase(id, mEnt.tCollisionBox);
-    erase(id, mEnt.tMoveAbility);
-    erase(id, mEnt.tMoveIntention);
-    erase(id, mEnt.tWalkTarget);
-    erase(id, mEnt.tBloodValues);
+    erase(id, mData.tPosition);
+    erase(id, mData.tPhysics);
+    erase(id, mData.tCollisionBox);
+    erase(id, mData.tMoveAbility);
+    erase(id, mData.tMoveIntention);
+    erase(id, mData.tWalkTarget);
+    erase(id, mData.tBloodValues);
 
     eraseIf([&] (int32_t actorSpriteId, const ActorSprite& actorSprite)
     {
@@ -55,9 +52,9 @@ void ActorLogic::removeActor(int32_t id)
             return true;
         }
         return false;
-    }, mGfx.tActorSprite);
-    erase(id, mEnt.builders);
-    erase(id, mEnt.freeWorkers);
+    }, mData.tActorSprite);
+    erase(id, mData.builders);
+    erase(id, mData.freeWorkers);
 }
 
 void ActorLogic::update()
@@ -75,34 +72,34 @@ void ActorLogic::updateDeath()
 {
     forEach([&] (int32_t id)
     {
-        erase(id, mEnt.tPhysics);
-        erase(id, mEnt.tCollisionBox);
-        erase(id, mEnt.tWalkTarget);
-        erase(id, mEnt.tMoveIntention);
-        erase(id, mEnt.tMoveAbility);
+        erase(id, mData.tPhysics);
+        erase(id, mData.tCollisionBox);
+        erase(id, mData.tWalkTarget);
+        erase(id, mData.tMoveIntention);
+        erase(id, mData.tMoveAbility);
 
-        erase(id, mEnt.builders);
-        erase(id, mEnt.freeWorkers);
+        erase(id, mData.builders);
+        erase(id, mData.freeWorkers);
 
-        if(auto busyWorker = findOne(id, mEnt.tBusyWorker))
+        if(auto busyWorker = findOne(id, mData.tBusyWorker))
         {
             int32_t taskId = busyWorker->data.taskId;
-            erase(taskId, mTsk.tAssignedTask);
-            insert(taskId, mTsk.unassignedTasks);
-            erase(id, mEnt.tBusyWorker);
+            erase(taskId, mData.tAssignedTask);
+            insert(taskId, mData.unassignedTasks);
+            erase(id, mData.tBusyWorker);
         }
 
-        erase(id, mEnt.tBloodValues);
-        erase(id, mEnt.tChoking);
+        erase(id, mData.tBloodValues);
+        erase(id, mData.tChoking);
 
         forEach([&] (int32_t spriteId, ActorSprite& sprite)
         {
             if(sprite.actorId == id)
                 sprite.color = fea::Color(60, 70, 40);
-        }, mGfx.tActorSprite);
+        }, mData.tActorSprite);
 
-        insert(id, mEnt.deadWorkers);
-    }, mEnt.died);
+        insert(id, mData.deadWorkers);
+    }, mData.died);
 }
 
 void ActorLogic::updateWorkers()
@@ -115,43 +112,43 @@ void ActorLogic::updateWorkers()
         if(!findOne([&](int32_t taskId, const AssignedTask& assignedTask)
         {
             return assignedTask.assigneeId == id;
-        }, mTsk.tAssignedTask))
+        }, mData.tAssignedTask))
         {
             erase = true;
-            insert(id, mEnt.freeWorkers);
+            insert(id, mData.freeWorkers);
         }
 
         return erase;
-    }, mEnt.tBusyWorker);
+    }, mData.tBusyWorker);
 
     //assign free workers to unassigned tasks
     eraseIf([&] (int32_t id)
     {
         bool erase = false;
-        if(count(mTsk.unassignedTasks) > 0)
+        if(count(mData.unassignedTasks) > 0)
         {
-            int32_t taskId = extractOne(mTsk.unassignedTasks);
-            assignTask(taskId, id, mTsk.tAssignedTask);
-            insert(id, {taskId}, mEnt.tBusyWorker);
+            int32_t taskId = extractOne(mData.unassignedTasks);
+            assignTask(taskId, id, mData.tAssignedTask);
+            insert(id, {taskId}, mData.tBusyWorker);
             erase = true;
         }
 
         return erase;
-    }, mEnt.freeWorkers);
+    }, mData.freeWorkers);
 }
 
 void ActorLogic::updateTaskWork()
 {
     forEach([&](const int32_t workerId, const BusyWorker& worker)
     {
-        if(auto wallTask = findOne(worker.taskId, mTsk.tWallTask))
+        if(auto wallTask = findOne(worker.taskId, mData.tWallTask))
         {
             glm::vec2 taskPosition = wallTask->data.position * 32;
-            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition);
+            const glm::vec2& workerPosition = get(workerId, mData.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
             {
-                erase(workerId, mEnt.tWalkTarget);
+                erase(workerId, mData.tWalkTarget);
 
                 if(rand() % 100 == 0)
                 {
@@ -160,55 +157,55 @@ void ActorLogic::updateTaskWork()
             }
             else
             {
-                set(workerId, {taskPosition}, mEnt.tWalkTarget);
+                set(workerId, {taskPosition}, mData.tWalkTarget);
             }
         }
-        else if(auto roomTask = findOne(worker.taskId, mTsk.tRoomTask))
+        else if(auto roomTask = findOne(worker.taskId, mData.tRoomTask))
         {
         }
-        else if(auto doorTask = findOne(worker.taskId, mTsk.tDoorTask))
+        else if(auto doorTask = findOne(worker.taskId, mData.tDoorTask))
         {
             glm::vec2 taskPosition = doorTask->data.position * 32;
-            const glm::vec2& workerPosition = get(workerId, mEnt.tPosition);
+            const glm::vec2& workerPosition = get(workerId, mData.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
             {
-                erase(workerId, mEnt.tWalkTarget);
+                erase(workerId, mData.tWalkTarget);
 
                 if(rand() % 100 == 0)
                 {
-                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
                 }
             }
             else
             {
-                set(workerId, {taskPosition}, mEnt.tWalkTarget);
+                set(workerId, {taskPosition}, mData.tWalkTarget);
             }
         }
-    }, mEnt.tBusyWorker);
+    }, mData.tBusyWorker);
 }
 
 void ActorLogic::calculateMoveIntention()
 {
     forEach([&] (int32_t id, MoveIntention& intention)
     {
-        if(!has(id, mEnt.tWalkTarget))
+        if(!has(id, mData.tWalkTarget))
         {
             intention.speedPercent = 0.0f;
         }
-    }, mEnt.tMoveIntention);
+    }, mData.tMoveIntention);
 
     forEach([&] (int32_t id)
     {
-    }, mEnt.died);
+    }, mData.died);
 
     join([&] (int32_t id, const glm::vec2& walkTarget, const glm::vec2& position)
     {
         MoveIntention moveIntention;
         moveIntention.direction = glm::normalize(walkTarget - position);
         moveIntention.speedPercent = 0.5f;
-        set(id, std::move(moveIntention), mEnt.tMoveIntention);
-    }, mEnt.tWalkTarget, mEnt.tPosition);
+        set(id, std::move(moveIntention), mData.tMoveIntention);
+    }, mData.tWalkTarget, mData.tPosition);
 }
 
 void ActorLogic::applyMoveIntention()
@@ -219,7 +216,7 @@ void ActorLogic::applyMoveIntention()
 
         physics.acceleration = Accelerator::get(moveIntention.direction, maxSpeed, physics.velocity, moveAbility.maxAcceleration);
 
-    }, mEnt.tMoveIntention, mEnt.tMoveAbility, mEnt.tPhysics);
+    }, mData.tMoveIntention, mData.tMoveAbility, mData.tPhysics);
 }
 
 void ActorLogic::applyPhysics()
@@ -228,7 +225,7 @@ void ActorLogic::applyPhysics()
     {
         physics.velocity += physics.acceleration;
         position += physics.velocity;
-    }, mEnt.tPosition, mEnt.tPhysics);
+    }, mData.tPosition, mData.tPhysics);
 }
 
 void ActorLogic::applyCollisions()
@@ -252,7 +249,7 @@ void ActorLogic::applyCollisions()
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
                     return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Vertical;
-                }, mWld.tDoor);
+                }, mData.tDoor);
 
                 if(!collidedDoor)
                 {
@@ -261,7 +258,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
                 }
             }
         }
@@ -272,7 +269,7 @@ void ActorLogic::applyCollisions()
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
                     return door.position == glm::ivec2(currentTile.x + 1, currentTile.y) && door.orientation == Orientation::Vertical;
-                }, mWld.tDoor);
+                }, mData.tDoor);
 
                 if(!collidedDoor)
                 {
@@ -281,7 +278,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
                 }
             }
         }
@@ -293,7 +290,7 @@ void ActorLogic::applyCollisions()
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
                     return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Horizontal;
-                }, mWld.tDoor);
+                }, mData.tDoor);
 
                 if(!collidedDoor)
                 {
@@ -302,7 +299,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
                 }
             }
         }
@@ -313,7 +310,7 @@ void ActorLogic::applyCollisions()
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
                     return door.position == glm::ivec2(currentTile.x, currentTile.y + 1) && door.orientation == Orientation::Horizontal;
-                }, mWld.tDoor);
+                }, mData.tDoor);
 
                 if(!collidedDoor)
                 {
@@ -322,10 +319,10 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
                 }
             }
         }
 
-    }, mEnt.tPosition, mEnt.tPhysics, mEnt.tCollisionBox);
+    }, mData.tPosition, mData.tPhysics, mData.tCollisionBox);
 }

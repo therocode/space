@@ -48,14 +48,14 @@ Space::Space() :
     mWalls(cMapSize),
     mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
-    mActorLogic(mEnt, mGfx, mTsk, mWld, mWalls, mWallChanges),
-    mOrganismLogic(mEnt, mAtmosphere),
-    mStructureLogic(mStr, mResources),
-    mTaskLogic(mTsk, mEnt, mWld, mWalls),
+    mActorLogic(mData, mWalls, mWallChanges),
+    mOrganismLogic(mData, mAtmosphere),
+    mStructureLogic(mData, mResources),
+    mTaskLogic(mData, mWalls),
     mZoneLogic(mZones),
     mAtmosphereLogic(mZones, mWalls, mAtmosphere),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mGfx, mEnt, mStr, mTsk, mWld, mShowZones, mShowAtmosphere),
-    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mWallChanges, mTsk, mEnt)
+    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mData, mShowZones, mShowAtmosphere),
+    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mWallChanges, mData)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -121,7 +121,7 @@ void Space::handleMessage(const MouseClickMessage& message)
         }   
         else if(message.button == fea::Mouse::RIGHT)
         {
-            if(count(mEnt.tPosition))
+            if(count(mData.tPosition))
             {
                 //int32_t toDelete = rand() % count(mTPosition);
                 //if(has(toDelete, mTPosition))
@@ -183,7 +183,7 @@ void Space::startScenario()
 	forEach([&] (const int32_t id, const glm::vec2&)
     {
 		toRemove.push_back(id);
-    }, mEnt.tPosition);
+    }, mData.tPosition);
 	
 	for(int32_t id : toRemove)
     {
@@ -211,12 +211,12 @@ void Space::startScenario()
     set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mWalls, mWallChanges);
     set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
 
-    createDoor(Door{{9, 8}, Orientation::Horizontal}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{10, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{11, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{12, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{13, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{14, 7}, Orientation::Vertical}, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{9, 8}, Orientation::Horizontal}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{10, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{11, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{12, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{13, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+    createDoor(Door{{14, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
 
     //temp
     set({glm::ivec2(10, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
@@ -243,19 +243,19 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
-    insert(Structure{offset + glm::ivec2(2, 0), 0}, mStr.tStructure);
-    insert(Structure{offset + glm::ivec2(0, 0), 1}, mStr.tStructure);
-    insert(Structure{offset + glm::ivec2(0, 1), 1}, mStr.tStructure);
-    insert(Structure{offset + glm::ivec2(1, 1), 2}, mStr.tStructure);
-    insert(Structure{offset + glm::ivec2(1, 0), 3}, mStr.tStructure);
+    insert(Structure{offset + glm::ivec2(2, 0), 0}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(0, 0), 1}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(0, 1), 1}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(1, 1), 2}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(1, 0), 3}, mData.tStructure);
     //mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 
-    clear(mTsk.tRoomTask);
-    clear(mTsk.tWallTask);
-    clear(mTsk.tDoorTask);
-    clear(mTsk.unassignedTasks);
-    clear(mTsk.tAssignedTask);
+    clear(mData.tRoomTask);
+    clear(mData.tWallTask);
+    clear(mData.tDoorTask);
+    clear(mData.unassignedTasks);
+    clear(mData.tAssignedTask);
 }
 
 void Space::loop()
@@ -283,7 +283,7 @@ void Space::loop()
     }
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mEnt.tPosition, mEnt.tPhysics, mEnt.tCollisionBox, mEnt.tWalkTarget, mEnt.tMoveAbility, mEnt.tMoveIntention, mEnt.tBloodValues, mEnt.tChoking, mStr.tStructureType, mStr.tStructure, mTsk.tRoomTask, mTsk.tWallTask, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask, mEnt.builders, mEnt.freeWorkers, mEnt.tBusyWorker, mEnt.deadWorkers, mGfx.tActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
     DebugGui::showInspector(io.MousePos, mZones, mAtmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);
@@ -312,7 +312,7 @@ void Space::temp()
     {
         if(!(rand() % 60))
         {
-            closeDoor(id, mWld.tDoor, mWld.openDoors, mWalls, mWallChanges);
+            closeDoor(id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
         }
-    }, mWld.tDoor);
+    }, mData.tDoor);
 }

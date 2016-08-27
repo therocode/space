@@ -63,9 +63,7 @@ class Space : public fea::Application,
         bool mShowAtmosphere;
         th::Optional<int32_t> mClickedEntity;
 
-        EntityData mEnt;
-        TaskData mTsk;
-        StructureData mStr;
+        GameData mData;
 
         //world
         WallMap mWalls;
@@ -73,10 +71,6 @@ class Space : public fea::Application,
         Zones mZones;
         Grid<Gases> mAtmosphere;
         Grid<GridNeighbors<Gases>> mAtmosphereNeighbors;
-        WorldData mWld;
-
-        //gfx
-        GfxData mGfx;
 
         NumberPool<int32_t> mTaskIdPool;
         //AudioPlayer mAudioPlayer;

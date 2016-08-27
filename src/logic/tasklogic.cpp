@@ -2,13 +2,10 @@
 #include "../roomutil.hpp"
 #include "../taskutil.hpp"
 
-TaskLogic::TaskLogic(TaskData& tsk, EntityData& ent, WorldData& wld, const WallMap& walls):
-    mTsk(tsk),
-    mEnt(ent),
-    mWld(wld),
+TaskLogic::TaskLogic(GameData& data, const WallMap& walls):
+    mData(data),
     mWalls(walls)
 {
-    (void)mEnt;
 }
 
 void TaskLogic::update()
@@ -37,10 +34,10 @@ void TaskLogic::updateRoomTasks()
         {
             toErase.push_back(id);
         }
-    }, mTsk.tRoomTask);
+    }, mData.tRoomTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mTsk.tRoomTask, mTsk.unassignedTasks, mTsk.tAssignedTask);
+        eraseTask(id, mData.tRoomTask, mData.unassignedTasks, mData.tAssignedTask);
 }
 
 void TaskLogic::updateWallTasks()
@@ -54,10 +51,10 @@ void TaskLogic::updateWallTasks()
         {
             toErase.push_back(id);
         }
-    }, mTsk.tWallTask);
+    }, mData.tWallTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mTsk.tWallTask, mTsk.unassignedTasks, mTsk.tAssignedTask);
+        eraseTask(id, mData.tWallTask, mData.unassignedTasks, mData.tAssignedTask);
 }
 
 void TaskLogic::updateDoorTasks()
@@ -69,13 +66,13 @@ void TaskLogic::updateDoorTasks()
         bool finished = !findOne([&] (int32_t doorId, const Door& door)
         {
             return doorTask.position == door.position && doorTask.orientation == door.orientation;
-        },  mWld.tDoor).isNull();
+        },  mData.tDoor).isNull();
         if(finished)
         {
             toErase.push_back(id);
         }
-    }, mTsk.tDoorTask);
+    }, mData.tDoorTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mTsk.tDoorTask, mTsk.unassignedTasks, mTsk.tAssignedTask);
+        eraseTask(id, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask);
 }

@@ -2,18 +2,14 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GfxData& gfx, const EntityData& ent, const StructureData& str, const TaskData& tsk, const WorldData& wld, bool& showZones, bool& showAtmosphere):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GameData& data, bool& showZones, bool& showAtmosphere):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
     mWalls(walls),
     mZones(zones),
     mAtmosphere(atmosphere),
-    mGfx(gfx),
-    mEnt(ent),
-    mStr(str),
-    mTsk(tsk),
-    mWld(wld),
+    mData(data),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
 {
@@ -27,7 +23,7 @@ void RenderLogic::frameStart()
 void RenderLogic::update()
 {
     mRenderer.startFrame();
-    mRenderer.renderWorld(mWalls, mWld, mZones.zones, mShowZones, mAtmosphere, mShowAtmosphere);
+    mRenderer.renderWorld(mWalls, mData, mZones.zones, mShowZones, mAtmosphere, mShowAtmosphere);
     renderStructures();
     renderTasks();
     renderSprites();
@@ -45,7 +41,7 @@ void RenderLogic::renderSprites()
 
      forEach([&] (int32_t actorId, const ActorSprite& sprite)
     {
-        const glm::vec2& position = get(sprite.actorId, mEnt.tPosition);
+        const glm::vec2& position = get(sprite.actorId, mData.tPosition);
 
         orders.emplace_back(
                 RenderOrder{
@@ -69,7 +65,7 @@ void RenderLogic::renderSprites()
             rect.setColor(fea::Color::Yellow);
             mFeaRenderer.render(rect);
         }
-    }, mGfx.tActorSprite); 
+    }, mData.tActorSprite); 
 
     mRenderer.render(orders);
 }
@@ -80,7 +76,7 @@ void RenderLogic::renderStructures()
 
      forEach([&] (int32_t structureId, const Structure& structure)
     {
-        const StructureType& type = get(structure.structureType, mStr.tStructureType);
+        const StructureType& type = get(structure.structureType, mData.tStructureType);
         const glm::vec2& position = structure.position * 32 + glm::ivec2(16, 16);
 
         orders.emplace_back(
@@ -95,7 +91,7 @@ void RenderLogic::renderStructures()
                 //sprite.flip,
                 }   
                 );  
-    }, mStr.tStructure); 
+    }, mData.tStructure); 
 
     mRenderer.render(orders);
 }
@@ -121,7 +117,7 @@ void RenderLogic::renderTasks()
                 //sprite.flip,
                 }   
                 );  
-    }, mTsk.tRoomTask); 
+    }, mData.tRoomTask); 
 
     forEach([&] (int32_t taskId, const WallTask& wallTask)
     {   
@@ -143,7 +139,7 @@ void RenderLogic::renderTasks()
                 //sprite.flip,
                 }   
                 );  
-    }, mTsk.tWallTask); 
+    }, mData.tWallTask); 
 
     forEach([&] (int32_t taskId, const DoorTask& doorTask)
     {   
@@ -165,7 +161,7 @@ void RenderLogic::renderTasks()
                 //sprite.flip,
                 }   
                 );  
-    }, mTsk.tDoorTask); 
+    }, mData.tDoorTask); 
 
     mRenderer.render(orders);
 }

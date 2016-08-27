@@ -9,11 +9,11 @@ void addTask(int32_t id, typename TaskTable::Type data, TaskTable& table, IdSet&
 }
 
 template <typename TaskTable>
-void eraseTask(int32_t id, TaskTable& table, IdSet& unassignedTasks, tsk::TAssignedTask& tAssignedTask)
+void eraseTask(int32_t id, TaskTable& table, IdSet& unassignedTasks, TAssignedTask& tAssignedTask)
 {
     erase(id, table);
     erase(id, unassignedTasks);
     erase(id, tAssignedTask);
 }
 
-void assignTask(int32_t taskId, int32_t actorId, tsk::TAssignedTask& tAssignedTask);
+void assignTask(int32_t taskId, int32_t actorId, TAssignedTask& tAssignedTask);

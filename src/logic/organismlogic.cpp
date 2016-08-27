@@ -1,15 +1,15 @@
 #include "organismlogic.hpp"
 
-OrganismLogic::OrganismLogic(EntityData& ent, Grid<Gases>& atmosphere):
-    mEnt(ent),
+OrganismLogic::OrganismLogic(GameData& data, Grid<Gases>& atmosphere):
+    mData(data),
     mAtmosphere(atmosphere)
 {
 }
 
 void OrganismLogic::update()
 {
-    clear(mEnt.died);
-    clear(mEnt.tChoking);
+    clear(mData.died);
+    clear(mData.tChoking);
 
     join([&] (int32_t id, const glm::vec2& position, BloodValues& bloodValue)
     {
@@ -27,7 +27,7 @@ void OrganismLogic::update()
 
         if(choking)
         {
-            insert(id, {breathingCapability}, mEnt.tChoking);
+            insert(id, {breathingCapability}, mData.tChoking);
         }
 
         if(bloodValue.oxygen < 600)
@@ -44,8 +44,8 @@ void OrganismLogic::update()
         }
         else
         {
-            insert(id, mEnt.died);
+            insert(id, mData.died);
         }
 
-    }, mEnt.tPosition, mEnt.tBloodValues);
+    }, mData.tPosition, mData.tBloodValues);
 }

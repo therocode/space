@@ -7,7 +7,7 @@
 class ActorLogic
 {
     public:
-        ActorLogic(EntityData& ent, GfxData& gfx, TaskData& tsk, WorldData& wld, const WallMap& walls, WallChanges& wallChanges);
+        ActorLogic(GameData& data, const WallMap& walls, WallChanges& wallChanges);
         void removeActor(int32_t id);
         int32_t addActor(Actor actor);
         void update();
@@ -20,10 +20,7 @@ class ActorLogic
         void applyPhysics();
         void applyCollisions();
 
-        EntityData& mEnt;
-        GfxData& mGfx;
-        TaskData& mTsk;
-        WorldData& mWld;
+        GameData& mData;
         const WallMap& mWalls;
         WallChanges& mWallChanges;
 };

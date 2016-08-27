@@ -25,7 +25,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TPosition& table)
+    std::vector<std::string> debugHeaders(const TPosition& table)
     {
         return {"Position"};
     }
@@ -38,7 +38,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TPhysics& table)
+    std::vector<std::string> debugHeaders(const TPhysics& table)
     {
         return {"Acceleration", "Velocity"};
     }
@@ -52,7 +52,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TCollisionBox& table)
+    std::vector<std::string> debugHeaders(const TCollisionBox& table)
     {
         return {"Size",};
     }
@@ -65,7 +65,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TMoveIntention& table)
+    std::vector<std::string> debugHeaders(const TMoveIntention& table)
     {
         return {"Direction", "Speed Percent"};
     }
@@ -81,7 +81,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TMoveAbility& table)
+    std::vector<std::string> debugHeaders(const TMoveAbility& table)
     {
         return {"Max Speed", "Max Acceleration"};
     }
@@ -99,7 +99,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TBloodValues& table)
+    std::vector<std::string> debugHeaders(const TBloodValues& table)
     {
         return {"Oxygen"};
     }
@@ -114,7 +114,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TChoking& table)
+    std::vector<std::string> debugHeaders(const TChoking& table)
     {
         return {"Choking"};
     }
@@ -129,7 +129,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const str::TStructure& table)
+    std::vector<std::string> debugHeaders(const TStructure& table)
     {
         return {"Type", "Position"};
     }
@@ -147,7 +147,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const str::TStructureType& table)
+    std::vector<std::string> debugHeaders(const TStructureType& table)
     {
         return {"Name"};
     }
@@ -162,7 +162,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const ent::TBusyWorker& table)
+    std::vector<std::string> debugHeaders(const TBusyWorker& table)
     {
         return {"Task ID",};
     }
@@ -177,7 +177,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const tsk::TRoomTask& table)
+    std::vector<std::string> debugHeaders(const TRoomTask& table)
     {
         return {"Position", "Size"};
     }
@@ -195,7 +195,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const tsk::TWallTask& table)
+    std::vector<std::string> debugHeaders(const TWallTask& table)
     {
         return {"Position", "Orientation"};
     }
@@ -213,7 +213,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const tsk::TDoorTask& table)
+    std::vector<std::string> debugHeaders(const TDoorTask& table)
     {
         return {"Position", "Orientation"};
     }
@@ -231,7 +231,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const tsk::TAssignedTask& table)
+    std::vector<std::string> debugHeaders(const TAssignedTask& table)
     {
         return {"Assignee ID"};
     }
@@ -246,7 +246,7 @@ namespace DebugGui
         };
     }
 
-    std::vector<std::string> debugHeaders(const gfx::TActorSprite& table)
+    std::vector<std::string> debugHeaders(const TActorSprite& table)
     {
         return {"Actor ID", "Texture ID", "Color"};
     }
