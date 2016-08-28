@@ -23,13 +23,25 @@ class InterfaceLogic
         std::unordered_set<WallPosition> doors;
     };
 
+    struct StructureInteraction
+    {
+        int32_t structureId;
+        int32_t structureTypeId;
+        th::Optional<glm::ivec2> initialPos;
+    };
+
     public:
         struct Output
         {
             std::vector<RoomTask> roomTasks;
         };
 
-        enum State { IDLE, DRAGGING_ROOM, PLANNING_ROOM };
+        enum State
+        {
+            IDLE,
+            DRAGGING_ROOM, PLANNING_ROOM,
+            INTERACT_STRUCTURE,
+        };
 
         InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, const WallMap& walls, WallChanges& wallChanges, GameData& data);
         void update();
@@ -45,6 +57,8 @@ class InterfaceLogic
         th::Optional<glm::ivec2> mDragStart;
         th::Optional<glm::ivec2> mDragEnd;
         th::Optional<RoomPlanInfo> mRoomPlan;
+
+        th::Optional<StructureInteraction> mStructureInteraction;
 
 		Space& mSpace;
         fea::Renderer2D& mRenderer;

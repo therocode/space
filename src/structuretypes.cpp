@@ -2,22 +2,22 @@
 
 void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
 {
-    insert(StructureType
+    insert(Airlock, StructureType
     {
         "Airlock",
         resources.textureFromName("airlock"),
     }, types);
-    insert(StructureType
+    insert(CryoPods, StructureType
     {
         "Cryo pods",
         resources.textureFromName("cryopods"),
     }, types);
-    insert(StructureType
+    insert(Battery, StructureType
     {
         "Battery",
         resources.textureFromName("battery"),
     }, types);
-    insert(StructureType
+    insert(Crate, StructureType
     {
         "Crate",
         resources.textureFromName("crate"),

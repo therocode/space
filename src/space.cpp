@@ -8,6 +8,7 @@
 #include "doorutil.hpp"
 #include "gridneighbors.hpp"
 #include <imgui.h>
+#include "structuretypes.hpp"
 
 const glm::ivec2 cMapSize(256, 256);
 const Gases cDefaultAtmosphere
@@ -69,6 +70,7 @@ Space::Space() :
     io.DisplaySize.x = mWindowSize.x;
     io.DisplaySize.y = mWindowSize.y;
     io.IniFilename = "data/imgui.ini";
+    io.MousePos = {0, 0};
     unsigned char* pixels;
     int width, height;
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
@@ -243,11 +245,11 @@ void Space::startScenario()
     mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
-    insert(Structure{offset + glm::ivec2(2, 0), 0}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(0, 0), 1}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(0, 1), 1}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(1, 1), 2}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(1, 0), 3}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(2, 0), Airlock}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(0, 0), CryoPods}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(0, 1), CryoPods}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(1, 1), Battery}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(1, 0), Crate}, mData.tStructure);
     //mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 

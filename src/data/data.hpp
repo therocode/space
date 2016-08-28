@@ -130,7 +130,7 @@ using TAssignedTask = DataTable<AssignedTask, true>;
 using TDoor = DataTable<Door, false>;
 //structure
 using TStructure = DataTable<Structure, false>;
-using TStructureType = DataTable<StructureType, false>;
+using TStructureType = DataTable<StructureType, true>;
 using TActorSprite = DataTable<ActorSprite, false>;
 
 struct GameData

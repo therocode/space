@@ -2,6 +2,7 @@
 #include "../drawables/linerect.hpp"
 #include "../taskutil.hpp"
 #include "../space.hpp"
+#include "../structuregui.hpp"
 #include <imgui.h>
 
 InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, const WallMap& walls, WallChanges& wallChanges, GameData& data):
@@ -16,7 +17,8 @@ InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t&
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
 {
-    (void)mData;
+    (void)mWallChanges;
+    (void)mWalls;
 }
 
 void InterfaceLogic::update()
@@ -152,6 +154,16 @@ void InterfaceLogic::update()
 
         ImGui::End();
     }
+    if(mStructureInteraction)
+    {
+        if(mStructureInteraction->initialPos)
+        {
+            ImGui::SetNextWindowPos(ImVec2(*mStructureInteraction->initialPos));
+            mStructureInteraction->initialPos = {};
+        }
+
+        showStructureGui(mStructureInteraction->structureId, mStructureInteraction->structureTypeId, mData);
+    }
 }
 
 void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
@@ -197,14 +209,26 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
                     toggleDoor(position + glm::ivec2(0, 16), Orientation::Horizontal);
             }
         }
-        //TEMP
-        else
+        else if(mState == IDLE || mState == INTERACT_STRUCTURE)
         {
-            glm::ivec2 offset = button == fea::Mouse::LEFT ? glm::ivec2(16, 0) : glm::ivec2(0, 16);
-            int32_t idToSet = mWalls.at((position + offset) / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal) ? 0 : 1;
-            set({(position + offset) / 32, button == fea::Mouse::LEFT ? Orientation::Vertical : Orientation::Horizontal}, idToSet, mWalls, mWallChanges);
+            mState = IDLE;
+            mStructureInteraction = {};
+
+            auto structureAtClick = findOne([&](int32_t id, const Structure& structure)
+            {
+                return structure.position == tile;
+            }, mData.tStructure);
+
+            if(structureAtClick)
+            {
+                mStructureInteraction = StructureInteraction
+                {
+                    structureAtClick->id,
+                    structureAtClick->data.structureType,
+                    {position},
+                };
+            }
         }
-        //ENDTEMP
     }
 }
 
@@ -258,6 +282,8 @@ std::string InterfaceLogic::stateToString(State state) const
         return "Drag Room";
     else if(state == PLANNING_ROOM)
         return "Plan Room";
+    else if(state == INTERACT_STRUCTURE)
+        return "Structure Interaction";
     else
         return "None";
 }
