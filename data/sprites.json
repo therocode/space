@@ -53,5 +53,16 @@
         },
         "texture": "crate",
         "animation": ""
+    },
+    {
+        "name": "toilet",
+        "size": { "x": 32.0, "y": 32.0 },
+        "offset":
+        {
+            "x": 0.0,
+            "y": 0.0
+        },
+        "texture": "toilet",
+        "animation": ""
     }
 ]

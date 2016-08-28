@@ -22,4 +22,9 @@ void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
         "Crate",
         resources.textureFromName("crate"),
     }, types);
+    insert(Toilet, StructureType
+    {
+        "Toilet",
+        resources.textureFromName("toilet"),
+    }, types);
 }

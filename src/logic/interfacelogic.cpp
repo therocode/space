@@ -162,7 +162,10 @@ void InterfaceLogic::update()
             mStructureInteraction->initialPos = {};
         }
 
-        showStructureGui(mStructureInteraction->structureId, mStructureInteraction->structureTypeId, mData);
+        if(showStructureGui(mStructureInteraction->structureId, mStructureInteraction->structureTypeId, mData))
+        {//close it
+            reset();
+        }
     }
 }
 
@@ -294,4 +297,5 @@ void InterfaceLogic::reset()
     mDragStart = {};
     mDragEnd = {};
     mRoomPlan = {};
+    mStructureInteraction = {};
 }

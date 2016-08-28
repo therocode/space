@@ -18,5 +18,9 @@
     {
         "name": "crate",
         "path": "data/textures/crate.png"
+    },
+    {
+        "name": "toilet",
+        "path": "data/textures/toilet.png"
     }
 ]

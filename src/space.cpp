@@ -203,6 +203,7 @@ void Space::startScenario()
     glm::ivec2 offset(7, 7);
     set({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
     set({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(1, 1), Orientation::Horizontal}, 1, mWalls, mWallChanges);
     set({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
     set({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
     set({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
@@ -213,6 +214,7 @@ void Space::startScenario()
     set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mWalls, mWallChanges);
     set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
 
+    createDoor(Door{offset + glm::ivec2(1, 0), Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
     createDoor(Door{{9, 8}, Orientation::Horizontal}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
     createDoor(Door{{10, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
     createDoor(Door{{11, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
@@ -249,7 +251,8 @@ void Space::startScenario()
     insert(Structure{offset + glm::ivec2(0, 0), CryoPods}, mData.tStructure);
     insert(Structure{offset + glm::ivec2(0, 1), CryoPods}, mData.tStructure);
     insert(Structure{offset + glm::ivec2(1, 1), Battery}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(1, 0), Crate}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(1, 0), Toilet}, mData.tStructure);
+    insert(Structure{offset + glm::ivec2(2, 1), Crate}, mData.tStructure);
     //mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 
