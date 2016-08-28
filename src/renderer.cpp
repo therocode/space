@@ -11,7 +11,7 @@
 const float cTileWidth = 32.0f;
 const float cWallThickness = 8.0f;
 
-const fea::Color cGroundColor = {75, 75, 75};
+const fea::Color cGroundColor = {40, 40, 40};
 Renderer::Renderer(fea::Renderer2D& renderer, const std::vector<Texture>& textures):
     mRenderer(renderer),
     mTextures(textures)
