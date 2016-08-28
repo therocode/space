@@ -1,4 +1,5 @@
 #include "debugguidata.hpp"
+#include <sstream>
 
 namespace DebugGui
 {
