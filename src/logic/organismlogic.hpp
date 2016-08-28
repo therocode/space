@@ -1,14 +1,11 @@
 #pragma once
-#include "data.hpp"
-#include "../util/grid.hpp"
-#include "../gases.hpp"
+#include <data.hpp>
 
 class OrganismLogic
 {
     public:
-        OrganismLogic(GameData& data, Grid<Gases>& atmosphere);
+        OrganismLogic(GameData& data);
         void update();
     private:
         GameData& mData;
-        Grid<Gases>& mAtmosphere;
 };

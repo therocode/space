@@ -7,11 +7,11 @@
 class ZoneLogic
 {
     public:
-        ZoneLogic(Zones& zones);
+        ZoneLogic(GameData& data);
         void update(WallMap& walls, const WallChanges& changedWalls);
     private:
         void updateZones(WallMap& walls, const WallChanges& changedWalls);
 
-        Zones& mZones;
+        GameData& mData;
         NumberPool<int32_t> mZoneIds;
 };

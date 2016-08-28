@@ -6,7 +6,7 @@
 class TaskLogic
 {
     public:
-        TaskLogic(GameData& data, const WallMap& walls);
+        TaskLogic(GameData& data);
         void update();
     private:
         void updateRoomTasks();
@@ -14,5 +14,4 @@ class TaskLogic
         void updateDoorTasks();
 
         GameData& mData;
-        const WallMap& mWalls;
 };

@@ -1,30 +1,54 @@
 #include "structuretypes.hpp"
+#include "structures/airlock.hpp"
 
 void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
 {
-    insert(Airlock, StructureType
+    insert(Structures::Airlock, StructureType
     {
         "Airlock",
         resources.textureFromName("airlock"),
     }, types);
-    insert(CryoPods, StructureType
+    insert(Structures::CryoPods, StructureType
     {
         "Cryo pods",
         resources.textureFromName("cryopods"),
     }, types);
-    insert(Battery, StructureType
+    insert(Structures::Battery, StructureType
     {
         "Battery",
         resources.textureFromName("battery"),
     }, types);
-    insert(Crate, StructureType
+    insert(Structures::Crate, StructureType
     {
         "Crate",
         resources.textureFromName("crate"),
     }, types);
-    insert(Toilet, StructureType
+    insert(Structures::Toilet, StructureType
     {
         "Toilet",
         resources.textureFromName("toilet"),
     }, types);
+}
+
+void createStructure(Structure structure, GameData& data)
+{
+    int32_t newId = insert(std::move(structure), data.tStructure);
+    insert(newId, data.uninitializedStructures);
+
+    int32_t type = structure.structureType;
+
+    if(type == Structures::Airlock)
+    {
+        insert(newId, Airlock{}, data.tAirlock);
+    }
+}
+
+void initializeStructure(int32_t id, const Structure& structure, GameData& data)
+{
+    int32_t type = structure.structureType;
+
+    if(type == Structures::Airlock)
+    {
+        discoverAirlockDoors(id, structure, data);
+    }
 }

@@ -10,7 +10,7 @@
 class RenderLogic
 {
     public:
-        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GameData& data, bool& showZones, bool& showAtmosphere);
+        RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const GameData& data, bool& showZones, bool& showAtmosphere);
         void frameStart();
         void update();
         void frameEnd();
@@ -22,11 +22,8 @@ class RenderLogic
         fea::Renderer2D& mFeaRenderer;
         Renderer mRenderer;
 
-        const WallMap& mWalls;
-        const Zones& mZones;
-        const Grid<Gases>& mAtmosphere;
-
         const GameData& mData;
+
         bool& mShowZones;
         bool& mShowAtmosphere;
 };

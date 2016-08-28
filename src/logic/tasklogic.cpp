@@ -2,9 +2,8 @@
 #include "../roomutil.hpp"
 #include "../taskutil.hpp"
 
-TaskLogic::TaskLogic(GameData& data, const WallMap& walls):
-    mData(data),
-    mWalls(walls)
+TaskLogic::TaskLogic(GameData& data):
+    mData(data)
 {
 }
 
@@ -24,7 +23,7 @@ void TaskLogic::updateRoomTasks()
         bool finished = true;
         forEachWall(roomTask.position, roomTask.size, [&]  (const glm::ivec2& coordinate, Orientation orientation)
         {
-            if(!mWalls.at(coordinate, orientation))
+            if(!mData.walls.at(coordinate, orientation))
             {
                 finished = false;
             }
@@ -46,7 +45,7 @@ void TaskLogic::updateWallTasks()
 
     forEach([&] (int32_t id, const WallTask& wallTask)
     {
-        bool finished = mWalls.at(wallTask.position, wallTask.orientation);
+        bool finished = mData.walls.at(wallTask.position, wallTask.orientation);
         if(finished)
         {
             toErase.push_back(id);

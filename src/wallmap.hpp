@@ -16,6 +16,7 @@ using WallChanges = std::unordered_map<WallPosition, WallChange>;
 class WallMap
 {
     public:
+        WallMap() = default;
         WallMap(glm::ivec2 tileCount);
         int32_t at(const glm::ivec2& position, Orientation orientation) const;
         int32_t& at(const glm::ivec2& position, Orientation orientation);

@@ -1,8 +1,7 @@
 #include "organismlogic.hpp"
 
-OrganismLogic::OrganismLogic(GameData& data, Grid<Gases>& atmosphere):
-    mData(data),
-    mAtmosphere(atmosphere)
+OrganismLogic::OrganismLogic(GameData& data):
+    mData(data)
 {
 }
 
@@ -15,7 +14,7 @@ void OrganismLogic::update()
     {
         glm::ivec2 tile = position / 32.0f;       
 
-        Gases& gases = mAtmosphere.at(tile);
+        Gases& gases = mData.atmosphere.at(tile);
         int64_t totalGasAmount = pressure(gases);
         float pressure = pressurePercent(gases);
         float oxygenPercent = gases[Oxygen] / static_cast<float>(totalGasAmount);

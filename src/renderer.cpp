@@ -26,13 +26,13 @@ void Renderer::startFrame()
     mRenderer.clear();
 }
 
-void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Grid<int32_t>& zones, bool showZones, const Grid<Gases>& atmosphere, bool showAtmosphere)
+void Renderer::renderWorld(const GameData& data, bool showZones, bool showAtmosphere)
 {
     mRenderer.clear(cGroundColor);
 
     fea::Quad quad({cTileWidth, cTileWidth});
 
-    auto size = zones.size();
+    auto size = data.zones.zones.size();
 
 
     fea::Quad colorMapQuad(glm::vec2(256.0f, 256.0f) * 32.0f);
@@ -45,17 +45,17 @@ void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Gri
         {
             for(int32_t x = 0; x < size.x; ++x)
             {
-                maxZoneId = std::max(maxZoneId, zones.at({x, y}));
+                maxZoneId = std::max(maxZoneId, data.zones.zones.at({x, y}));
             }
         }
 
-        size = zones.size();
+        size = data.zones.zones.size();
 
         for(int32_t y = 0; y < size.y; ++y)
         {
             for(int32_t x = 0; x < size.x; ++x)
             {
-                int32_t id = zones.at({x, y});
+                int32_t id = data.zones.zones.at({x, y});
                 if(id)
                 {
                     mMapTexture.setPixel({x, y}, fea::HSVColor(id / static_cast<float>(maxZoneId), 0.6f, 0.6f).toRGB());
@@ -69,8 +69,8 @@ void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Gri
         mRenderer.render(colorMapQuad);
     }
 
-    size = walls.size();
-    const auto& hWallArray = walls.horizontalWalls();
+    size = data.walls.size();
+    const auto& hWallArray = data.walls.horizontalWalls();
 
     quad = fea::Quad({cTileWidth, cWallThickness});
     quad.setColor(fea::Color(90, 90, 90));
@@ -79,7 +79,7 @@ void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Gri
     {
         for(int32_t x = 0; x < size.x; ++x)
         {
-            if(hWallArray[walls.toIndex({x, y})])
+            if(hWallArray[data.walls.toIndex({x, y})])
             {
                 quad.setPosition(glm::vec2(x, y) * 32.0f - glm::vec2(0.0f, cWallThickness / 2.0f));
                 mRenderer.render(quad);
@@ -87,7 +87,7 @@ void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Gri
         }
     }
 
-    const auto& vWallArray = walls.verticalWalls();
+    const auto& vWallArray = data.walls.verticalWalls();
 
     quad.setSize({cWallThickness, cTileWidth});
 
@@ -95,7 +95,7 @@ void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Gri
     {
         for(int32_t x = 0; x < size.x; ++x)
         {
-            if(vWallArray[walls.toIndex({x, y})])
+            if(vWallArray[data.walls.toIndex({x, y})])
             {
                 quad.setPosition(glm::vec2(x, y) * 32.0f - glm::vec2(cWallThickness / 2.0f, 0.0f));
                 mRenderer.render(quad);
@@ -130,13 +130,13 @@ void Renderer::renderWorld(const WallMap& walls, const GameData& data, const Gri
 
     if(showAtmosphere)
     {
-        size = atmosphere.size();
+        size = data.atmosphere.size();
 
         for(int32_t y = 0; y < size.y; ++y)
         {
             for(int32_t x = 0; x < size.x; ++x)
             {
-                const Gases& gases = atmosphere.at({x, y});
+                const Gases& gases = data.atmosphere.at({x, y});
                 
                 mMapTexture.setPixel({x, y}, 
                     fea::Color(

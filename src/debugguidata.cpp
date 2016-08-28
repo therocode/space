@@ -25,6 +25,33 @@ namespace DebugGui
         };
     }
 
+    template<typename T>
+    std::vector<std::string> vectorToStringList(const std::vector<T>& list)
+    {
+        std::vector<std::string> result;
+
+        std::stringstream total;
+
+        for(const auto& item : list)
+        {
+            std::stringstream ss;
+            ss << item;
+            total << item << ", ";
+            result.push_back(ss.str());
+        }
+
+        std::string totalString = total.str();
+
+        if(!list.empty())
+        {
+            totalString.pop_back();
+            totalString.pop_back();
+        }
+
+        result.insert(result.begin(), totalString);
+        return result;
+    }
+
     std::vector<std::string> debugHeaders(const TPosition& table)
     {
         return {"Position"};
@@ -144,6 +171,21 @@ namespace DebugGui
             {
                 vec2ToStringList(data.position),
             }
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TAirlock& table)
+    {
+        return {"Doors",};
+    }
+
+    void debugText(const Airlock& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                vectorToStringList(data.doors),
+            },
         };
     }
 

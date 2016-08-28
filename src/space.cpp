@@ -46,24 +46,24 @@ Space::Space() :
     mGameSpeedMultiplier(1),
     mShowZones(false),
     mShowAtmosphere(false),
-    mWalls(cMapSize),
-    mAtmosphere(cMapSize, cDefaultAtmosphere),
     mGuiBlocksMouse(false),
-    mActorLogic(mData, mWalls, mWallChanges),
-    mOrganismLogic(mData, mAtmosphere),
+    mActorLogic(mData),
+    mOrganismLogic(mData),
     mStructureLogic(mData, mResources),
-    mTaskLogic(mData, mWalls),
-    mZoneLogic(mZones),
-    mAtmosphereLogic(mZones, mWalls, mAtmosphere),
-    mRenderLogic(mResources, mFeaRenderer, mWalls, mZones, mAtmosphere, mData, mShowZones, mShowAtmosphere),
-    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mWalls, mWallChanges, mData)
+    mTaskLogic(mData),
+    mZoneLogic(mData),
+    mAtmosphereLogic(mData),
+    mRenderLogic(mResources, mFeaRenderer, mData, mShowZones, mShowAtmosphere),
+    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mData)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
 
     subscribe(mBus, *this, false);
 
-    init(cMapSize, 0, mZones);
+    mData.walls = {cMapSize};
+    mData.atmosphere = {cMapSize, cDefaultAtmosphere};
+    init(cMapSize, 0, mData.zones);
 
     //imgui
     ImGuiIO& io = ImGui::GetIO();
@@ -77,7 +77,7 @@ Space::Space() :
     mImguiFontTexture.create({width, height}, pixels);
     io.Fonts->TexID = reinterpret_cast<void*>(mImguiFontTexture.getId());
 
-    mAtmosphereNeighbors = findAllNeighbors(mAtmosphere, mWalls);
+    mData.atmosphereNeighbors = findAllNeighbors(mData.atmosphere, mData.walls);
 }
 
 void Space::handleMessage(const QuitMessage& message)
@@ -198,62 +198,62 @@ void Space::startScenario()
         mActorLogic.addActor(std::move(actor));
     }
 
-    mWalls.fill(0);
-    mAtmosphere.fill(cDefaultAtmosphere);
+    mData.walls.fill(0);
+    mData.atmosphere.fill(cDefaultAtmosphere);
     glm::ivec2 offset(7, 7);
-    set({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(1, 1), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(2, 2), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(0, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(0, 1), Orientation::Vertical}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(3, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mWalls, mWallChanges);
-    set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mWalls, mWallChanges);
+    set({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(1, 1), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(2, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(0, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(0, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(3, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
+    set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
 
-    createDoor(Door{offset + glm::ivec2(1, 0), Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{9, 8}, Orientation::Horizontal}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{10, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{11, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{12, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{13, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
-    createDoor(Door{{14, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+    createDoor(Door{offset + glm::ivec2(1, 0), Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+    createDoor(Door{{9, 8}, Orientation::Horizontal}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+    createDoor(Door{{10, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+    createDoor(Door{{11, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+    createDoor(Door{{12, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+    createDoor(Door{{13, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+    createDoor(Door{{14, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
 
     //temp
-    set({glm::ivec2(10, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(10, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(11, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(11, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(12, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(12, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(13, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(13, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(14, 7), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    set({glm::ivec2(14, 8), Orientation::Horizontal}, 1, mWalls, mWallChanges);
-    mAtmosphere.set(glm::ivec2(10, 7), cHealthyAtmosphere);
-    mAtmosphere.set(glm::ivec2(11, 7), cHealthyAtmosphere);
-    mAtmosphere.set(glm::ivec2(12, 7), cHealthyAtmosphere);
-    mAtmosphere.set(glm::ivec2(13, 7), cHealthyAtmosphere);
-    mAtmosphere.set(glm::ivec2(14, 7), cHealthyAtmosphere);
+    set({glm::ivec2(10, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(10, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(11, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(11, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(12, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(12, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(13, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(13, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(14, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    set({glm::ivec2(14, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
+    mData.atmosphere.set(glm::ivec2(10, 7), cHealthyAtmosphere);
+    mData.atmosphere.set(glm::ivec2(11, 7), cHealthyAtmosphere);
+    mData.atmosphere.set(glm::ivec2(12, 7), cHealthyAtmosphere);
+    mData.atmosphere.set(glm::ivec2(13, 7), cHealthyAtmosphere);
+    mData.atmosphere.set(glm::ivec2(14, 7), cHealthyAtmosphere);
     //endtemp
 
-    mAtmosphere.set(offset + glm::ivec2(0, 0), cHealthyAtmosphere);
-    mAtmosphere.set(offset + glm::ivec2(1, 0), cHealthyAtmosphere);
-    mAtmosphere.set(offset + glm::ivec2(2, 0), cHealthyAtmosphere);
-    mAtmosphere.set(offset + glm::ivec2(0, 1), cHealthyAtmosphere);
-    mAtmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
-    mAtmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
+    mData.atmosphere.set(offset + glm::ivec2(0, 0), cHealthyAtmosphere);
+    mData.atmosphere.set(offset + glm::ivec2(1, 0), cHealthyAtmosphere);
+    mData.atmosphere.set(offset + glm::ivec2(2, 0), cHealthyAtmosphere);
+    mData.atmosphere.set(offset + glm::ivec2(0, 1), cHealthyAtmosphere);
+    mData.atmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
+    mData.atmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
-    insert(Structure{offset + glm::ivec2(2, 0), Airlock}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(0, 0), CryoPods}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(0, 1), CryoPods}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(1, 1), Battery}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(1, 0), Toilet}, mData.tStructure);
-    insert(Structure{offset + glm::ivec2(2, 1), Crate}, mData.tStructure);
-    //mAtmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
+    createStructure(Structure{offset + glm::ivec2(2, 0), Structures::Airlock}, mData);
+    createStructure(Structure{offset + glm::ivec2(0, 0), Structures::CryoPods}, mData);
+    createStructure(Structure{offset + glm::ivec2(0, 1), Structures::CryoPods}, mData);
+    createStructure(Structure{offset + glm::ivec2(1, 1), Structures::Battery}, mData);
+    createStructure(Structure{offset + glm::ivec2(1, 0), Structures::Toilet}, mData);
+    createStructure(Structure{offset + glm::ivec2(2, 1), Structures::Crate}, mData);
+    //mData.atmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 
     clear(mData.tRoomTask);
@@ -282,14 +282,15 @@ void Space::loop()
         mOrganismLogic.update();
         mStructureLogic.update();
         mTaskLogic.update();
-        mZoneLogic.update(mWalls, mWallChanges);
-        updateNeighbors(mAtmosphereNeighbors, mAtmosphere, mWalls, mWallChanges);
-        mAtmosphereLogic.update(mAtmosphereNeighbors);
+        mZoneLogic.update(mData.walls, mData.wallChanges);
+        mStructureLogic.updateAfterWall();
+        updateNeighbors(mData.atmosphereNeighbors, mData.atmosphere, mData.walls, mData.wallChanges);
+        mAtmosphereLogic.update(mData.atmosphereNeighbors);
     }
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
-    DebugGui::showInspector(io.MousePos, mZones, mAtmosphere);
+    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
+    DebugGui::showInspector(io.MousePos, mData.zones, mData.atmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);
 
@@ -317,7 +318,7 @@ void Space::temp()
     {
         if(!(rand() % 60))
         {
-            closeDoor(id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+            closeDoor(id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
         }
     }, mData.tDoor);
 }

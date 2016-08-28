@@ -5,20 +5,16 @@
 #include "../structuregui.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, const WallMap& walls, WallChanges& wallChanges, GameData& data):
+InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
 	mSpace(space),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
     mTaskIdPool(taskIdPool),
-    mWalls(walls),
-    mWallChanges(wallChanges),
     mData(data),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
 {
-    (void)mWallChanges;
-    (void)mWalls;
 }
 
 void InterfaceLogic::update()

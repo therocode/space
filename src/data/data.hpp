@@ -20,6 +20,10 @@
 #include "glm/glm.hpp"
 #include <fea/rendering/color.hpp>
 #include "../orientation.hpp"
+#include "../wallmap.hpp"
+#include "../gases.hpp"
+#include "../zones.hpp"
+#include "../gridneighbors.hpp"
 
 //table layouts
 struct ActorSprite
@@ -91,6 +95,10 @@ struct Door
     Orientation orientation;
 };
 
+struct Airlock
+{
+    std::vector<int32_t> doors;
+};
 //http://members.shaw.ca/tfrisen/how_much_oxygen_for_a_person.htm
 //one ingame hour: 20s. time ratio: 0.005555555555555
 //need to use 2000 oxygene in 2 hours, 1000 in 1h, 1000/20 = 50 oxygene/s
@@ -131,6 +139,8 @@ using TDoor = DataTable<Door, false>;
 //structure
 using TStructure = DataTable<Structure, false>;
 using TStructureType = DataTable<StructureType, true>;
+using TAirlock = DataTable<Airlock, true>;
+//gfx
 using TActorSprite = DataTable<ActorSprite, false>;
 
 struct GameData
@@ -168,7 +178,16 @@ struct GameData
     //structure
     TStructure tStructure = {"Structure", "All existing structures"};
     TStructureType tStructureType = {"Structure Type", "All types of structures"};
+    TAirlock tAirlock = {"Airlock", "All existing airlocks"};
+    IdSet uninitializedStructures = {{}, {"Uninitialized Structures", "Structures that need initialization"}};
 
     //gfx
-    ::TActorSprite tActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
+    TActorSprite tActorSprite = {"Actor Sprite", "Many-to-many relationship between game objects and sprites. Represents the visibility on screen of game entities"};
+
+    //world
+    WallMap walls;
+    WallChanges wallChanges;
+    Zones zones;
+    Grid<Gases> atmosphere;
+    Grid<GridNeighbors<Gases>> atmosphereNeighbors;
 };

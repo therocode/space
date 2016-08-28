@@ -6,7 +6,6 @@
 #include <fea/userinterface.hpp>
 #include <data.hpp>
 #include "../util/numberpool.hpp"
-#include "../wallmap.hpp"
 #include <fea/util.hpp>
 #include <unordered_set>
 #include "../wallposition.hpp"
@@ -43,7 +42,7 @@ class InterfaceLogic
             INTERACT_STRUCTURE,
         };
 
-        InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, const WallMap& walls, WallChanges& wallChanges, GameData& data);
+        InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
         void update();
         void worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
@@ -64,8 +63,6 @@ class InterfaceLogic
         fea::Renderer2D& mRenderer;
         int32_t& mGameSpeedMultiplier;
         NumberPool<int32_t>& mTaskIdPool;
-        const WallMap& mWalls;
-        WallChanges& mWallChanges;
         GameData& mData;
         bool& mShowZones;
         bool& mShowAtmosphere;

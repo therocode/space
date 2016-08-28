@@ -1,26 +1,25 @@
 #include "atmospherelogic.hpp"
 #include "../debug.hpp"
 
-AtmosphereLogic::AtmosphereLogic(const Zones& zones, const WallMap& walls, Grid<Gases>& atmosphere):
-    mZones(zones),
-    mWalls(walls),
-    mAtmosphere(atmosphere),
-    mAtmosphereDifference(mAtmosphere.size(), Gases{})
+AtmosphereLogic::AtmosphereLogic(GameData& data):
+    mData(data)
 {
-    (void)mWalls;
 }
 
 void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
 {
+    if(mAtmosphereDifference.size().x == 0)
+        mAtmosphereDifference = {mData.atmosphere.size(), Gases{}};
+
     mAtmosphereDifference.fill(Gases{});
 
     std::array<int32_t, 4> neighborDifferences;
 
     const GridNeighbors<Gases>* startNeighborsPointer = &allNeighbors.at({0, 0});
-    const int32_t* startZoneIdPointer = &mZones.zones.at({0, 0});
-    Gases* startGasesPointer = &mAtmosphere.at({0, 0});
+    const int32_t* startZoneIdPointer = &mData.zones.zones.at({0, 0});
+    Gases* startGasesPointer = &mData.atmosphere.at({0, 0});
     Gases* startGasesDifferencePointer = &mAtmosphereDifference.at({0, 0});
-    size_t amount = static_cast<size_t>(mZones.zones.size().x * mZones.zones.size().y);
+    size_t amount = static_cast<size_t>(mData.zones.zones.size().x * mData.zones.zones.size().y);
     for(size_t currentTileIndex = 0; currentTileIndex < amount; ++currentTileIndex)
     {
         const GridNeighbors<Gases>& neighbors = startNeighborsPointer[currentTileIndex];

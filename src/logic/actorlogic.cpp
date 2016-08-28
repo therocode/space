@@ -5,10 +5,8 @@
 #include "../doorutil.hpp"
 #include "../debug.hpp"
 
-ActorLogic::ActorLogic(GameData& data, const WallMap& walls, WallChanges& wallChanges):
-    mData(data),
-    mWalls(walls),
-    mWallChanges(wallChanges)
+ActorLogic::ActorLogic(GameData& data):
+    mData(data)
 {
 }
 
@@ -152,7 +150,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    set({wallTask->data.position, wallTask->data.orientation}, 1, mWalls, mWallChanges);
+                    set({wallTask->data.position, wallTask->data.orientation}, 1, mData.walls, mData.wallChanges);
                 }
             }
             else
@@ -174,7 +172,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
                 }
             }
             else
@@ -244,7 +242,7 @@ void ActorLogic::applyCollisions()
 
         if(physics.velocity.x < 0.0f && tileL != currentTile.x)
         {
-            if(mWalls.at(currentTile, Orientation::Vertical) != 0)
+            if(mData.walls.at(currentTile, Orientation::Vertical) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
@@ -258,13 +256,13 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
                 }
             }
         }
         else if(physics.velocity.x > 0.0f && tileR != currentTile.x)
         {
-            if(mWalls.at({currentTile.x + 1, currentTile.y}, Orientation::Vertical) != 0)
+            if(mData.walls.at({currentTile.x + 1, currentTile.y}, Orientation::Vertical) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
@@ -278,14 +276,14 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
                 }
             }
         }
 
         if(physics.velocity.y < 0.0f && tileT != currentTile.y)
         {
-            if(mWalls.at(currentTile, Orientation::Horizontal) != 0)
+            if(mData.walls.at(currentTile, Orientation::Horizontal) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
@@ -299,13 +297,13 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
                 }
             }
         }
         else if(physics.velocity.y > 0.0f && tileB != currentTile.y)
         {
-            if(mWalls.at({currentTile.x, currentTile.y + 1}, Orientation::Horizontal) != 0)
+            if(mData.walls.at({currentTile.x, currentTile.y + 1}, Orientation::Horizontal) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
@@ -319,7 +317,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mWalls, mWallChanges);
+                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
                 }
             }
         }

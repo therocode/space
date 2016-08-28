@@ -2,13 +2,10 @@
 #include "../debug.hpp"
 #include "../drawables/linerect.hpp"
 
-RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const WallMap& walls, const Zones& zones, const Grid<Gases>& atmosphere, const GameData& data, bool& showZones, bool& showAtmosphere):
+RenderLogic::RenderLogic(ResourceManager& resources, fea::Renderer2D& feaRenderer, const GameData& data, bool& showZones, bool& showAtmosphere):
     mResources(resources),
     mFeaRenderer(feaRenderer),
     mRenderer(mFeaRenderer, mResources.textures()),
-    mWalls(walls),
-    mZones(zones),
-    mAtmosphere(atmosphere),
     mData(data),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
@@ -23,7 +20,7 @@ void RenderLogic::frameStart()
 void RenderLogic::update()
 {
     mRenderer.startFrame();
-    mRenderer.renderWorld(mWalls, mData, mZones.zones, mShowZones, mAtmosphere, mShowAtmosphere);
+    mRenderer.renderWorld(mData, mShowZones, mShowAtmosphere);
     renderStructures();
     renderTasks();
     renderSprites();

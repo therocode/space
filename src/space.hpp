@@ -65,13 +65,6 @@ class Space : public fea::Application,
 
         GameData mData;
 
-        //world
-        WallMap mWalls;
-        WallChanges mWallChanges;
-        Zones mZones;
-        Grid<Gases> mAtmosphere;
-        Grid<GridNeighbors<Gases>> mAtmosphereNeighbors;
-
         NumberPool<int32_t> mTaskIdPool;
         //AudioPlayer mAudioPlayer;
         
