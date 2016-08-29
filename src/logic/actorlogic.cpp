@@ -249,7 +249,7 @@ void ActorLogic::applyCollisions()
                     return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Vertical;
                 }, mData.tDoor);
 
-                if(!collidedDoor)
+                if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))
                 {
                     physics.velocity.x = 0.0f;
                     position.x = currentTile.x * 32.0f + collisionBox.size.x / 2.0f + 0.001f;
@@ -269,7 +269,7 @@ void ActorLogic::applyCollisions()
                     return door.position == glm::ivec2(currentTile.x + 1, currentTile.y) && door.orientation == Orientation::Vertical;
                 }, mData.tDoor);
 
-                if(!collidedDoor)
+                if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))
                 {
                     physics.velocity.x = 0.0f;
                     position.x = (currentTile.x + 1) * 32.0f - collisionBox.size.x / 2.0f - 0.001f;
@@ -290,7 +290,7 @@ void ActorLogic::applyCollisions()
                     return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Horizontal;
                 }, mData.tDoor);
 
-                if(!collidedDoor)
+                if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))
                 {
                     physics.velocity.y = 0.0f;
                     position.y = currentTile.y * 32.0f + collisionBox.size.y / 2.0f + 0.001f;
@@ -310,7 +310,7 @@ void ActorLogic::applyCollisions()
                     return door.position == glm::ivec2(currentTile.x, currentTile.y + 1) && door.orientation == Orientation::Horizontal;
                 }, mData.tDoor);
 
-                if(!collidedDoor)
+                if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))
                 {
                     physics.velocity.y = 0.0f;
                     position.y = (currentTile.y + 1) * 32.0f - collisionBox.size.y / 2.0f - 0.001f;

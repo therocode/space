@@ -23,9 +23,12 @@ void closeDoor(int32_t doorId, GameData& data)
 
 void openDoor(int32_t doorId, GameData& data)
 {
-    const auto& door = get(doorId, data.tDoor);
-    insert(doorId, data.openDoors);
-    set({door.position, door.orientation}, 0, data.walls, data.wallChanges);
+    if(!has(doorId, data.lockedDoors))
+    {
+        const auto& door = get(doorId, data.tDoor);
+        insert(doorId, data.openDoors);
+        set({door.position, door.orientation}, 0, data.walls, data.wallChanges);
+    }
 }
 
 void lockDoor(int32_t doorId, GameData& data)
