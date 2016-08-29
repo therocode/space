@@ -9,6 +9,10 @@ StructureLogic::StructureLogic(GameData& data, const ResourceManager& resources)
 
 void StructureLogic::update()
 {
+    forEach([&] (int32_t id, Structure& structure)
+    {
+        updateStructure(id, structure, mData);
+    }, mData.tStructure);
 }
 
 void StructureLogic::updateAfterWall()

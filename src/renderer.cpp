@@ -120,10 +120,15 @@ void Renderer::renderWorld(const GameData& data, bool showZones, bool showAtmosp
         {
             quad.setColor(fea::Color(0, 80, 190, 40));
         }
+        else if(has(id, data.lockedDoors))
+        {
+            quad.setColor(fea::Color(90, 0, 30));
+        }
         else
         {
             quad.setColor(fea::Color(0, 30, 90));
         }
+
 
         mRenderer.render(quad);
     }, data.tDoor);

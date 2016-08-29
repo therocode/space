@@ -2,7 +2,9 @@
 #include "data.hpp"
 #include "wallmap.hpp"
 
-void createDoor(Door door, TDoor& tDoor, IdSet& openDoors, const WallMap& walls, WallChanges& changes);
-void toggleDoor(int32_t doorId, TDoor& tDoor, IdSet& openDoors, const WallMap& walls, WallChanges& changes);
-void closeDoor(int32_t doorId, TDoor& tDoor, IdSet& openDoors, const WallMap& walls, WallChanges& changes);
-void openDoor(int32_t doorId, TDoor& tDoor, IdSet& openDoors, const WallMap& walls, WallChanges& changes);
+void createDoor(Door door, GameData& data);
+void toggleDoor(int32_t doorId, GameData& data);
+void closeDoor(int32_t doorId, GameData& data);
+void openDoor(int32_t doorId, GameData& data);
+void lockDoor(int32_t doorId, GameData& data);
+void unlockDoor(int32_t doorId, GameData& data);

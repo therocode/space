@@ -98,6 +98,7 @@ struct Door
 struct Airlock
 {
     std::vector<int32_t> doors;
+    th::Optional<int32_t> exit;
 };
 //http://members.shaw.ca/tfrisen/how_much_oxygen_for_a_person.htm
 //one ingame hour: 20s. time ratio: 0.005555555555555
@@ -174,6 +175,7 @@ struct GameData
     //world
     TDoor tDoor = {"Door", "Represents all doors"};
     IdSet openDoors = {{}, {"Open doors", "All doors that are open"}};
+    IdSet lockedDoors = {{}, {"Locked doors", "All doors that are locked"}};
 
     //structure
     TStructure tStructure = {"Structure", "All existing structures"};

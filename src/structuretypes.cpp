@@ -1,5 +1,6 @@
 #include "structuretypes.hpp"
 #include "structures/airlock.hpp"
+#include "doorutil.hpp"
 
 void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
 {
@@ -50,5 +51,19 @@ void initializeStructure(int32_t id, const Structure& structure, GameData& data)
     if(type == Structures::Airlock)
     {
         discoverAirlockDoors(id, structure, data);
+    }
+}
+
+void updateStructure(int32_t id, const Structure& structure, GameData& data)
+{
+    int32_t type = structure.structureType;
+
+    if(type == Structures::Airlock)
+    {
+        const Airlock& airlock = get(id, data.tAirlock);
+        for(const auto& door : airlock.doors)
+        {
+            lockDoor(door, data);
+        }
     }
 }

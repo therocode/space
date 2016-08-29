@@ -33,6 +33,9 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TAirlock& table);
     void debugText(const Airlock& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TDoor& table);
+    void debugText(const Door& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TBusyWorker& table);
     void debugText(const BusyWorker& data, std::vector<std::vector<std::string>>& outText);
 

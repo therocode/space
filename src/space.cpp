@@ -214,13 +214,13 @@ void Space::startScenario()
     set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
     set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
 
-    createDoor(Door{offset + glm::ivec2(1, 0), Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
-    createDoor(Door{{9, 8}, Orientation::Horizontal}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
-    createDoor(Door{{10, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
-    createDoor(Door{{11, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
-    createDoor(Door{{12, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
-    createDoor(Door{{13, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
-    createDoor(Door{{14, 7}, Orientation::Vertical}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+    createDoor(Door{offset + glm::ivec2(1, 0), Orientation::Vertical}, mData);
+    createDoor(Door{{9, 8}, Orientation::Horizontal}, mData);
+    createDoor(Door{{10, 7}, Orientation::Vertical}, mData);
+    createDoor(Door{{11, 7}, Orientation::Vertical}, mData);
+    createDoor(Door{{12, 7}, Orientation::Vertical}, mData);
+    createDoor(Door{{13, 7}, Orientation::Vertical}, mData);
+    createDoor(Door{{14, 7}, Orientation::Vertical}, mData);
 
     //temp
     set({glm::ivec2(10, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
@@ -289,7 +289,7 @@ void Space::loop()
     }
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tDoor, mData.openDoors, mData.lockedDoors, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
     DebugGui::showInspector(io.MousePos, mData.zones, mData.atmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);
@@ -318,7 +318,7 @@ void Space::temp()
     {
         if(!(rand() % 60))
         {
-            closeDoor(id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+            closeDoor(id, mData);
         }
     }, mData.tDoor);
 }

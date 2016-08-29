@@ -172,7 +172,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mData);
                 }
             }
             else
@@ -256,7 +256,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+                    openDoor(collidedDoor->id, mData);
                 }
             }
         }
@@ -276,7 +276,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+                    openDoor(collidedDoor->id, mData);
                 }
             }
         }
@@ -297,7 +297,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+                    openDoor(collidedDoor->id, mData);
                 }
             }
         }
@@ -317,7 +317,7 @@ void ActorLogic::applyCollisions()
                 }
                 else
                 {
-                    openDoor(collidedDoor->id, mData.tDoor, mData.openDoors, mData.walls, mData.wallChanges);
+                    openDoor(collidedDoor->id, mData);
                 }
             }
         }

@@ -177,7 +177,7 @@ namespace DebugGui
 
     std::vector<std::string> debugHeaders(const TAirlock& table)
     {
-        return {"Doors",};
+        return {"Doors", "Exit"};
     }
 
     void debugText(const Airlock& data, std::vector<std::vector<std::string>>& outText)
@@ -186,6 +186,27 @@ namespace DebugGui
         {
             {
                 vectorToStringList(data.doors),
+            },
+            {
+                data.exit ? std::to_string(*data.exit) : "none",
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TDoor& table)
+    {
+        return {"Position", "Orientation"};
+    }
+
+    void debugText(const Door& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                vec2ToStringList(data.position),
+            },
+            {
+                {to_string(data.orientation)},
             },
         };
     }

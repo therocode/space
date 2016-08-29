@@ -15,9 +15,15 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
         Airlock& airlock = get(structureId, data.tAirlock);
         ImGui::Text("%s", "This airlock is neat, but it's not functional");
 
+        ImGui::Text("Connected doors:");
         for(int32_t doorId : airlock.doors)
         {
-            ImGui::Text("Connected to door ID %d", doorId);
+            bool isExit = (doorId == airlock.exit);
+            const Door& door = get(doorId, data.tDoor);
+            if(ImGui::SmallButton((std::to_string(door.position.x) + "," + std::to_string(door.position.y) + (isExit ? std::string(" (exit)") : std::string()) + "###" + std::to_string(doorId)).c_str()))
+            {
+                airlock.exit = doorId;
+            }
         }
     }
     else if(structureTypeId == Structures::CryoPods)
