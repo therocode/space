@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <thero/optional.hpp>
-#include <glm/glm.hpp>
+#include "../glm.hpp"
 #include <fea/render2d.hpp>
 #include <fea/userinterface.hpp>
 #include <data.hpp>

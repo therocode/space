@@ -1,4 +1,5 @@
 #pragma once
+#include "common.hpp"
 
 template <typename Functor>
 void forEach(Functor f, IdSet& idSet)

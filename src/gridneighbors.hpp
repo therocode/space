@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 #include <array>
+#include "util/grid.hpp"
+#include "wallmap.hpp"
 
 template <typename T>
 struct GridNeighbors

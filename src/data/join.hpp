@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include "common.hpp"
 
 template <typename Functor>
 bool return_if_false(Functor functor)

@@ -1,4 +1,5 @@
 #pragma once
+#include <fea/render2d.hpp>
 #include <thero/optional.hpp>
 #include "glm.hpp"
 #include "pi.hpp"
