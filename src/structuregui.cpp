@@ -1,5 +1,6 @@
 #include "structuregui.hpp"
 #include "structuretypes.hpp"
+#include "doorutil.hpp"
 #include <imgui.h>
 
 bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& data)
@@ -13,8 +14,9 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
     if(structureTypeId == Structures::Airlock)
     {
         Airlock& airlock = get(structureId, data.tAirlock);
-        ImGui::Text("%s", "This airlock is neat, but it's not functional");
+        ImGui::Text("%s", "This airlock is neat!");
 
+        ImGui::Text("Current mode is %s", airlock.currentMode == Airlock::In ? "In" : "Out");
         ImGui::Text("Connected doors:");
         for(int32_t doorId : airlock.doors)
         {
@@ -23,6 +25,34 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
             if(ImGui::SmallButton((std::to_string(door.position.x) + "," + std::to_string(door.position.y) + (isExit ? std::string(" (exit)") : std::string()) + "###" + std::to_string(doorId)).c_str()))
             {
                 airlock.exit = doorId;
+            }
+
+            if(ImGui::SmallButton((std::string("Open##") + std::to_string(doorId)).c_str()))
+            {
+                if(isExit)
+                {
+                    if(airlock.currentMode == Airlock::In)
+                    {
+                        ///change mode
+                        airlock.currentMode = Airlock::Out;
+                    }
+                    else
+                    {
+                        openDoor(doorId, data);
+                    }
+                }
+                else
+                {
+                    if(airlock.currentMode == Airlock::In)
+                    {
+                        openDoor(doorId, data);
+                    }
+                    else
+                    {
+                        ///change mode
+                        airlock.currentMode = Airlock::In;
+                    }
+                }
             }
         }
     }

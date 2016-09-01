@@ -97,9 +97,17 @@ struct Door
 
 struct Airlock
 {
+    enum Mode { In, Out };
+    Mode currentMode;
     std::vector<int32_t> doors;
     th::Optional<int32_t> exit;
 };
+
+struct AirlockActivity
+{
+    Airlock::Mode targetMode;
+};
+
 //http://members.shaw.ca/tfrisen/how_much_oxygen_for_a_person.htm
 //one ingame hour: 20s. time ratio: 0.005555555555555
 //need to use 2000 oxygene in 2 hours, 1000 in 1h, 1000/20 = 50 oxygene/s
@@ -141,6 +149,7 @@ using TDoor = DataTable<Door, false>;
 using TStructure = DataTable<Structure, false>;
 using TStructureType = DataTable<StructureType, true>;
 using TAirlock = DataTable<Airlock, true>;
+using TAirlockActivity = DataTable<AirlockActivity, true>;
 //gfx
 using TActorSprite = DataTable<ActorSprite, false>;
 
@@ -181,6 +190,7 @@ struct GameData
     TStructure tStructure = {"Structure", "All existing structures"};
     TStructureType tStructureType = {"Structure Type", "All types of structures"};
     TAirlock tAirlock = {"Airlock", "All existing airlocks"};
+    TAirlockActivity tAirlockActivity = {"Airlock Activity", "Airlocks that are currently pumping air"};
     IdSet uninitializedStructures = {{}, {"Uninitialized Structures", "Structures that need initialization"}};
 
     //gfx

@@ -40,7 +40,7 @@ void createStructure(Structure structure, GameData& data)
 
     if(type == Structures::Airlock)
     {
-        insert(newId, Airlock{}, data.tAirlock);
+        insert(newId, Airlock{Airlock::In, {}, {}}, data.tAirlock);
     }
 }
 
@@ -61,9 +61,23 @@ void updateStructure(int32_t id, const Structure& structure, GameData& data)
     if(type == Structures::Airlock)
     {
         const Airlock& airlock = get(id, data.tAirlock);
+        
         for(const auto& door : airlock.doors)
         {
-            lockDoor(door, data);
+            if(airlock.currentMode == Airlock::In)
+            {
+                if(airlock.exit && (*airlock.exit != door))
+                    unlockDoor(door, data);
+                else
+                    lockDoor(door, data);
+            }
+            else
+            {
+                if(airlock.exit && (*airlock.exit != door))
+                    lockDoor(door, data);
+                else
+                    unlockDoor(door, data);
+            }
         }
     }
 }
