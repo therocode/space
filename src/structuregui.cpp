@@ -1,6 +1,7 @@
 #include "structuregui.hpp"
 #include "structuretypes.hpp"
 #include "doorutil.hpp"
+#include "structures/airlock.hpp"
 #include <imgui.h>
 
 bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& data)
@@ -16,7 +17,13 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
         Airlock& airlock = get(structureId, data.tAirlock);
         ImGui::Text("%s", "This airlock is neat!");
 
-        ImGui::Text("Current mode is %s", airlock.currentMode == Airlock::In ? "In" : "Out");
+        std::string mode = "In";
+        if(airlock.currentMode == Airlock::Out)
+            mode = "Out";
+        else if(airlock.currentMode == Airlock::Pumping)
+            mode = "Pumping";
+
+        ImGui::Text("Current mode is %s", mode.c_str());
         ImGui::Text("Connected doors:");
         for(int32_t doorId : airlock.doors)
         {
@@ -27,32 +34,11 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
                 airlock.exit = doorId;
             }
 
+            ImGui::SameLine(150);
             if(ImGui::SmallButton((std::string("Open##") + std::to_string(doorId)).c_str()))
             {
-                if(isExit)
-                {
-                    if(airlock.currentMode == Airlock::In)
-                    {
-                        ///change mode
-                        airlock.currentMode = Airlock::Out;
-                    }
-                    else
-                    {
-                        openDoor(doorId, data);
-                    }
-                }
-                else
-                {
-                    if(airlock.currentMode == Airlock::In)
-                    {
-                        openDoor(doorId, data);
-                    }
-                    else
-                    {
-                        ///change mode
-                        airlock.currentMode = Airlock::In;
-                    }
-                }
+                std::cout << "want to open: " << doorId << "\n";
+                requestOpenAirlockDoor(structureId, doorId, data);
             }
         }
     }

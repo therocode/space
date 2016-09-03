@@ -8,3 +8,5 @@ void closeDoor(int32_t doorId, GameData& data);
 void openDoor(int32_t doorId, GameData& data);
 void lockDoor(int32_t doorId, GameData& data);
 void unlockDoor(int32_t doorId, GameData& data);
+int64_t doorPressureDiff(int32_t doorId, GameData& data);
+glm::ivec2 otherSide(const Door& door);

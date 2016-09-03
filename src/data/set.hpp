@@ -8,7 +8,7 @@ void set(int32_t id, DataType value, DataTable<DataType, true>& table)
 
     if(entry)
     {
-        entry->data = std::move(value);
+        *entry = std::move(value);
     }
     else
     {
@@ -23,7 +23,7 @@ void set(int32_t id, DataType value, DataTable<DataType, false>& table)
 
     if(entry)
     {
-        entry->data = std::move(value);
+        *entry = std::move(value);
     }
     TH_ASSERT(false, "Cannot set value of id '" << id << "' in a table that doesn't have that ID and provides own IDs");
 }

@@ -53,6 +53,17 @@ namespace DebugGui
         return result;
     }
 
+    std::vector<std::string> airlockModeToStringList(Airlock::Mode mode)
+    {
+        if(mode == Airlock::In)
+            return {"In"};
+        else if(mode == Airlock::Out)
+            return {"Out"};
+        else if(mode == Airlock::Pumping)
+            return {"Pumping"};
+        return {"Unknown"};
+    }
+
     std::vector<std::string> debugHeaders(const TPosition& table)
     {
         return {"Position"};
@@ -185,10 +196,34 @@ namespace DebugGui
         outText =
         {
             {
+                airlockModeToStringList(data.currentMode),
+            },
+            {
                 vectorToStringList(data.doors),
             },
             {
                 data.exit ? std::to_string(*data.exit) : "none",
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TAirlockActivity& table)
+    {
+        return {"Target Mode", "Currently Pumping", "Leak Id"};
+    }
+
+    void debugText(const AirlockActivity& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                airlockModeToStringList(data.targetMode),
+            },
+            {
+                airlockModeToStringList(data.currentlyPumping),
+            },
+            {
+                std::to_string(data.leakId),
             },
         };
     }
@@ -207,6 +242,30 @@ namespace DebugGui
             },
             {
                 {to_string(data.orientation)},
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TZoneLeak& table)
+    {
+        return {"Start Position", "End Position", "Hole Size", "Pump Force"};
+    }
+
+    void debugText(const ZoneLeak& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                vec2ToStringList(data.start),
+            },
+            {
+                vec2ToStringList(data.end),
+            },
+            {
+                {std::to_string(data.size)},
+            },
+            {
+                {std::to_string(data.pumpForce)},
             },
         };
     }

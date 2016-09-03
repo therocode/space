@@ -81,7 +81,7 @@ void ActorLogic::updateDeath()
 
         if(auto busyWorker = findOne(id, mData.tBusyWorker))
         {
-            int32_t taskId = busyWorker->data.taskId;
+            int32_t taskId = busyWorker->taskId;
             erase(taskId, mData.tAssignedTask);
             insert(taskId, mData.unassignedTasks);
             erase(id, mData.tBusyWorker);
@@ -141,7 +141,7 @@ void ActorLogic::updateTaskWork()
     {
         if(auto wallTask = findOne(worker.taskId, mData.tWallTask))
         {
-            glm::vec2 taskPosition = wallTask->data.position * 32;
+            glm::vec2 taskPosition = wallTask->position * 32;
             const glm::vec2& workerPosition = get(workerId, mData.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
@@ -150,7 +150,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    set({wallTask->data.position, wallTask->data.orientation}, 1, mData.walls, mData.wallChanges);
+                    set({wallTask->position, wallTask->orientation}, 1, mData.walls, mData.wallChanges);
                 }
             }
             else
@@ -163,7 +163,7 @@ void ActorLogic::updateTaskWork()
         }
         else if(auto doorTask = findOne(worker.taskId, mData.tDoorTask))
         {
-            glm::vec2 taskPosition = doorTask->data.position * 32;
+            glm::vec2 taskPosition = doorTask->position * 32;
             const glm::vec2& workerPosition = get(workerId, mData.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
@@ -172,7 +172,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    createDoor(Door{doorTask->data.position, doorTask->data.orientation}, mData);
+                    createDoor(Door{doorTask->position, doorTask->orientation}, mData);
                 }
             }
             else

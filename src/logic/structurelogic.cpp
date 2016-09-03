@@ -1,5 +1,6 @@
 #include "structurelogic.hpp"
 #include "../structuretypes.hpp"
+#include "../structures/airlock.hpp"
 
 StructureLogic::StructureLogic(GameData& data, const ResourceManager& resources):
     mData(data)
@@ -9,10 +10,7 @@ StructureLogic::StructureLogic(GameData& data, const ResourceManager& resources)
 
 void StructureLogic::update()
 {
-    forEach([&] (int32_t id, Structure& structure)
-    {
-        updateStructure(id, structure, mData);
-    }, mData.tStructure);
+    airlockUpdate(mData);
 }
 
 void StructureLogic::updateAfterWall()

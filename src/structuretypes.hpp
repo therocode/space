@@ -9,4 +9,3 @@ namespace Structures
 void loadStructureTypes(TStructureType& types, const ResourceManager& resources);
 void createStructure(Structure structure, GameData& data);
 void initializeStructure(int32_t id, const Structure& structure, GameData& data);
-void updateStructure(int32_t id, const Structure& structure, GameData& data);

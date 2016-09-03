@@ -53,31 +53,3 @@ void initializeStructure(int32_t id, const Structure& structure, GameData& data)
         discoverAirlockDoors(id, structure, data);
     }
 }
-
-void updateStructure(int32_t id, const Structure& structure, GameData& data)
-{
-    int32_t type = structure.structureType;
-
-    if(type == Structures::Airlock)
-    {
-        const Airlock& airlock = get(id, data.tAirlock);
-        
-        for(const auto& door : airlock.doors)
-        {
-            if(airlock.currentMode == Airlock::In)
-            {
-                if(airlock.exit && (*airlock.exit != door))
-                    unlockDoor(door, data);
-                else
-                    lockDoor(door, data);
-            }
-            else
-            {
-                if(airlock.exit && (*airlock.exit != door))
-                    lockDoor(door, data);
-                else
-                    unlockDoor(door, data);
-            }
-        }
-    }
-}

@@ -79,4 +79,33 @@ void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
             gases[gasIndex] += gasDifference[gasIndex];
         }
     }
+
+    //leaks
+
+    forEach([&] (int32_t id, const auto& leak)
+    {
+        Gases& sourceGases = mData.atmosphere.at(leak.start);
+        Gases& targetGases = mData.atmosphere.at(leak.end);
+
+        int64_t difference = pressure(sourceGases) - pressure(targetGases);
+        float transferRate = difference / 10000.0f;
+        if(transferRate >= 0.0f)
+            transferRate = std::min(0.0625f, std::max(0.05f, transferRate));
+        else
+            transferRate = std::max(-0.0625f, std::min(-0.05f, transferRate));
+
+        for(size_t gasIndex = 0; gasIndex < sourceGases.size(); ++gasIndex)
+        {
+            int32_t toTransfer = static_cast<int32_t>(std::abs(sourceGases[gasIndex] - targetGases[gasIndex]) * transferRate) + leak.pumpForce;
+            int32_t signBit = toTransfer >= 0 ? 1 : -1;
+            toTransfer = std::min(std::abs(toTransfer), leak.size) * signBit;
+            toTransfer = std::min(toTransfer, sourceGases[gasIndex]);
+
+            if(toTransfer > 0)
+            {
+                targetGases[gasIndex] += toTransfer;
+                sourceGases[gasIndex] -= toTransfer;
+            }
+        }
+    }, mData.tZoneLeak);
 }

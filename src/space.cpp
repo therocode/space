@@ -15,7 +15,7 @@ const Gases cDefaultAtmosphere
 {{
     static_cast<int32_t>(50000 * 0.0f), //oxygene
     static_cast<int32_t>(50000 * 0.0f), //nitrogen
-    static_cast<int32_t>(50000 * 0.0f), //carbondioxide
+    static_cast<int32_t>(50000 * 1.0f), //carbondioxide
 }};
 const Gases cHealthyAtmosphere
 {{
@@ -217,28 +217,6 @@ void Space::startScenario()
     createDoor(Door{offset + glm::ivec2(1, 0), Orientation::Vertical}, mData);
     createDoor(Door{{9, 8}, Orientation::Horizontal}, mData);
     createDoor(Door{{10, 7}, Orientation::Vertical}, mData);
-    createDoor(Door{{11, 7}, Orientation::Vertical}, mData);
-    createDoor(Door{{12, 7}, Orientation::Vertical}, mData);
-    createDoor(Door{{13, 7}, Orientation::Vertical}, mData);
-    createDoor(Door{{14, 7}, Orientation::Vertical}, mData);
-
-    //temp
-    set({glm::ivec2(10, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(10, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(11, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(11, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(12, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(12, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(13, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(13, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(14, 7), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({glm::ivec2(14, 8), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    mData.atmosphere.set(glm::ivec2(10, 7), cHealthyAtmosphere);
-    mData.atmosphere.set(glm::ivec2(11, 7), cHealthyAtmosphere);
-    mData.atmosphere.set(glm::ivec2(12, 7), cHealthyAtmosphere);
-    mData.atmosphere.set(glm::ivec2(13, 7), cHealthyAtmosphere);
-    mData.atmosphere.set(glm::ivec2(14, 7), cHealthyAtmosphere);
-    //endtemp
 
     mData.atmosphere.set(offset + glm::ivec2(0, 0), cHealthyAtmosphere);
     mData.atmosphere.set(offset + glm::ivec2(1, 0), cHealthyAtmosphere);
@@ -261,6 +239,9 @@ void Space::startScenario()
     clear(mData.tDoorTask);
     clear(mData.unassignedTasks);
     clear(mData.tAssignedTask);
+
+    mZoneLogic.update(mData.walls, mData.wallChanges);
+    mData.atmosphereNeighbors = findAllNeighbors(mData.atmosphere, mData.walls);
 }
 
 void Space::loop()
@@ -289,7 +270,7 @@ void Space::loop()
     }
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tDoor, mData.openDoors, mData.lockedDoors, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tAirlockActivity, mData.tDoor, mData.tZoneLeak, mData.openDoors, mData.lockedDoors, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
     DebugGui::showInspector(io.MousePos, mData.zones, mData.atmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);

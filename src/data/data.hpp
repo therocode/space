@@ -95,9 +95,17 @@ struct Door
     Orientation orientation;
 };
 
+struct ZoneLeak
+{
+    glm::ivec2 start;
+    glm::ivec2 end;
+    int32_t size;
+    int32_t pumpForce;
+};
+
 struct Airlock
 {
-    enum Mode { In, Out };
+    enum Mode { In, Out, Pumping};
     Mode currentMode;
     std::vector<int32_t> doors;
     th::Optional<int32_t> exit;
@@ -106,6 +114,8 @@ struct Airlock
 struct AirlockActivity
 {
     Airlock::Mode targetMode;
+    Airlock::Mode currentlyPumping;
+    int32_t leakId;
 };
 
 //http://members.shaw.ca/tfrisen/how_much_oxygen_for_a_person.htm
@@ -145,6 +155,7 @@ using TDoorTask = DataTable<DoorTask, true>;
 using TAssignedTask = DataTable<AssignedTask, true>;
 //world
 using TDoor = DataTable<Door, false>;
+using TZoneLeak = DataTable<ZoneLeak, false>;
 //structure
 using TStructure = DataTable<Structure, false>;
 using TStructureType = DataTable<StructureType, true>;
@@ -185,6 +196,7 @@ struct GameData
     TDoor tDoor = {"Door", "Represents all doors"};
     IdSet openDoors = {{}, {"Open doors", "All doors that are open"}};
     IdSet lockedDoors = {{}, {"Locked doors", "All doors that are locked"}};
+    TZoneLeak tZoneLeak = {"Zone Leak", "Zone leaks are holes between atmosphere zones that transfer air"};
 
     //structure
     TStructure tStructure = {"Structure", "All existing structures"};

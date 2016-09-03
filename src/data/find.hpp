@@ -3,7 +3,7 @@
 #include <thero/optional.hpp>
 
 template <typename DataTable>
-th::Optional<TableEntry<typename DataTable::Type>> findOne(int32_t id, DataTable& table)
+typename DataTable::Type* findOne(int32_t id, DataTable& table)
 {
     ++table.meta.metrics[AccessType::RandomAccess];
     if(!table.meta.sorted)
@@ -13,21 +13,21 @@ th::Optional<TableEntry<typename DataTable::Type>> findOne(int32_t id, DataTable
     for(auto iter = table.ids.begin(); iter != table.ids.end(); ++iter)
     {
         if(*iter == id)
-            return TableEntry<typename DataTable::Type>{id, table.data[static_cast<size_t>(std::distance(table.ids.begin(), iter))]};
+            return &table.data[static_cast<size_t>(std::distance(table.ids.begin(), iter))];
     }
 
-    return {};
+    return nullptr;
 }
 
 template <typename DataTable>
-th::Optional<TableEntry<const typename DataTable::Type>> findOne(int32_t id, const DataTable& table)
+typename DataTable::Type* findOne(int32_t id, const DataTable& table)
 {
     auto nonConst = findOne(id, const_cast<DataTable&>(table));
 
     if(nonConst)
-        return TableEntry<const typename DataTable::Type>{nonConst->id, nonConst->data};
+        return &nonConst->data;
     else
-        return {};
+        return nullptr;
 }
 
 template <typename DataTable, typename Functor>
