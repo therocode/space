@@ -24,10 +24,8 @@ void closeDoor(int32_t doorId, GameData& data)
 
 void openDoor(int32_t doorId, GameData& data)
 {
-    std::cout << "opening door " << doorId << "\n";
     if(!has(doorId, data.lockedDoors))
     {
-        std::cout << "truly opening door " << doorId << "\n";
         const auto& door = get(doorId, data.tDoor);
         insert(doorId, data.openDoors);
         set({door.position, door.orientation}, 0, data.walls, data.wallChanges);
@@ -36,9 +34,12 @@ void openDoor(int32_t doorId, GameData& data)
 
 void lockDoor(int32_t doorId, GameData& data)
 {
-    if(has(doorId, data.openDoors))
-        closeDoor(doorId, data);
-    insert(doorId, data.lockedDoors);
+    if(!has(doorId, data.lockedDoors))
+    {
+        if(has(doorId, data.openDoors))
+            closeDoor(doorId, data);
+        insert(doorId, data.lockedDoors);
+    }
 }
 
 void unlockDoor(int32_t doorId, GameData& data)

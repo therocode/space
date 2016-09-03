@@ -136,7 +136,10 @@ void airlockUpdate(GameData& data)
         else if(airlock.currentMode == Airlock::Out)
         {
             for(int32_t door : airlock.doors)
-                lockDoor(door, data);
+            {
+                if(airlock.exit && door != *airlock.exit)
+                    lockDoor(door, data);
+            }
 
             if(airlock.exit)
                 unlockDoor(*airlock.exit, data);
