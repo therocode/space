@@ -57,13 +57,13 @@ void startPumpDoor(int32_t id, Airlock::Mode targetMode, Airlock::Mode pumpMode,
     AirlockActivity* existing = findOne(id, data.tAirlockActivity);
     if(!existing)
     {
-        int32_t leakId = insert(ZoneLeak{start, end, 100, 10000}, data.tZoneLeak);
+        int32_t leakId = insert(ZoneLeak{start, end, 400, 10000}, data.tZoneLeak);
         insert(id, AirlockActivity{targetMode, pumpMode, leakId}, data.tAirlockActivity); 
     }
     else
     {
         erase(existing->leakId, data.tZoneLeak);
-        int32_t leakId = insert(ZoneLeak{start, end, 100, 10000}, data.tZoneLeak);
+        int32_t leakId = insert(ZoneLeak{start, end, 400, 10000}, data.tZoneLeak);
         existing->currentlyPumping = pumpMode;
     }
 }

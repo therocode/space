@@ -138,6 +138,24 @@ struct Structure
     int32_t structureType;
 };
 
+struct Incentive
+{
+    int32_t importance;
+};
+
+struct BreatheIncentive
+{
+};
+
+struct WorkIncentive
+{
+};
+
+struct Action
+{
+    th::Optional<int32_t> parentAction;
+};
+
 //entity
 using TPosition  = DataTable<glm::vec2, false>;
 using TPhysics  = DataTable<Physics, true>;

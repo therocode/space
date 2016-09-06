@@ -98,9 +98,11 @@ void updateNeighbors(Grid<GridNeighbors<T>>& neighbors, Grid<T>& grid, const Wal
         neighbors.at({x, y}).neighborCount = count;
 
         if(change.first.orientation == Orientation::Vertical)
-            --y;
-        else
             --x;
+        else
+            --y;
+
+        thisIndex = static_cast<size_t>(x + y * size.x);
 
         count = 0;
 
