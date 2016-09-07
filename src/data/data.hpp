@@ -56,6 +56,13 @@ struct MoveAbility
     float maxAcceleration;
 };
 
+//ai
+struct Ai
+{
+    enum { Human };
+};
+
+//tasks
 struct RoomTask
 {
     glm::ivec2 position;
@@ -140,6 +147,7 @@ struct Structure
 
 struct Incentive
 {
+    int32_t actorId;
     int32_t importance;
 };
 
@@ -166,6 +174,11 @@ using TMoveAbility = DataTable<MoveAbility, true>;
 using TBusyWorker = DataTable<BusyWorker, true>;
 using TBloodValues = DataTable<BloodValues, true>;
 using TChoking = DataTable<Choking, true>;
+//AI
+using TAi = DataTable<Ai, true>;
+using TIncentive = DataTable<Incentive, false>;
+using TBreatheIncentive = DataTable<BreatheIncentive, true>;
+using TWorkIncentive = DataTable<WorkIncentive, true>;
 //tasks
 using TRoomTask = DataTable<RoomTask, true>;
 using TWallTask = DataTable<WallTask, true>;
@@ -197,6 +210,15 @@ struct GameData
     IdSet freeWorkers = {{}, {"Free workers", "All workers who are currently not working on any task"}};
     IdSet deadWorkers = {{}, {"Dead workers", "All workers who are no longer alive"}};
     TBusyWorker tBusyWorker = {"Busy Worker", "The workers who are working on a task"};
+
+    //ai
+    TAi tAi = {"AI", "Agents that can come to decisions"};
+    IdSet uninitializedAis = {{}, {"Uninitialized AIs", "AI agents that are in need of initialization"}};
+    IdSet humanAis = {{}, {"Human AIs", "AI agents that think like a human"}};
+    TIncentive tIncentive = {"Incentive", "All incentives that drive actions in AI agents"};
+    TBreatheIncentive tBreatheIncentive = {"Breathe Incentive", "Makes creatures want to breathe"};
+    TWorkIncentive tWorkIncentive = {"Work Incentive", "Makes creatures want to work"};
+    IdSet activeIncentives = {{}, {"Active Incentives", "The incentives that are the ones currently acted upon"}};
 
     //organism stuff
     TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};

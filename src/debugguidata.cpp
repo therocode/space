@@ -168,6 +168,67 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const TAi& table)
+    {
+        return {""};
+    }
+
+    void debugText(const Ai& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText = 
+        {
+            {""},
+        };
+    }
+
+
+    std::vector<std::string> debugHeaders(const TIncentive& table)
+    {
+        return {"Actor ID", "Importance"};
+    }
+
+    void debugText(const Incentive& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.actorId),
+            },
+            {
+                std::to_string(data.importance),
+            },
+        };
+    }
+
+
+    std::vector<std::string> debugHeaders(const TBreatheIncentive& table)
+    {
+        return {""};
+    }
+
+    void debugText(const BreatheIncentive& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText = 
+        {
+            {""},
+        };
+    }
+
+
+    std::vector<std::string> debugHeaders(const TWorkIncentive& table)
+    {
+        return {""};
+    }
+
+    void debugText(const WorkIncentive& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText = 
+        {
+            {""},
+        };
+    }
+
+
     std::vector<std::string> debugHeaders(const TStructure& table)
     {
         return {"Type", "Position"};

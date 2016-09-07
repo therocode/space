@@ -262,7 +262,7 @@ void Space::loop()
         temp();
         mActorLogic.update();
         mOrganismLogic.update();
-        mOrganismLogic.update();
+        mDecisionAILogic.update();
         mStructureLogic.update();
         mTaskLogic.update();
         mZoneLogic.update(mData.walls, mData.wallChanges);
@@ -272,7 +272,9 @@ void Space::loop()
     }
 
     ImGui::ShowTestWindow();
-    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tAirlockActivity, mData.tDoor, mData.tZoneLeak, mData.openDoors, mData.lockedDoors, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
+
+    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tAi, mData.uninitializedAis, mData.humanAis, mData.tIncentive, mData.tBreatheIncentive, mData.tWorkIncentive, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tAirlockActivity, mData.tDoor, mData.tZoneLeak, mData.openDoors, mData.lockedDoors, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
+
     DebugGui::showInspector(io.MousePos, mData.zones, mData.atmosphere);
     if(mClickedEntity)
         dbg::set<int32_t>("selected_actor", *mClickedEntity);

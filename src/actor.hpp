@@ -13,4 +13,5 @@ struct Actor
     th::Optional<BloodValues> bloodValues;
     std::vector<ActorSprite> actorSprites;
     bool worker;
+    th::Optional<int32_t> ai;
 };

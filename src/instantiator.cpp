@@ -51,6 +51,9 @@ Instantiator::Instantiator(const ResourceManager& resources)
         }
 
         templateToStore.worker = templateEntry["worker"];
+        std::string ai = templateEntry["ai"];
+        if(ai == "human")
+            templateToStore.ai = Ai::Human;
 
         //auto walkSpeed = extractOptional(templateEntry, "walk_speed");
 

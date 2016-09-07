@@ -30,6 +30,14 @@ int32_t ActorLogic::addActor(Actor actor)
         insert(id, mData.freeWorkers);
     }
 
+    if(actor.ai)
+    {
+        insert(id, Ai{}, mData.tAi);
+        if(*actor.ai == Ai::Human)
+            insert(id, mData.humanAis);
+        insert(id, mData.uninitializedAis);
+    }
+
     return id;
 }
 
@@ -53,6 +61,20 @@ void ActorLogic::removeActor(int32_t id)
     }, mData.tActorSprite);
     erase(id, mData.builders);
     erase(id, mData.freeWorkers);
+    erase(id, mData.tAi);
+    erase(id, mData.humanAis);
+    erase(id, mData.uninitializedAis);
+    erase(id, mData.tIncentive);
+    eraseIf([&] (int32_t incentiveId, const Incentive& incentive)
+    {
+        if(incentive.actorId == id)
+        {
+            erase(incentiveId, mData.tBreatheIncentive);
+            erase(incentiveId, mData.tWorkIncentive);
+            return true;
+        }
+        return false;
+    }, mData.tIncentive);
 }
 
 void ActorLogic::update()
@@ -89,6 +111,22 @@ void ActorLogic::updateDeath()
 
         erase(id, mData.tBloodValues);
         erase(id, mData.tChoking);
+
+        erase(id, mData.tAi);
+        erase(id, mData.humanAis);
+        erase(id, mData.uninitializedAis);
+        erase(id, mData.tIncentive);
+        eraseIf([&] (int32_t incentiveId, const Incentive& incentive)
+        {
+            if(incentive.actorId == id)
+            {
+                erase(incentiveId, mData.tBreatheIncentive);
+                erase(incentiveId, mData.tWorkIncentive);
+                return true;
+            }
+
+            return false;
+        }, mData.tIncentive);
 
         forEach([&] (int32_t spriteId, ActorSprite& sprite)
         {

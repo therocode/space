@@ -24,6 +24,18 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TChoking& table);
     void debugText(const Choking& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TAi& table);
+    void debugText(const Ai& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TIncentive& table);
+    void debugText(const Incentive& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TBreatheIncentive& table);
+    void debugText(const BreatheIncentive& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TWorkIncentive& table);
+    void debugText(const WorkIncentive& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TStructure& table);
     void debugText(const Structure& data, std::vector<std::vector<std::string>>& outText);
 
