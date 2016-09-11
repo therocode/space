@@ -64,13 +64,13 @@ void ActorLogic::removeActor(int32_t id)
     erase(id, mData.tAi);
     erase(id, mData.humanAis);
     erase(id, mData.uninitializedAis);
-    erase(id, mData.tIncentive);
     eraseIf([&] (int32_t incentiveId, const Incentive& incentive)
     {
         if(incentive.actorId == id)
         {
             erase(incentiveId, mData.tBreatheIncentive);
             erase(incentiveId, mData.tWorkIncentive);
+            erase(incentiveId, mData.activeIncentives);
             return true;
         }
         return false;
@@ -115,13 +115,13 @@ void ActorLogic::updateDeath()
         erase(id, mData.tAi);
         erase(id, mData.humanAis);
         erase(id, mData.uninitializedAis);
-        erase(id, mData.tIncentive);
         eraseIf([&] (int32_t incentiveId, const Incentive& incentive)
         {
             if(incentive.actorId == id)
             {
                 erase(incentiveId, mData.tBreatheIncentive);
                 erase(incentiveId, mData.tWorkIncentive);
+                erase(incentiveId, mData.activeIncentives);
                 return true;
             }
 
@@ -157,20 +157,35 @@ void ActorLogic::updateWorkers()
         return erase;
     }, mData.tBusyWorker);
 
-    //assign free workers to unassigned tasks
-    eraseIf([&] (int32_t id)
+    forEach([&] (int32_t actorId)
     {
-        bool erase = false;
-        if(count(mData.unassignedTasks) > 0)
+        auto foundIncentive = findOne([&] (int32_t incentiveId, const Incentive& incentive)
         {
-            int32_t taskId = extractOne(mData.unassignedTasks);
-            assignTask(taskId, id, mData.tAssignedTask);
-            insert(id, {taskId}, mData.tBusyWorker);
-            erase = true;
-        }
+            if(has(incentiveId, mData.tWorkIncentive))
+            {
+                return incentive.actorId == actorId;
+            }
+            return false;
+        }, mData.tIncentive);
 
-        return erase;
+        if(foundIncentive)
+            foundIncentive->data.importance = 50;
     }, mData.freeWorkers);
+
+    ////assign free workers to unassigned tasks
+    //eraseIf([&] (int32_t id)
+    //{
+    //    bool erase = false;
+    //    if(count(mData.unassignedTasks) > 0)
+    //    {
+    //        int32_t taskId = extractOne(mData.unassignedTasks);
+    //        assignTask(taskId, id, mData.tAssignedTask);
+    //        insert(id, {taskId}, mData.tBusyWorker);
+    //        erase = true;
+    //    }
+
+    //    return erase;
+    //}, mData.freeWorkers);
 }
 
 void ActorLogic::updateTaskWork()

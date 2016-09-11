@@ -161,7 +161,16 @@ struct WorkIncentive
 
 struct Action
 {
+    enum Type {GOTO};
+    int32_t actorId;
     th::Optional<int32_t> parentAction;
+    Type type;
+};
+
+struct GotoAction
+{
+    int32_t actionId;
+    glm::ivec2 target;
 };
 
 //entity
@@ -179,6 +188,7 @@ using TAi = DataTable<Ai, true>;
 using TIncentive = DataTable<Incentive, false>;
 using TBreatheIncentive = DataTable<BreatheIncentive, true>;
 using TWorkIncentive = DataTable<WorkIncentive, true>;
+using TAction = DataTable<Action, false>;
 //tasks
 using TRoomTask = DataTable<RoomTask, true>;
 using TWallTask = DataTable<WallTask, true>;
@@ -219,6 +229,7 @@ struct GameData
     TBreatheIncentive tBreatheIncentive = {"Breathe Incentive", "Makes creatures want to breathe"};
     TWorkIncentive tWorkIncentive = {"Work Incentive", "Makes creatures want to work"};
     IdSet activeIncentives = {{}, {"Active Incentives", "The incentives that are the ones currently acted upon"}};
+    TAction tAction = {"Action", "The currently existing actions for all AI agents"};
 
     //organism stuff
     TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};

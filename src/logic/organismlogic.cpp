@@ -34,6 +34,19 @@ void OrganismLogic::update()
 		    int32_t amount = std::max(0, std::min(static_cast<int32_t>(choking ? breathingCapability * 5 : 5), gases[Oxygen]));
 		    bloodValue.oxygen += amount;
 		    gases[Oxygen] -= amount;
+
+            if(bloodValue.oxygen < 500)
+            {
+                auto breatheIncentive = findOne([&] (int32_t incentiveId, const BreatheIncentive& incentive)
+                {
+                    return get(incentiveId, mData.tIncentive).actorId == id;
+                }, mData.tBreatheIncentive);
+
+                if(breatheIncentive)
+                {
+                    get(breatheIncentive->id, mData.tIncentive).importance = 550-bloodValue.oxygen;
+                }
+            }
         }
 
         if(bloodValue.oxygen > 1)

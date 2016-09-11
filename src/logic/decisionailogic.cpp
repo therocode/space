@@ -1,4 +1,5 @@
 #include "decisionailogic.hpp"
+#include "../actionutil.hpp"
 
 DecisionAILogic::DecisionAILogic(GameData& data):
     mData(data)
@@ -22,10 +23,28 @@ void DecisionAILogic::update()
     }, mData.uninitializedAis);
     clear(mData.uninitializedAis);
 
-    forEach([&] (int32_t id, const Ai& ai)
+    forEach([&] (int32_t aiId, const Ai& ai)
     {
-        //find the incentive which has the most important
-        //assign as active
-        //if it was a change, delete actions
+		int32_t mostImportantIncentive = -1;
+		int32_t mostImportantIncentiveScore = -1;
+
+        forEach([&] (int32_t incentiveId, const Incentive& incentive)
+        {
+            if(incentive.actorId == aiId && incentive.importance > mostImportantIncentiveScore)
+            {
+                mostImportantIncentiveScore = incentive.importance;
+                mostImportantIncentive = incentiveId;
+            }
+        }, mData.tIncentive);
+
+        if(!has(mostImportantIncentive, mData.activeIncentives))
+        {
+            eraseIf([&] (int32_t id)
+            {
+                return get(id, mData.tIncentive).actorId == aiId;
+            },mData.activeIncentives);
+            insert(mostImportantIncentive, mData.activeIncentives);
+            clearActions(aiId, mData);
+        }
     }, mData.tAi);
 }
