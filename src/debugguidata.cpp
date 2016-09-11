@@ -64,6 +64,17 @@ namespace DebugGui
         return {"Unknown"};
     }
 
+    std::vector<std::string> actionTypeToStringList(Action::Type type)
+    {
+        if(type == Action::Goto)
+            return {"Goto"};
+        else if(type == Action::TotalPanic)
+            return {"Total Panic"};
+        else if(type == Action::FindWorkTask)
+            return {"Find work task"};
+        return {"Unknown"};
+    }
+
     std::vector<std::string> debugHeaders(const TPosition& table)
     {
         return {"Position"};
@@ -228,6 +239,68 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const TAction& table)
+    {
+        return {"Actor ID", "Parent action", "Action type"};
+    }
+
+    void debugText(const Action& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.actorId),
+            },
+            {
+                data.parentAction ? std::to_string(*data.parentAction) : std::string("None"),
+            },
+            {
+                actionTypeToStringList(data.type),
+            },
+        };
+    }
+
+
+    std::vector<std::string> debugHeaders(const TGotoAction& table)
+    {
+        return {"Target", };
+    }
+
+    void debugText(const GotoAction& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                vec2ToStringList(data.target),
+            },
+        };
+    }
+
+
+    std::vector<std::string> debugHeaders(const TTotalPanicAction& table)
+    {
+        return {"", };
+    }
+
+    void debugText(const TotalPanicAction& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                ""
+            },
+        };
+    }
+
+
+    std::vector<std::string> debugHeaders(const TFindWorkTaskAction& table)
+    {
+        return {"", };
+    }
+
+    void debugText(const FindWorkTaskAction& data, std::vector<std::vector<std::string>>& outText)
+    {
+    }
 
     std::vector<std::string> debugHeaders(const TStructure& table)
     {

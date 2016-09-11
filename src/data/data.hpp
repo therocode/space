@@ -59,7 +59,8 @@ struct MoveAbility
 //ai
 struct Ai
 {
-    enum { Human };
+    enum Type { Human };
+    Type type;
 };
 
 //tasks
@@ -147,8 +148,10 @@ struct Structure
 
 struct Incentive
 {
+    enum Type {Breathe, Work};
     int32_t actorId;
     int32_t importance;
+    Type type;
 };
 
 struct BreatheIncentive
@@ -161,7 +164,7 @@ struct WorkIncentive
 
 struct Action
 {
-    enum Type {GOTO};
+    enum Type {Goto, TotalPanic, FindWorkTask};
     int32_t actorId;
     th::Optional<int32_t> parentAction;
     Type type;
@@ -169,8 +172,18 @@ struct Action
 
 struct GotoAction
 {
-    int32_t actionId;
     glm::ivec2 target;
+    static constexpr Action::Type type = Action::Goto;
+};
+
+struct TotalPanicAction
+{
+    static constexpr Action::Type type = Action::TotalPanic;
+};
+
+struct FindWorkTaskAction
+{
+    static constexpr Action::Type type = Action::FindWorkTask;
 };
 
 //entity
@@ -189,6 +202,9 @@ using TIncentive = DataTable<Incentive, false>;
 using TBreatheIncentive = DataTable<BreatheIncentive, true>;
 using TWorkIncentive = DataTable<WorkIncentive, true>;
 using TAction = DataTable<Action, false>;
+using TGotoAction = DataTable<GotoAction, true>;
+using TTotalPanicAction = DataTable<TotalPanicAction, true>;
+using TFindWorkTaskAction = DataTable<FindWorkTaskAction, true>;
 //tasks
 using TRoomTask = DataTable<RoomTask, true>;
 using TWallTask = DataTable<WallTask, true>;
@@ -230,6 +246,9 @@ struct GameData
     TWorkIncentive tWorkIncentive = {"Work Incentive", "Makes creatures want to work"};
     IdSet activeIncentives = {{}, {"Active Incentives", "The incentives that are the ones currently acted upon"}};
     TAction tAction = {"Action", "The currently existing actions for all AI agents"};
+    TGotoAction tGotoAction = {"Goto action", "Current goto actions"};
+    TTotalPanicAction tTotalPanicAction = {"Total Panic Action", "Current total panic actions"};
+    TFindWorkTaskAction tFindWorkTaskAction = {"Find Work Task Action", "Current find work task actions"};
 
     //organism stuff
     TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};

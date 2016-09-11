@@ -36,6 +36,18 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TWorkIncentive& table);
     void debugText(const WorkIncentive& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TAction& table);
+    void debugText(const Action& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TGotoAction& table);
+    void debugText(const GotoAction& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TTotalPanicAction& table);
+    void debugText(const TotalPanicAction& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TFindWorkTaskAction& table);
+    void debugText(const FindWorkTaskAction& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TStructure& table);
     void debugText(const Structure& data, std::vector<std::vector<std::string>>& outText);
 

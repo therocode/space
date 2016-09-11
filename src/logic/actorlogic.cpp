@@ -32,9 +32,14 @@ int32_t ActorLogic::addActor(Actor actor)
 
     if(actor.ai)
     {
-        insert(id, Ai{}, mData.tAi);
+        Ai newAi;
+
         if(*actor.ai == Ai::Human)
+        {
+            newAi.type = Ai::Human;
             insert(id, mData.humanAis);
+        }
+        insert(id, std::move(newAi), mData.tAi);
         insert(id, mData.uninitializedAis);
     }
 
