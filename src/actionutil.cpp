@@ -6,7 +6,13 @@ void clearActions(int32_t actorId, GameData& data)
     {
         if(action.actorId == actorId)
         {
-            //delete extra data
+            erase(id, data.tTotalPanicAction);
+            erase(id, data.tGotoAction);
+            erase(id, data.tFindWorkTaskAction);
+            //What! How to remember to put stuff here?
+
+            //clear extra data to make them stop doing stuff
+            erase(action.actorId, data.tWalkTarget);
             return true;
         }
         return false;

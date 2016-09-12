@@ -44,8 +44,8 @@ void DecisionAILogic::update()
                 return get(id, mData.tIncentive).actorId == aiId;
             },mData.activeIncentives);
             insert(mostImportantIncentive, mData.activeIncentives);
-            clearActions(aiId, mData);
 
+            clearActions(aiId, mData);
             createAction(aiId, ai.type, get(mostImportantIncentive, mData.tIncentive).type, mData);
         }
     }, mData.tAi);

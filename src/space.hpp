@@ -15,6 +15,7 @@
 #include "logic/actorlogic.hpp"
 #include "logic/organismlogic.hpp"
 #include "logic/decisionailogic.hpp"
+#include "logic/actionlogic.hpp"
 #include "logic/structurelogic.hpp"
 #include "logic/tasklogic.hpp"
 #include "logic/zonelogic.hpp"
@@ -78,6 +79,7 @@ class Space : public fea::Application,
         ActorLogic mActorLogic;
         OrganismLogic mOrganismLogic;
         DecisionAILogic mDecisionAILogic;
+        ActionLogic mActionLogic;
         StructureLogic mStructureLogic;
         TaskLogic mTaskLogic;
         ZoneLogic mZoneLogic;
