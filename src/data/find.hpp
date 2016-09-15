@@ -46,3 +46,14 @@ th::Optional<TableEntry<typename DataTable::Type>> findOne(Functor f, DataTable&
 
     return {};
 }
+
+template <typename DataTable, typename Functor>
+th::Optional<TableEntry<typename DataTable::Type>> findOne(Functor f, const DataTable& table)
+{
+    auto nonConst = findOne(f, const_cast<DataTable&>(table));
+
+    if(nonConst)
+        return nonConst;
+    else
+        return {};
+}

@@ -152,3 +152,8 @@ void airlockUpdate(GameData& data)
 
     }, data.tAirlock);
 }
+
+th::Optional<int32_t> airlockProvidesPath(int32_t structureId, const WallPosition& wallPosition, const GameData& data)
+{
+    return {};
+}

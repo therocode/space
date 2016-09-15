@@ -103,6 +103,12 @@ struct Door
     Orientation orientation;
 };
 
+struct StructureDoorLock
+{
+    int32_t doorId;
+    int32_t structureId;
+};
+
 struct ZoneLeak
 {
     glm::ivec2 start;
@@ -212,6 +218,7 @@ using TDoorTask = DataTable<DoorTask, true>;
 using TAssignedTask = DataTable<AssignedTask, true>;
 //world
 using TDoor = DataTable<Door, false>;
+using TStructureDoorLock = DataTable<StructureDoorLock, false>;
 using TZoneLeak = DataTable<ZoneLeak, false>;
 //structure
 using TStructure = DataTable<Structure, false>;
@@ -264,6 +271,7 @@ struct GameData
 
     //world
     TDoor tDoor = {"Door", "Represents all doors"};
+    TStructureDoorLock tStructureDoorLock = {"Structure Door Lock", "All doors that are locked by structures"};
     IdSet openDoors = {{}, {"Open doors", "All doors that are open"}};
     IdSet lockedDoors = {{}, {"Locked doors", "All doors that are locked"}};
     TZoneLeak tZoneLeak = {"Zone Leak", "Zone leaks are holes between atmosphere zones that transfer air"};

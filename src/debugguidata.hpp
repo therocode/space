@@ -63,6 +63,9 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TDoor& table);
     void debugText(const Door& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TStructureDoorLock& table);
+    void debugText(const StructureDoorLock& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TZoneLeak& table);
     void debugText(const ZoneLeak& data, std::vector<std::vector<std::string>>& outText);
 

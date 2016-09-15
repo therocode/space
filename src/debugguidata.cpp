@@ -380,6 +380,24 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const TStructureDoorLock& table)
+    {
+        return {"Structure ID", "Door ID"};
+    }
+
+    void debugText(const StructureDoorLock& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                {std::to_string(data.structureId)},
+            },
+            {
+                {std::to_string(data.doorId)},
+            },
+        };
+    }
+
     std::vector<std::string> debugHeaders(const TZoneLeak& table)
     {
         return {"Start Position", "End Position", "Hole Size", "Pump Force"};

@@ -275,7 +275,7 @@ void Space::loop()
 
     ImGui::ShowTestWindow();
 
-    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tAi, mData.uninitializedAis, mData.humanAis, mData.tIncentive, mData.activeIncentives, mData.tBreatheIncentive, mData.tWorkIncentive, mData.tAction, mData.tGotoAction, mData.tTotalPanicAction, mData.tFindWorkTaskAction, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tAirlockActivity, mData.tDoor, mData.tZoneLeak, mData.openDoors, mData.lockedDoors, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
+    DebugGui::showDataTables(mClickedEntity, mData.tPosition, mData.tPhysics, mData.tCollisionBox, mData.tWalkTarget, mData.tMoveAbility, mData.tMoveIntention, mData.tBloodValues, mData.tChoking, mData.tAi, mData.uninitializedAis, mData.humanAis, mData.tIncentive, mData.activeIncentives, mData.tBreatheIncentive, mData.tWorkIncentive, mData.tAction, mData.tGotoAction, mData.tTotalPanicAction, mData.tFindWorkTaskAction, mData.tStructureType, mData.tStructure, mData.uninitializedStructures, mData.tAirlock, mData.tAirlockActivity, mData.tDoor, mData.tStructureDoorLock, mData.tZoneLeak, mData.openDoors, mData.lockedDoors, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask, mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
 
     DebugGui::showInspector(io.MousePos, mData.zones, mData.atmosphere);
     if(mClickedEntity)

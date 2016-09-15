@@ -1,4 +1,5 @@
 #include "workerpathadaptor.hpp"
+#include "structuretypes.hpp"
 #include <thero/assert.hpp>
 
 const glm::ivec2 up(0, -1);
@@ -104,13 +105,13 @@ int32_t WorkerPathAdaptor::estimateDistance(const glm::ivec2& start, const glm::
 
 bool WorkerPathAdaptor::isPassable(const glm::ivec2& tile, Orientation orientation) const
 {
-    bool Wall = mData.walls.at(tile, Orientation::Horizontal);
+    bool wallSet = mData.walls.at(tile, Orientation::Horizontal);
 
-    if(wall)
+    if(wallSet)
     {
-        auto door = findOne([&] (int32_t doorId, const Door& door)
+        auto door = findOne([&] (int32_t doorId, const Door& d)
         {
-            return door.position == tile && door.orientation == orientation;   
+            return d.position == tile && d.orientation == orientation;   
         }, mData.tDoor);
 
         if(door)
@@ -123,14 +124,14 @@ bool WorkerPathAdaptor::isPassable(const glm::ivec2& tile, Orientation orientati
             }
             else
             {//now it is a locked door, and a structure might be in control of it and might actually provide a path. We should check this here
-                auto structureDoorLock = findOne([&] (const StructureDoorLock& lock)
+                auto structureDoorLock = findOne([&] (int32_t id, const StructureDoorLock& lock)
                 {
                     return door->id == lock.doorId;
                 }, mData.tStructureDoorLock);
 
                 if(structureDoorLock)
                 {
-                    th::Optional<int32_t> cost = structureAllowsDoorOpen(structureDoorLock->structureId, {tile, orientation}, mData);
+                    th::Optional<int32_t> cost = structureProvidesPath(structureDoorLock->data.structureId, {tile, orientation}, mData);
 
                     if(cost)
                     {

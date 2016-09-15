@@ -53,3 +53,16 @@ void initializeStructure(int32_t id, const Structure& structure, GameData& data)
         discoverAirlockDoors(id, structure, data);
     }
 }
+
+th::Optional<int32_t> structureProvidesPath(int32_t structureId, const WallPosition& wallPosition, const GameData& data)
+{
+    Structure structure = get(structureId, data.tStructure);
+    int32_t type = structure.structureType;
+
+    if(type == Structures::Airlock)
+    {
+        return airlockProvidesPath(structureId, wallPosition, data);
+    }
+
+    return {};
+}
