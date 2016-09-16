@@ -19,7 +19,7 @@ const glm::ivec2 WorkerPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t
 
     if(tile.y > 0)
     {
-        if(isPassable(tile, Orientation::Horizontal))
+        if(isPassable({tile, Orientation::Horizontal}))
         {
             if(skip == 0)
                 return tile + up;
@@ -29,7 +29,7 @@ const glm::ivec2 WorkerPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t
     
     if(tile.x < mWallSize.x - 2)
     {
-        if(isPassable(tile + right, Orientation::Vertical))
+        if(isPassable({tile + right, Orientation::Vertical}))
         {
             if(skip == 0)
                 return tile + right;
@@ -39,7 +39,7 @@ const glm::ivec2 WorkerPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t
 
     if(tile.y < mWallSize.y - 2)
     {
-       if(isPassable(tile + down, Orientation::Horizontal))
+       if(isPassable({tile + down, Orientation::Horizontal}))
        {
            if(skip == 0)
                return tile + down;
@@ -49,7 +49,7 @@ const glm::ivec2 WorkerPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t
     
     if(tile.x > 0)
     {
-        if(isPassable(tile, Orientation::Vertical))
+        if(isPassable({tile, Orientation::Vertical}))
         {
             if(skip == 0)
                 return tile + left;
@@ -68,25 +68,25 @@ uint32_t WorkerPathAdaptor::getNeighborAmount(const glm::ivec2& tile) const
 
     if(tile.y > 0)
     {
-        if(isPassable(tile, Orientation::Horizontal))
+        if(isPassable({tile, Orientation::Horizontal}))
             ++amount;
     }
     
     if(tile.x < mWallSize.x - 2)
     {
-        if(isPassable(tile + right, Orientation::Vertical))
+        if(isPassable({tile + right, Orientation::Vertical}))
             ++amount;
     }
 
     if(tile.y < mWallSize.y - 2)
     {
-        if(isPassable(tile + down, Orientation::Horizontal))
+        if(isPassable({tile + down, Orientation::Horizontal}))
             ++amount;
     }
     
     if(tile.x > 0)
     {
-        if(isPassable(tile, Orientation::Vertical))
+        if(isPassable({tile, Orientation::Vertical}))
             ++amount;
     }
 
@@ -103,15 +103,15 @@ int32_t WorkerPathAdaptor::estimateDistance(const glm::ivec2& start, const glm::
     return static_cast<int32_t>(glm::distance((glm::vec2)start, (glm::vec2)target) * 10.0f);
 }
 
-bool WorkerPathAdaptor::isPassable(const glm::ivec2& tile, Orientation orientation) const
+bool WorkerPathAdaptor::isPassable(const WallPosition& position) const
 {
-    bool wallSet = mData.walls.at(tile, Orientation::Horizontal);
+    bool wallSet = mData.walls.at(position);
 
     if(wallSet)
     {
         auto door = findOne([&] (int32_t doorId, const Door& d)
         {
-            return d.position == tile && d.orientation == orientation;   
+            return d.position == position;
         }, mData.tDoor);
 
         if(door)
@@ -131,7 +131,7 @@ bool WorkerPathAdaptor::isPassable(const glm::ivec2& tile, Orientation orientati
 
                 if(structureDoorLock)
                 {
-                    th::Optional<int32_t> cost = structureProvidesPath(structureDoorLock->data.structureId, {tile, orientation}, mData);
+                    th::Optional<int32_t> cost = structureProvidesPath(structureDoorLock->data.structureId, position, mData);
 
                     if(cost)
                     {
@@ -141,6 +141,10 @@ bool WorkerPathAdaptor::isPassable(const glm::ivec2& tile, Orientation orientati
                 //locked by other means...
             }
         }
+    }
+    else
+    {
+        return true;
     }
 
     return false;

@@ -8,20 +8,20 @@ WallMap::WallMap(glm::ivec2 tileCount):
 {
 }
 
-int32_t WallMap::at(const glm::ivec2& position, Orientation orientation) const
+int32_t WallMap::at(const WallPosition& position) const
 {
-    TH_ASSERT(position.x >= 0 && position.y >= 0 && position.x < mSize.x && position.y < mSize.y, "Invalid coordinate " << position << " given to map of size " << mSize);
-    size_t index = toIndex(position);
-    return orientation == Orientation::Horizontal ?
+    TH_ASSERT(position.position.x >= 0 && position.position.y >= 0 && position.position.x < mSize.x && position.position.y < mSize.y, "Invalid coordinate " << position.position << " given to map of size " << mSize);
+    size_t index = toIndex(position.position);
+    return position.orientation == Orientation::Horizontal ?
         mHorizontalWalls[index] :
         mVerticalWalls[index];
 }
 
-int32_t& WallMap::at(const glm::ivec2& position, Orientation orientation)
+int32_t& WallMap::at(const WallPosition& position)
 {
-    TH_ASSERT(position.x >= 0 && position.y >= 0 && position.x < mSize.x && position.y < mSize.y, "Invalid coordinate " << position << " given to map of size " << mSize);
-    size_t index = toIndex(position);
-    return orientation == Orientation::Horizontal ?
+    TH_ASSERT(position.position.x >= 0 && position.position.y >= 0 && position.position.x < mSize.x && position.position.y < mSize.y, "Invalid coordinate " << position.position << " given to map of size " << mSize);
+    size_t index = toIndex(position.position);
+    return position.orientation == Orientation::Horizontal ?
         mHorizontalWalls[index] :
         mVerticalWalls[index];
 }
@@ -68,13 +68,13 @@ int32_t WallMap::atV(size_t index) const
     return mVerticalWalls[index];
 }
 
-void WallMap::set(const glm::ivec2& position, Orientation orientation, int32_t type)
+void WallMap::set(const WallPosition& position, int32_t type)
 {
-    TH_ASSERT(position.x >= 0 && position.y >= 0 && position.x < mSize.x && position.y < mSize.y, "Invalid coordinate " << position << " given to map of size " << mSize);
-    if(orientation == Orientation::Horizontal)
-        mHorizontalWalls[toIndex(position)] = type;
+    TH_ASSERT(position.position.x >= 0 && position.position.y >= 0 && position.position.x < mSize.x && position.position.y < mSize.y, "Invalid coordinate " << position.position << " given to map of size " << mSize);
+    if(position.orientation == Orientation::Horizontal)
+        mHorizontalWalls[toIndex(position.position)] = type;
     else
-        mVerticalWalls[toIndex(position)] = type;
+        mVerticalWalls[toIndex(position.position)] = type;
 }
 
 void WallMap::fill(int32_t type)
@@ -105,7 +105,7 @@ size_t WallMap::toIndex(const glm::ivec2& position) const
 
 void set(const WallPosition& position, int32_t type, const WallMap& walls, WallChanges& changes)
 {
-    int32_t oldType = walls.at(position.position, position.orientation);
+    int32_t oldType = walls.at(position);
 
     if(oldType != type)
     {

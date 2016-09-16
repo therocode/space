@@ -20,13 +20,13 @@ void ZoneLogic::updateZones(WallMap& walls, const WallChanges& changedWalls)
     {
         std::vector<glm::ivec2> result;
 
-        if(node.y > 0 &&                   !walls.at(node, Orientation::Horizontal) &&                    ignoreNodes.count(node + glm::ivec2(0, -1)) == 0 && at(node + glm::ivec2(0, -1), mData.zones) != ignoreId)
+        if(node.y > 0 &&                   !walls.atH(node) &&                   ignoreNodes.count(node + glm::ivec2(0, -1)) == 0 && at(node + glm::ivec2(0, -1), mData.zones) != ignoreId)
             result.push_back(node + glm::ivec2(0, -1));
-        if(node.x > 0 &&                   !walls.at(node, Orientation::Vertical) &&                      ignoreNodes.count(node + glm::ivec2(-1, 0)) == 0 && at(node + glm::ivec2(-1, 0), mData.zones) != ignoreId)
+        if(node.x > 0 &&                   !walls.atV(node) &&                   ignoreNodes.count(node + glm::ivec2(-1, 0)) == 0 && at(node + glm::ivec2(-1, 0), mData.zones) != ignoreId)
             result.push_back(node + glm::ivec2(-1, 0));
-        if(node.y < walls.size().y - 2 && !walls.at(node + glm::ivec2(0, 1), Orientation::Horizontal) && ignoreNodes.count(node + glm::ivec2(0, 1)) == 0 && at(node + glm::ivec2(0, 1), mData.zones) != ignoreId)
+        if(node.y < walls.size().y - 2 && !walls.atH(node + glm::ivec2(0, 1)) && ignoreNodes.count(node + glm::ivec2(0, 1)) == 0 && at(node + glm::ivec2(0, 1), mData.zones) != ignoreId)
             result.push_back(node + glm::ivec2(0, 1));
-        if(node.x < walls.size().x - 2 && !walls.at(node + glm::ivec2(1, 0), Orientation::Vertical) &&   ignoreNodes.count(node + glm::ivec2(1, 0)) == 0 && at(node + glm::ivec2(1, 0), mData.zones) != ignoreId)
+        if(node.x < walls.size().x - 2 && !walls.atV(node + glm::ivec2(1, 0)) && ignoreNodes.count(node + glm::ivec2(1, 0)) == 0 && at(node + glm::ivec2(1, 0), mData.zones) != ignoreId)
             result.push_back(node + glm::ivec2(1, 0));
 
         return result;
@@ -66,7 +66,7 @@ void ZoneLogic::updateZones(WallMap& walls, const WallChanges& changedWalls)
 
     for(const auto& changedWall : changedWalls)
     {
-        walls.set(changedWall.first.position, changedWall.first.orientation, changedWall.second.newValue);
+        walls.set(changedWall.first, changedWall.second.newValue);
         glm::ivec2 start = changedWall.first.position;
         glm::ivec2 end = changedWall.first.position + (changedWall.first.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
         int32_t startId = at(start, mData.zones);

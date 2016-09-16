@@ -94,26 +94,26 @@ void InterfaceLogic::update()
                 if(hasDoor({{x, mDragStart->y}, Orientation::Horizontal}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
-                        {x, mDragStart->y},
-                        Orientation::Horizontal,
+                        {{x, mDragStart->y},
+                        Orientation::Horizontal},
                     }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
-                        {x, mDragStart->y},
-                        Orientation::Horizontal,
+                        {{x, mDragStart->y},
+                        Orientation::Horizontal},
                     }, mData.tWallTask, mData.unassignedTasks);
                 if(hasDoor({{x, mDragEnd->y + 1}, Orientation::Horizontal}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
-                            {x, mDragEnd->y + 1},
-                            Orientation::Horizontal,
+                        {{x, mDragEnd->y + 1},
+                            Orientation::Horizontal},
                     }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
-                            {x, mDragEnd->y + 1},
-                            Orientation::Horizontal,
+                        {{x, mDragEnd->y + 1},
+                            Orientation::Horizontal,}
                     }, mData.tWallTask, mData.unassignedTasks);
             }
 
@@ -122,26 +122,26 @@ void InterfaceLogic::update()
                 if(hasDoor({{mDragStart->x, y}, Orientation::Vertical}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
-                            {mDragStart->x, y},
-                            Orientation::Vertical,
+                        {{mDragStart->x, y},
+                            Orientation::Vertical,}
                     }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
-                            {mDragStart->x, y},
-                            Orientation::Vertical,
+                        {{mDragStart->x, y},
+                            Orientation::Vertical,}
                     }, mData.tWallTask, mData.unassignedTasks);
                 if(hasDoor({{mDragEnd->x + 1, y}, Orientation::Vertical}))
                     addTask(mTaskIdPool.next(), DoorTask
                     {
-                            {mDragEnd->x + 1, y},
-                            Orientation::Vertical,
+                        {{mDragEnd->x + 1, y},
+                            Orientation::Vertical,}
                     }, mData.tDoorTask, mData.unassignedTasks);
                 else
                     addTask(mTaskIdPool.next(), WallTask
                     {
-                            {mDragEnd->x + 1, y},
-                            Orientation::Vertical,
+                        {{mDragEnd->x + 1, y},
+                            Orientation::Vertical,}
                     }, mData.tWallTask, mData.unassignedTasks);
             }
 

@@ -21,9 +21,9 @@ void TaskLogic::updateRoomTasks()
     forEach([&] (int32_t id, const RoomTask& roomTask)
     {
         bool finished = true;
-        forEachWall(roomTask.position, roomTask.size, [&]  (const glm::ivec2& coordinate, Orientation orientation)
+        forEachWall(roomTask.position, roomTask.size, [&]  (const WallPosition& position)
         {
-            if(!mData.walls.at(coordinate, orientation))
+            if(!mData.walls.at(position))
             {
                 finished = false;
             }
@@ -45,7 +45,7 @@ void TaskLogic::updateWallTasks()
 
     forEach([&] (int32_t id, const WallTask& wallTask)
     {
-        bool finished = mData.walls.at(wallTask.position, wallTask.orientation);
+        bool finished = mData.walls.at(wallTask.position);
         if(finished)
         {
             toErase.push_back(id);
@@ -64,7 +64,7 @@ void TaskLogic::updateDoorTasks()
     {
         bool finished = !findOne([&] (int32_t doorId, const Door& door)
         {
-            return doorTask.position == door.position && doorTask.orientation == door.orientation;
+            return doorTask.position == door.position;
         },  mData.tDoor).isNull();
         if(finished)
         {

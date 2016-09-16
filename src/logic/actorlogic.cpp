@@ -199,7 +199,7 @@ void ActorLogic::updateTaskWork()
     {
         if(auto wallTask = findOne(worker.taskId, mData.tWallTask))
         {
-            glm::vec2 taskPosition = wallTask->position * 32;
+            glm::vec2 taskPosition = wallTask->position.position * 32;
             const glm::vec2& workerPosition = get(workerId, mData.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
@@ -208,7 +208,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    set({wallTask->position, wallTask->orientation}, 1, mData.walls, mData.wallChanges);
+                    set(wallTask->position, 1, mData.walls, mData.wallChanges);
                 }
             }
             else
@@ -221,7 +221,7 @@ void ActorLogic::updateTaskWork()
         }
         else if(auto doorTask = findOne(worker.taskId, mData.tDoorTask))
         {
-            glm::vec2 taskPosition = doorTask->position * 32;
+            glm::vec2 taskPosition = doorTask->position.position * 32;
             const glm::vec2& workerPosition = get(workerId, mData.tPosition);
 
             if(glm::distance(taskPosition, workerPosition) <= 32.0f)
@@ -230,7 +230,7 @@ void ActorLogic::updateTaskWork()
 
                 if(rand() % 100 == 0)
                 {
-                    createDoor(Door{doorTask->position, doorTask->orientation}, mData);
+                    createDoor(Door{doorTask->position}, mData);
                 }
             }
             else
@@ -300,11 +300,11 @@ void ActorLogic::applyCollisions()
 
         if(physics.velocity.x < 0.0f && tileL != currentTile.x)
         {
-            if(mData.walls.at(currentTile, Orientation::Vertical) != 0)
+            if(mData.walls.atV(currentTile) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
-                    return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Vertical;
+                    return door.position.position == glm::ivec2(currentTile.x, currentTile.y) && door.position.orientation == Orientation::Vertical;
                 }, mData.tDoor);
 
                 if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))
@@ -320,11 +320,11 @@ void ActorLogic::applyCollisions()
         }
         else if(physics.velocity.x > 0.0f && tileR != currentTile.x)
         {
-            if(mData.walls.at({currentTile.x + 1, currentTile.y}, Orientation::Vertical) != 0)
+            if(mData.walls.atV({currentTile.x + 1, currentTile.y}) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
-                    return door.position == glm::ivec2(currentTile.x + 1, currentTile.y) && door.orientation == Orientation::Vertical;
+                    return door.position.position == glm::ivec2(currentTile.x + 1, currentTile.y) && door.position.orientation == Orientation::Vertical;
                 }, mData.tDoor);
 
                 if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))
@@ -341,11 +341,11 @@ void ActorLogic::applyCollisions()
 
         if(physics.velocity.y < 0.0f && tileT != currentTile.y)
         {
-            if(mData.walls.at(currentTile, Orientation::Horizontal) != 0)
+            if(mData.walls.atH(currentTile) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
-                    return door.position == glm::ivec2(currentTile.x, currentTile.y) && door.orientation == Orientation::Horizontal;
+                    return door.position.position == glm::ivec2(currentTile.x, currentTile.y) && door.position.orientation == Orientation::Horizontal;
                 }, mData.tDoor);
 
                 if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))
@@ -361,11 +361,11 @@ void ActorLogic::applyCollisions()
         }
         else if(physics.velocity.y > 0.0f && tileB != currentTile.y)
         {
-            if(mData.walls.at({currentTile.x, currentTile.y + 1}, Orientation::Horizontal) != 0)
+            if(mData.walls.atH({currentTile.x, currentTile.y + 1}) != 0)
             {
                 auto collidedDoor = findOne([&] (int32_t doorId, const Door& door)
                 {
-                    return door.position == glm::ivec2(currentTile.x, currentTile.y + 1) && door.orientation == Orientation::Horizontal;
+                    return door.position.position == glm::ivec2(currentTile.x, currentTile.y + 1) && door.position.orientation == Orientation::Horizontal;
                 }, mData.tDoor);
 
                 if(!collidedDoor || has(collidedDoor->id, mData.lockedDoors))

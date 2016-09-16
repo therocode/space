@@ -1,4 +1,5 @@
 #include "airlock.hpp"
+#include "../structureutil.hpp"
 #include "../doorutil.hpp"
 
 void discoverAirlockDoors(int32_t id, const Structure& structure, GameData& data)
@@ -8,15 +9,15 @@ void discoverAirlockDoors(int32_t id, const Structure& structure, GameData& data
 
     forEach([&] (int32_t doorId, const Door& door)
     {
-        if(door.position == tile)
+        if(door.position.position == tile)
         {
             doors.push_back(doorId);
         }
-        else if(door.position == tile + glm::ivec2(1, 0) && door.orientation == Orientation::Vertical)
+        else if(door.position.position == tile + glm::ivec2(1, 0) && door.position.orientation == Orientation::Vertical)
         {
             doors.push_back(doorId);
         }
-        else if(door.position == tile + glm::ivec2(0, 1) && door.orientation == Orientation::Horizontal)
+        else if(door.position.position == tile + glm::ivec2(0, 1) && door.position.orientation == Orientation::Horizontal)
         {
             doors.push_back(doorId);
         }
@@ -46,8 +47,8 @@ void startPumpDoor(int32_t id, Airlock::Mode targetMode, Airlock::Mode pumpMode,
 
     glm::ivec2 start = structure.position;
     glm::ivec2 end;
-    if(pumpingDoor.position != start)
-        end = pumpingDoor.position;
+    if(pumpingDoor.position.position != start)
+        end = pumpingDoor.position.position;
     else
         end = otherSide(pumpingDoor);
 
@@ -77,7 +78,6 @@ void requestOpenAirlockDoor(int32_t id, int32_t doorId, GameData& data)
     TH_ASSERT(std::find(airlock.doors.begin(), airlock.doors.end(), doorId) != airlock.doors.end(), "Invalid doorId given to airlock");
     Airlock::Mode targetMode = *airlock.exit == doorId ? Airlock::Out : Airlock::In;
 
-    std::cout << airlock.currentMode << " was mode, " << targetMode << " was targetmode \n";
     if(airlock.currentMode == targetMode)
     {
         openDoor(doorId, data);
@@ -131,14 +131,14 @@ void airlockUpdate(GameData& data)
                 unlockDoor(door, data);
 
             if(airlock.exit)
-                lockDoor(*airlock.exit, data);
+                structureLockDoor(id, *airlock.exit, data);
         }
         else if(airlock.currentMode == Airlock::Out)
         {
             for(int32_t door : airlock.doors)
             {
                 if(airlock.exit && door != *airlock.exit)
-                    lockDoor(door, data);
+                    structureLockDoor(id, door, data);
             }
 
             if(airlock.exit)
@@ -147,7 +147,7 @@ void airlockUpdate(GameData& data)
         else
         {
             for(int32_t door : airlock.doors)
-                lockDoor(door, data);
+                structureLockDoor(id, door, data);
         }
 
     }, data.tAirlock);
@@ -155,5 +155,15 @@ void airlockUpdate(GameData& data)
 
 th::Optional<int32_t> airlockProvidesPath(int32_t structureId, const WallPosition& wallPosition, const GameData& data)
 {
-    return {};
+    const Airlock& airlock = get(structureId, data.tAirlock);
+
+    if(std::find_if(airlock.doors.begin(), airlock.doors.end(), [&] (int32_t doorId)
+    {
+        return get(doorId, data.tDoor).position == wallPosition;
+    }) != airlock.doors.end())
+    {
+        return {100};
+    }
+    else
+        return {};
 }

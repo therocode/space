@@ -216,9 +216,9 @@ void Space::startScenario()
     set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
     set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
 
-    createDoor(Door{offset + glm::ivec2(1, 0), Orientation::Vertical}, mData);
-    createDoor(Door{{9, 8}, Orientation::Horizontal}, mData);
-    createDoor(Door{{10, 7}, Orientation::Vertical}, mData);
+    createDoor(Door{{offset + glm::ivec2(1, 0), Orientation::Vertical}}, mData);
+    createDoor(Door{{{9, 8}, Orientation::Horizontal}}, mData);
+    createDoor(Door{{{10, 7}, Orientation::Vertical}}, mData);
 
     mData.atmosphere.set(offset + glm::ivec2(0, 0), cHealthyAtmosphere);
     mData.atmosphere.set(offset + glm::ivec2(1, 0), cHealthyAtmosphere);
@@ -288,16 +288,6 @@ void Space::loop()
 
     mWindow.swapBuffers();
 }
-
-
-//TODO:
-//pathfinding
-//task dependencies
-//ambient gas transfer
-
-//refact:
-//get rid of double rendering layer
-//group up system variables
 
 void Space::temp()
 {

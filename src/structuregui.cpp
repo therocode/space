@@ -29,7 +29,7 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
         {
             bool isExit = (doorId == airlock.exit);
             const Door& door = get(doorId, data.tDoor);
-            if(ImGui::SmallButton((std::to_string(door.position.x) + "," + std::to_string(door.position.y) + (isExit ? std::string(" (exit)") : std::string()) + "###" + std::to_string(doorId)).c_str()))
+            if(ImGui::SmallButton((std::to_string(door.position.position.x) + "," + std::to_string(door.position.position.y) + (isExit ? std::string(" (exit)") : std::string()) + "###" + std::to_string(doorId)).c_str()))
             {
                 airlock.exit = doorId;
             }

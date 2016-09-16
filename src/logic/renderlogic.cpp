@@ -118,8 +118,8 @@ void RenderLogic::renderTasks()
 
     forEach([&] (int32_t taskId, const WallTask& wallTask)
     {   
-        Orientation orientation = wallTask.orientation;
-        const glm::vec2& position = static_cast<glm::vec2>(wallTask.position * 32) - 
+        Orientation orientation = wallTask.position.orientation;
+        const glm::vec2& position = static_cast<glm::vec2>(wallTask.position.position * 32) - 
             (orientation == Orientation::Horizontal ? glm::vec2{0.0f, 4.0f} : glm::vec2{4.0f, 0.0f});
 
         glm::vec2 size = orientation == Orientation::Horizontal ? glm::vec2{32.0f, 8.0f} : glm::vec2{8.0f, 32.0f};
@@ -140,8 +140,8 @@ void RenderLogic::renderTasks()
 
     forEach([&] (int32_t taskId, const DoorTask& doorTask)
     {   
-        Orientation orientation = doorTask.orientation;
-        const glm::vec2& position = static_cast<glm::vec2>(doorTask.position * 32) - 
+        Orientation orientation = doorTask.position.orientation;
+        const glm::vec2& position = static_cast<glm::vec2>(doorTask.position.position * 32) - 
             (orientation == Orientation::Horizontal ? glm::vec2{0.0f, 4.0f} : glm::vec2{4.0f, 0.0f});
 
         glm::vec2 size = orientation == Orientation::Horizontal ? glm::vec2{32.0f, 8.0f} : glm::vec2{8.0f, 32.0f};

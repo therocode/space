@@ -105,15 +105,15 @@ void Renderer::renderWorld(const GameData& data, bool showZones, bool showAtmosp
 
     forEach([&] (int32_t id, const Door& door)
     {
-        if(door.orientation == Orientation::Horizontal)
+        if(door.position.orientation == Orientation::Horizontal)
         {
             quad.setSize({cTileWidth, cWallThickness});
-            quad.setPosition(static_cast<glm::vec2>(door.position) * 32.0f - glm::vec2(0.0f, cWallThickness / 2.0f));
+            quad.setPosition(static_cast<glm::vec2>(door.position.position) * 32.0f - glm::vec2(0.0f, cWallThickness / 2.0f));
         }
         else
         {
             quad.setSize({cWallThickness, cTileWidth});
-            quad.setPosition(static_cast<glm::vec2>(door.position) * 32.0f - glm::vec2(cWallThickness / 2.0f, 0.0f));
+            quad.setPosition(static_cast<glm::vec2>(door.position.position) * 32.0f - glm::vec2(cWallThickness / 2.0f, 0.0f));
         }
 
         if(has(id, data.openDoors))

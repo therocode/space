@@ -10,7 +10,7 @@ class WorkerPathAdaptor
         int32_t getStepCost(const glm::ivec2& tileA, const glm::ivec2& tileB) const;
         int32_t estimateDistance(const glm::ivec2& start, const glm::ivec2& target) const;
     private:
-        bool isPassable(const glm::ivec2& tile, Orientation orientation) const;
+        bool isPassable(const WallPosition& wallPosition) const;
         const GameData& mData;
         glm::ivec2 mWallSize;
 };

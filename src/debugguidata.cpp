@@ -372,10 +372,10 @@ namespace DebugGui
         outText =
         {
             {
-                vec2ToStringList(data.position),
+                vec2ToStringList(data.position.position),
             },
             {
-                {to_string(data.orientation)},
+                {to_string(data.position.orientation)},
             },
         };
     }
@@ -480,10 +480,10 @@ namespace DebugGui
         outText =
         {
             {
-                vec2ToStringList(data.position),
+                vec2ToStringList(data.position.position),
             },
             {
-                to_string(data.orientation),
+                to_string(data.position.orientation),
             },
         };
     }
@@ -498,10 +498,10 @@ namespace DebugGui
         outText =
         {
             {
-                vec2ToStringList(data.position),
+                vec2ToStringList(data.position.position),
             },
             {
-                to_string(data.orientation),
+                to_string(data.position.orientation),
             },
         };
     }

@@ -72,14 +72,12 @@ struct RoomTask
 
 struct WallTask
 {
-    glm::ivec2 position;
-    Orientation orientation;
+    WallPosition position;
 };
 
 struct DoorTask
 {
-    glm::ivec2 position;
-    Orientation orientation;
+    WallPosition position;
 };
 
 struct AssignedTask
@@ -99,8 +97,7 @@ struct Choking
 
 struct Door
 {
-    glm::ivec2 position;
-    Orientation orientation;
+    WallPosition position;
 };
 
 struct StructureDoorLock

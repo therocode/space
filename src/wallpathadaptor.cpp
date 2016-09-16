@@ -11,7 +11,7 @@ const glm::ivec2 WallPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t i
     uint32_t skip = index;
 
     glm::ivec2 up(0, -1);
-    if(tile.y > 0 && !mWalls.at(tile, Orientation::Horizontal))
+    if(tile.y > 0 && !mWalls.at({tile, Orientation::Horizontal}))
     {
         if(skip == 0)
             return tile + up;
@@ -19,7 +19,7 @@ const glm::ivec2 WallPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t i
     }
     
     glm::ivec2 right(1, 0);
-    if(tile.x < mWalls.size().x - 2 && !mWalls.at(tile + glm::ivec2(1, 0), Orientation::Vertical))
+    if(tile.x < mWalls.size().x - 2 && !mWalls.at({tile + glm::ivec2(1, 0), Orientation::Vertical}))
     {
         if(skip == 0)
             return tile + right;
@@ -27,7 +27,7 @@ const glm::ivec2 WallPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t i
     }
 
     glm::ivec2 down(0, 1);
-    if(tile.y < mWalls.size().y - 2 && !mWalls.at(tile + down, Orientation::Horizontal))
+    if(tile.y < mWalls.size().y - 2 && !mWalls.at({tile + down, Orientation::Horizontal}))
     {
         if(skip == 0)
             return tile + down;
@@ -35,7 +35,7 @@ const glm::ivec2 WallPathAdaptor::getNeighbor(const glm::ivec2& tile, uint32_t i
     }
     
     glm::ivec2 left(-1, 0);
-    if(tile.x > 0 && !mWalls.at(tile, Orientation::Vertical))
+    if(tile.x > 0 && !mWalls.at({tile, Orientation::Vertical}))
     {
         if(skip == 0)
             return tile + left;
@@ -52,19 +52,19 @@ uint32_t WallPathAdaptor::getNeighborAmount(const glm::ivec2& tile) const
     uint32_t amount = 0;
 
     glm::ivec2 up(0, -1);
-    if(tile.y > 0 && !mWalls.at(tile, Orientation::Horizontal))
+    if(tile.y > 0 && !mWalls.at({tile, Orientation::Horizontal}))
         ++amount;
     
     glm::ivec2 right(1, 0);
-    if(tile.x < mWalls.size().x - 2 && !mWalls.at(tile + glm::ivec2(1, 0), Orientation::Vertical))
+    if(tile.x < mWalls.size().x - 2 && !mWalls.at({tile + glm::ivec2(1, 0), Orientation::Vertical}))
         ++amount;
 
     glm::ivec2 down(0, 1);
-    if(tile.y < mWalls.size().y - 2 && !mWalls.at(tile + down, Orientation::Horizontal))
+    if(tile.y < mWalls.size().y - 2 && !mWalls.at({tile + down, Orientation::Horizontal}))
         ++amount;
     
     glm::ivec2 left(-1, 0);
-    if(tile.x > 0 && !mWalls.at(tile, Orientation::Vertical))
+    if(tile.x > 0 && !mWalls.at({tile, Orientation::Vertical}))
         ++amount;
 
     return amount;
