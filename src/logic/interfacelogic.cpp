@@ -10,7 +10,6 @@ InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t&
 	mSpace(space),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
-    mTaskIdPool(taskIdPool),
     mData(data),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
@@ -78,11 +77,11 @@ void InterfaceLogic::update()
 
         if(ImGui::SmallButton("Done"))
         {
-            addTask(mTaskIdPool.next(), RoomTask
-            {
-                *mDragStart,
-                *mDragEnd - *mDragStart + glm::ivec2(1, 1),
-            }, mData.tRoomTask, mData.unassignedTasks);
+            //addTask(RoomTask
+            //{
+            //    *mDragStart,
+            //    *mDragEnd - *mDragStart + glm::ivec2(1, 1),
+            //}, mData.tRoomTask, mData);
 
             auto hasDoor = [&] (const WallPosition& pos)
             {
@@ -92,57 +91,57 @@ void InterfaceLogic::update()
             for(int32_t x = mDragStart->x; x <= mDragEnd->x; ++x)
             {
                 if(hasDoor({{x, mDragStart->y}, Orientation::Horizontal}))
-                    addTask(mTaskIdPool.next(), DoorTask
+                    addTask(DoorTask
                     {
                         {{x, mDragStart->y},
                         Orientation::Horizontal},
-                    }, mData.tDoorTask, mData.unassignedTasks);
+                    }, mData.tDoorTask, mData);
                 else
-                    addTask(mTaskIdPool.next(), WallTask
+                    addTask(WallTask
                     {
                         {{x, mDragStart->y},
                         Orientation::Horizontal},
-                    }, mData.tWallTask, mData.unassignedTasks);
+                    }, mData.tWallTask, mData);
                 if(hasDoor({{x, mDragEnd->y + 1}, Orientation::Horizontal}))
-                    addTask(mTaskIdPool.next(), DoorTask
+                    addTask(DoorTask
                     {
                         {{x, mDragEnd->y + 1},
                             Orientation::Horizontal},
-                    }, mData.tDoorTask, mData.unassignedTasks);
+                    }, mData.tDoorTask, mData);
                 else
-                    addTask(mTaskIdPool.next(), WallTask
+                    addTask(WallTask
                     {
                         {{x, mDragEnd->y + 1},
                             Orientation::Horizontal,}
-                    }, mData.tWallTask, mData.unassignedTasks);
+                    }, mData.tWallTask, mData);
             }
 
             for(int32_t y = mDragStart->y; y <= mDragEnd->y; ++y)
             {
                 if(hasDoor({{mDragStart->x, y}, Orientation::Vertical}))
-                    addTask(mTaskIdPool.next(), DoorTask
+                    addTask(DoorTask
                     {
                         {{mDragStart->x, y},
                             Orientation::Vertical,}
-                    }, mData.tDoorTask, mData.unassignedTasks);
+                    }, mData.tDoorTask, mData);
                 else
-                    addTask(mTaskIdPool.next(), WallTask
+                    addTask(WallTask
                     {
                         {{mDragStart->x, y},
                             Orientation::Vertical,}
-                    }, mData.tWallTask, mData.unassignedTasks);
+                    }, mData.tWallTask, mData);
                 if(hasDoor({{mDragEnd->x + 1, y}, Orientation::Vertical}))
-                    addTask(mTaskIdPool.next(), DoorTask
+                    addTask(DoorTask
                     {
                         {{mDragEnd->x + 1, y},
                             Orientation::Vertical,}
-                    }, mData.tDoorTask, mData.unassignedTasks);
+                    }, mData.tDoorTask, mData);
                 else
-                    addTask(mTaskIdPool.next(), WallTask
+                    addTask(WallTask
                     {
                         {{mDragEnd->x + 1, y},
                             Orientation::Vertical,}
-                    }, mData.tWallTask, mData.unassignedTasks);
+                    }, mData.tWallTask, mData);
             }
 
             reset();

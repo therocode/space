@@ -176,21 +176,6 @@ void ActorLogic::updateWorkers()
         if(foundIncentive)
             foundIncentive->data.importance = 50;
     }, mData.freeWorkers);
-
-    ////assign free workers to unassigned tasks
-    //eraseIf([&] (int32_t id)
-    //{
-    //    bool erase = false;
-    //    if(count(mData.unassignedTasks) > 0)
-    //    {
-    //        int32_t taskId = extractOne(mData.unassignedTasks);
-    //        assignTask(taskId, id, mData.tAssignedTask);
-    //        insert(id, {taskId}, mData.tBusyWorker);
-    //        erase = true;
-    //    }
-
-    //    return erase;
-    //}, mData.freeWorkers);
 }
 
 void ActorLogic::updateTaskWork()

@@ -39,6 +39,9 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TAction& table);
     void debugText(const Action& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TTaskAction& table);
+    void debugText(const TaskAction& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TGotoAction& table);
     void debugText(const GotoAction& data, std::vector<std::vector<std::string>>& outText);
 
@@ -47,6 +50,12 @@ namespace DebugGui
 
     std::vector<std::string> debugHeaders(const TFindWorkTaskAction& table);
     void debugText(const FindWorkTaskAction& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TConstructWallAction& table);
+    void debugText(const ConstructWallAction& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TConstructDoorAction& table);
+    void debugText(const ConstructDoorAction& data, std::vector<std::vector<std::string>>& outText);
 
     std::vector<std::string> debugHeaders(const TStructure& table);
     void debugText(const Structure& data, std::vector<std::vector<std::string>>& outText);
@@ -71,6 +80,9 @@ namespace DebugGui
 
     std::vector<std::string> debugHeaders(const TBusyWorker& table);
     void debugText(const BusyWorker& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TTask& table);
+    void debugText(const Task& data, std::vector<std::vector<std::string>>& outText);
 
     std::vector<std::string> debugHeaders(const TRoomTask& table);
     void debugText(const RoomTask& data, std::vector<std::vector<std::string>>& outText);

@@ -64,20 +64,30 @@ struct Ai
 };
 
 //tasks
+struct Task
+{
+    enum Type {Wall, Door, Room};
+    int32_t priority;
+    Type type;
+};
+
 struct RoomTask
 {
     glm::ivec2 position;
     glm::ivec2 size;
+    static constexpr Task::Type type = Task::Room;
 };
 
 struct WallTask
 {
     WallPosition position;
+    static constexpr Task::Type type = Task::Wall;
 };
 
 struct DoorTask
 {
     WallPosition position;
+    static constexpr Task::Type type = Task::Door;
 };
 
 struct AssignedTask
@@ -167,15 +177,22 @@ struct WorkIncentive
 
 struct Action
 {
-    enum Type {Goto, TotalPanic, FindWorkTask};
+    enum Type {Goto, TotalPanic, FindWorkTask, ConstructWall, ConstructDoor};
     int32_t actorId;
     th::Optional<int32_t> parentAction;
     Type type;
 };
 
+struct TaskAction
+{
+    int32_t actionId;
+    int32_t taskId;
+};
+
 struct GotoAction
 {
-    glm::ivec2 target;
+    glm::vec2 target;
+    float acceptableDistance;
     static constexpr Action::Type type = Action::Goto;
 };
 
@@ -187,6 +204,18 @@ struct TotalPanicAction
 struct FindWorkTaskAction
 {
     static constexpr Action::Type type = Action::FindWorkTask;
+};
+
+struct ConstructWallAction
+{
+    static constexpr Action::Type type = Action::ConstructWall;
+    int32_t workLeft;
+};
+
+struct ConstructDoorAction
+{
+    static constexpr Action::Type type = Action::ConstructDoor;
+    int32_t workLeft;
 };
 
 //entity
@@ -204,11 +233,16 @@ using TAi = DataTable<Ai, true>;
 using TIncentive = DataTable<Incentive, false>;
 using TBreatheIncentive = DataTable<BreatheIncentive, true>;
 using TWorkIncentive = DataTable<WorkIncentive, true>;
+//action
 using TAction = DataTable<Action, false>;
+using TTaskAction = DataTable<TaskAction, false>;
 using TGotoAction = DataTable<GotoAction, true>;
 using TTotalPanicAction = DataTable<TotalPanicAction, true>;
 using TFindWorkTaskAction = DataTable<FindWorkTaskAction, true>;
+using TConstructWallAction = DataTable<ConstructWallAction, true>;
+using TConstructDoorAction = DataTable<ConstructDoorAction, true>;
 //tasks
+using TTask = DataTable<Task, false>;
 using TRoomTask = DataTable<RoomTask, true>;
 using TWallTask = DataTable<WallTask, true>;
 using TDoorTask = DataTable<DoorTask, true>;
@@ -249,10 +283,16 @@ struct GameData
     TBreatheIncentive tBreatheIncentive = {"Breathe Incentive", "Makes creatures want to breathe"};
     TWorkIncentive tWorkIncentive = {"Work Incentive", "Makes creatures want to work"};
     IdSet activeIncentives = {{}, {"Active Incentives", "The incentives that are the ones currently acted upon"}};
+
+    //actions
     TAction tAction = {"Action", "The currently existing actions for all AI agents"};
+    IdSet leafActions = {{}, {"Leaf actions", "Actions that have no children."}};
+    TTaskAction tTaskAction = {"Task Action", "Actions that are for a task"};
     TGotoAction tGotoAction = {"Goto action", "Current goto actions"};
     TTotalPanicAction tTotalPanicAction = {"Total Panic Action", "Current total panic actions"};
     TFindWorkTaskAction tFindWorkTaskAction = {"Find Work Task Action", "Current find work task actions"};
+    TConstructWallAction tConstructWallAction = {"Construct wall action", "Current construct wall actions"};
+    TConstructDoorAction tConstructDoorAction = {"Construct door action", "Current construct door actions"};
 
     //organism stuff
     TBloodValues tBloodValues = {"Blood Values", "The content of vital compounds in the blood of an organism"};
@@ -260,6 +300,7 @@ struct GameData
     IdSet died = {{}, {"Died", "The organisms that have just died, will only be set for one frame"}};
     
     //tasks
+    TTask tTask = {"Task", "Represents all tasks"};
     TRoomTask tRoomTask = {"Room Task", "Represents all rooms that need to be built"};
     TWallTask tWallTask = {"Wall Task", "Represents all walls that need to be built"};
     TDoorTask tDoorTask = {"Door Task", "Represents all doors that need to be built"};

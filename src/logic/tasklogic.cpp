@@ -36,7 +36,7 @@ void TaskLogic::updateRoomTasks()
     }, mData.tRoomTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mData.tRoomTask, mData.unassignedTasks, mData.tAssignedTask);
+        eraseTask(id, mData.tRoomTask, mData);
 }
 
 void TaskLogic::updateWallTasks()
@@ -53,7 +53,7 @@ void TaskLogic::updateWallTasks()
     }, mData.tWallTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mData.tWallTask, mData.unassignedTasks, mData.tAssignedTask);
+        eraseTask(id, mData.tWallTask, mData);
 }
 
 void TaskLogic::updateDoorTasks()
@@ -73,5 +73,5 @@ void TaskLogic::updateDoorTasks()
     }, mData.tDoorTask);
 
     for(int32_t id : toErase)
-        eraseTask(id, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask);
+        eraseTask(id, mData.tDoorTask, mData);
 }

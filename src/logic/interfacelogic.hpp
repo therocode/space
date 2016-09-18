@@ -62,7 +62,6 @@ class InterfaceLogic
 		Space& mSpace;
         fea::Renderer2D& mRenderer;
         int32_t& mGameSpeedMultiplier;
-        NumberPool<int32_t>& mTaskIdPool;
         GameData& mData;
         bool& mShowZones;
         bool& mShowAtmosphere;

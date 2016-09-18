@@ -1,4 +1,8 @@
 #include "debugguidata.hpp"
+#include "taskutil.hpp"
+#include "incentiveutil.hpp"
+#include "aiutil.hpp"
+#include "actionutil.hpp"
 #include <sstream>
 
 namespace DebugGui
@@ -61,17 +65,6 @@ namespace DebugGui
             return {"Out"};
         else if(mode == Airlock::Pumping)
             return {"Pumping"};
-        return {"Unknown"};
-    }
-
-    std::vector<std::string> actionTypeToStringList(Action::Type type)
-    {
-        if(type == Action::Goto)
-            return {"Goto"};
-        else if(type == Action::TotalPanic)
-            return {"Total Panic"};
-        else if(type == Action::FindWorkTask)
-            return {"Find work task"};
         return {"Unknown"};
     }
 
@@ -181,21 +174,23 @@ namespace DebugGui
 
     std::vector<std::string> debugHeaders(const TAi& table)
     {
-        return {""};
+        return {"Type"};
     }
 
     void debugText(const Ai& data, std::vector<std::vector<std::string>>& outText)
     {
         outText = 
         {
-            {""},
+            {
+                toString(data.type),
+            }
         };
     }
 
 
     std::vector<std::string> debugHeaders(const TIncentive& table)
     {
-        return {"Actor ID", "Importance"};
+        return {"Actor ID", "Importance", "Type"};
     }
 
     void debugText(const Incentive& data, std::vector<std::vector<std::string>>& outText)
@@ -207,6 +202,9 @@ namespace DebugGui
             },
             {
                 std::to_string(data.importance),
+            },
+            {
+                toString(data.type),
             },
         };
     }
@@ -255,15 +253,32 @@ namespace DebugGui
                 data.parentAction ? std::to_string(*data.parentAction) : std::string("None"),
             },
             {
-                actionTypeToStringList(data.type),
+                {toString(data.type)},
             },
         };
     }
 
+    std::vector<std::string> debugHeaders(const TTaskAction& table)
+    {
+        return {"Action ID", "Task ID",};
+    }
+
+    void debugText(const TaskAction& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.actionId),
+            },
+            {
+                std::to_string(data.taskId),
+            },
+        };
+    }
 
     std::vector<std::string> debugHeaders(const TGotoAction& table)
     {
-        return {"Target", };
+        return {"Target", "Acceptable Distance"};
     }
 
     void debugText(const GotoAction& data, std::vector<std::vector<std::string>>& outText)
@@ -272,6 +287,9 @@ namespace DebugGui
         {
             {
                 vec2ToStringList(data.target),
+            },
+            {
+                std::to_string(data.acceptableDistance),
             },
         };
     }
@@ -292,7 +310,6 @@ namespace DebugGui
         };
     }
 
-
     std::vector<std::string> debugHeaders(const TFindWorkTaskAction& table)
     {
         return {"", };
@@ -300,6 +317,42 @@ namespace DebugGui
 
     void debugText(const FindWorkTaskAction& data, std::vector<std::vector<std::string>>& outText)
     {
+        outText =
+        {
+            {
+                ""
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TConstructWallAction& table)
+    {
+        return {"Work Left"};
+    }
+
+    void debugText(const ConstructWallAction& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.workLeft),
+            }
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TConstructDoorAction& table)
+    {
+        return {"Work Left"};
+    }
+
+    void debugText(const ConstructDoorAction& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.workLeft),
+            }
+        };
     }
 
     std::vector<std::string> debugHeaders(const TStructure& table)
@@ -448,6 +501,24 @@ namespace DebugGui
         {
             {
                 std::to_string(data.taskId),
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TTask& table)
+    {
+        return {"Priority", "Type"};
+    }
+
+    void debugText(const Task& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.priority),
+            },
+            {
+                toString(data.type),
             },
         };
     }
