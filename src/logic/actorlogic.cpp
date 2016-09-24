@@ -195,10 +195,13 @@ void ActorLogic::calculateMoveIntention()
 
     join([&] (int32_t id, const glm::vec2& walkTarget, const glm::vec2& position)
     {
-        MoveIntention moveIntention;
-        moveIntention.direction = glm::normalize(walkTarget - position);
-        moveIntention.speedPercent = 0.5f;
-        set(id, std::move(moveIntention), mData.tMoveIntention);
+        if(walkTarget != position)
+        {
+            MoveIntention moveIntention;
+            moveIntention.direction = glm::normalize(walkTarget - position);
+            moveIntention.speedPercent = 0.5f;
+            set(id, std::move(moveIntention), mData.tMoveIntention);
+        }
     }, mData.tWalkTarget, mData.tPosition);
 }
 
