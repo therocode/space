@@ -53,7 +53,7 @@ th::Optional<ActionVariant> humanGoto(int32_t aiId, int32_t actionId, GameData& 
                 }
                 else
                 {
-                    ++(*gotoAction.pathIndex);
+                    std::cout << "I arrived!\n";
                 }
             }
         }
