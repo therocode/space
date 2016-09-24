@@ -1,5 +1,8 @@
 #pragma once
-#include <data.hpp>
+#include <fea/util/pathfinder.hpp>
+#include "wallposition.hpp"
+
+struct GameData;
 
 class WorkerPathAdaptor
 {

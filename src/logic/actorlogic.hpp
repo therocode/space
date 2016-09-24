@@ -12,7 +12,6 @@ class ActorLogic
     private:
         void updateDeath();
         void updateWorkers();
-        void updateTaskWork();
         void calculateMoveIntention();
         void applyMoveIntention();
         void applyPhysics();

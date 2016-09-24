@@ -19,6 +19,7 @@
 //includes
 #include "glm/glm.hpp"
 #include <fea/rendering/color.hpp>
+#include "../workerpathadaptor.hpp"
 #include "../orientation.hpp"
 #include "../wallmap.hpp"
 #include "../gases.hpp"
@@ -193,6 +194,8 @@ struct GotoAction
 {
     glm::vec2 target;
     float acceptableDistance;
+    th::Optional<int32_t> pathId;
+    th::Optional<size_t> pathIndex;
     static constexpr Action::Type type = Action::Goto;
 };
 
@@ -233,6 +236,9 @@ using TAi = DataTable<Ai, true>;
 using TIncentive = DataTable<Incentive, false>;
 using TBreatheIncentive = DataTable<BreatheIncentive, true>;
 using TWorkIncentive = DataTable<WorkIncentive, true>;
+//paths
+using Path = fea::Pathfinder<WorkerPathAdaptor>::Result;
+using TPath = DataTable<Path, false>;
 //action
 using TAction = DataTable<Action, false>;
 using TTaskAction = DataTable<TaskAction, false>;
@@ -283,6 +289,9 @@ struct GameData
     TBreatheIncentive tBreatheIncentive = {"Breathe Incentive", "Makes creatures want to breathe"};
     TWorkIncentive tWorkIncentive = {"Work Incentive", "Makes creatures want to work"};
     IdSet activeIncentives = {{}, {"Active Incentives", "The incentives that are the ones currently acted upon"}};
+    
+    //path
+    TPath tPath = {"Path", "Path cache"};
 
     //actions
     TAction tAction = {"Action", "The currently existing actions for all AI agents"};

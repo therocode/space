@@ -278,7 +278,7 @@ namespace DebugGui
 
     std::vector<std::string> debugHeaders(const TGotoAction& table)
     {
-        return {"Target", "Acceptable Distance"};
+        return {"Target", "Acceptable Distance", "PathId"};
     }
 
     void debugText(const GotoAction& data, std::vector<std::vector<std::string>>& outText)
@@ -290,6 +290,9 @@ namespace DebugGui
             },
             {
                 std::to_string(data.acceptableDistance),
+            },
+            {
+                data.pathId ? std::to_string(*data.pathId) : std::string("None"),
             },
         };
     }

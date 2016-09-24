@@ -1,6 +1,7 @@
 #include "workerpathadaptor.hpp"
 #include "structuretypes.hpp"
 #include <thero/assert.hpp>
+#include <data.hpp>
 
 const glm::ivec2 up(0, -1);
 const glm::ivec2 right(1, 0);

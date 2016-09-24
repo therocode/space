@@ -33,7 +33,7 @@ void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
 
 void createStructure(Structure structure, GameData& data)
 {
-    int32_t newId = insert(std::move(structure), data.tStructure);
+    int32_t newId = insert(std::move(structure), data.tStructure).id;
     insert(newId, data.uninitializedStructures);
 
     int32_t type = structure.structureType;

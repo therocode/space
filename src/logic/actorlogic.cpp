@@ -87,7 +87,6 @@ void ActorLogic::update()
 {
     updateDeath();
     updateWorkers();
-    updateTaskWork();
     calculateMoveIntention();
     applyMoveIntention();
     applyPhysics();
@@ -178,54 +177,6 @@ void ActorLogic::updateWorkers()
         if(foundIncentive)
             foundIncentive->data.importance = 50;
     }, mData.freeWorkers);
-}
-
-void ActorLogic::updateTaskWork()
-{
-    forEach([&](const int32_t workerId, const BusyWorker& worker)
-    {
-        if(auto wallTask = findOne(worker.taskId, mData.tWallTask))
-        {
-            glm::vec2 taskPosition = wallTask->position.position * 32;
-            const glm::vec2& workerPosition = get(workerId, mData.tPosition);
-
-            if(glm::distance(taskPosition, workerPosition) <= 32.0f)
-            {
-                erase(workerId, mData.tWalkTarget);
-
-                if(rand() % 100 == 0)
-                {
-                    set(wallTask->position, 1, mData.walls, mData.wallChanges);
-                }
-            }
-            else
-            {
-                set(workerId, {taskPosition}, mData.tWalkTarget);
-            }
-        }
-        else if(auto roomTask = findOne(worker.taskId, mData.tRoomTask))
-        {
-        }
-        else if(auto doorTask = findOne(worker.taskId, mData.tDoorTask))
-        {
-            glm::vec2 taskPosition = doorTask->position.position * 32;
-            const glm::vec2& workerPosition = get(workerId, mData.tPosition);
-
-            if(glm::distance(taskPosition, workerPosition) <= 32.0f)
-            {
-                erase(workerId, mData.tWalkTarget);
-
-                if(rand() % 100 == 0)
-                {
-                    createDoor(Door{doorTask->position}, mData);
-                }
-            }
-            else
-            {
-                set(workerId, {taskPosition}, mData.tWalkTarget);
-            }
-        }
-    }, mData.tBusyWorker);
 }
 
 void ActorLogic::calculateMoveIntention()

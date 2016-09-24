@@ -3,7 +3,7 @@
 
 void createDoor(Door door, GameData& data)
 {
-    int32_t doorId = insert(std::move(door), data.tDoor);
+    int32_t doorId = insert(std::move(door), data.tDoor).id;
     closeDoor(doorId, data);
 }
 
