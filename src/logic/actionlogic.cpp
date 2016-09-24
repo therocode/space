@@ -2,8 +2,7 @@
 #include "../actionutil.hpp"
 #include "../workerpathadaptor.hpp"
 #include <fea/util.hpp>
-#include "../taskutil.hpp"
-#include "../wallutil.hpp"
+#include "../humanai.hpp"
 
 ActionLogic::ActionLogic(GameData& data):
     mData(data)
@@ -21,6 +20,9 @@ struct NewTaskAction
 
 void ActionLogic::update()
 {
+    std::vector<ActionVariant> newActions;
+    std::vector<ActionCreateData> replacementActions;
+
     forEach([&] (int32_t actionId)
     {
         const Action& action = get(actionId, mData.tAction);
@@ -29,6 +31,40 @@ void ActionLogic::update()
         if(ai.type == Ai::Human)
         {
             //solve actions here. Actions must be able to create actions without adding them in this loop since iterator invalidation
+            if(action.type == Action::Goto)
+            {
+                auto newAction = humanGoto(action.actorId, actionId, mData);
+                if(newAction)
+                    newActions.push_back(std::move(*newAction));
+            }
+            else if(action.type == Action::TotalPanic)
+            {
+                auto newAction = humanTotalPanic(action.actorId, actionId, mData);
+                if(newAction)
+                    newActions.push_back(std::move(*newAction));
+            }
+            else if(action.type == Action::FindWorkTask)
+            {
+                auto replacementAction = humanFindWorkTask(action.actorId, actionId, mData);
+                if(replacementAction)
+                    replacementActions.push_back(std::move(*replacementAction));
+            }
+            else if(action.type == Action::ConstructWall)
+            {
+                auto newAction = humanConstructWall(action.actorId, actionId, mData);
+                if(newAction)
+                    newActions.push_back(std::move(*newAction));
+            }
+            else if(action.type == Action::ConstructDoor)
+            {
+                auto newAction = humanConstructDoor(action.actorId, actionId, mData);
+                if(newAction)
+                    newActions.push_back(std::move(*newAction));
+            }
+            else
+            {
+                TH_ASSERT(false, "unimplemented action: " << toString(action.type));
+            }
         }
         else
         {
@@ -36,59 +72,37 @@ void ActionLogic::update()
               
     }, mData.leafActions);
 
-    forEach([&] (int32_t actionId, const TotalPanicAction& totalPanicAction)
+    for(const ActionVariant& newAction : newActions)
     {
-        if(rand() % 10 == 0)
+        if(newAction.type == Action::Goto)
         {
-            const Action& action = get(actionId, mData.tAction);
-            auto newTarget = get(action.actorId, mData.tPosition) + glm::circularRand(10.0f);
-            set(action.actorId, newTarget, mData.tWalkTarget);
+            addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<GotoAction>()), mData.tGotoAction, mData);  
         }
-    }, mData.tTotalPanicAction);
-
-    std::vector<NewTaskAction> newActions;
-    forEach([&] (int32_t actionId, const FindWorkTaskAction& findWorkTaskAction)
-    {
-        //fea::Pathfinder<WorkerPathAdaptor> pathfinder;
-        //WorkerPathAdaptor adaptor(mData);
-
-        //auto path = pathfinder.findPath(adaptor, {8, 7}, {10, 7});
-
-        //if(!path.path.empty())
-        //{
-        //}
-
-        if(count(mData.unassignedTasks) > 0)
+        else if(newAction.type == Action::TotalPanic)
         {
-            const Action& action = get(actionId, mData.tAction);
-            const Ai& ai = get(action.actorId, mData.tAi);
-            int32_t takenTask = extractOne(mData.unassignedTasks);
-
-            assignTask(takenTask, action.actorId, mData);
-
-            const Task& task = get(takenTask, mData.tTask);
-            
-            newActions.push_back({action.actorId, ai.type, takenTask, task.type});
+            addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<TotalPanicAction>()), mData.tTotalPanicAction, mData);  
         }
-    }, mData.tFindWorkTaskAction);
-
-    for(const auto& newTaskAction : newActions)
-    {
-        clearActions(newTaskAction.aiId, mData);
-        createAction(newTaskAction.aiId, newTaskAction.aiType, newTaskAction.taskId, newTaskAction.taskType, mData);
+        else if(newAction.type == Action::FindWorkTask)
+        {
+            TH_ASSERT(false, "can never be childtask");
+        }
+        else if(newAction.type == Action::ConstructWall)
+        {
+            addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<ConstructWallAction>()), mData.tConstructWallAction, mData);  
+        }
+        else if(newAction.type == Action::ConstructDoor)
+        {
+            addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<ConstructDoorAction>()), mData.tConstructDoorAction, mData);  
+        }
+        else
+        {
+            TH_ASSERT(false, "unimplemented action: " << toString(newAction.type));
+        }
     }
 
-    forEach([&] (int32_t actionId, const ConstructDoorAction& constructDoorAction)
+    for(const ActionCreateData& replacementAction : replacementActions)
     {
-        //check for completion
-        const Action& action = get(actionId, mData.tAction);
-        const TaskAction& taskAction = findOne([&] (int32_t id, const TaskAction& tA)
-        {
-            return tA.actionId == actionId;
-        }, mData.tTaskAction)->data;
-        std::cout << "will get " << taskAction.taskId << " from door task table\n";
-        const auto& position = get(taskAction.taskId, mData.tDoorTask).position;
-        float acceptableDistance = 50.0f;
-        addChildAction(action.actorId, actionId, GotoAction{wallCenter(position), acceptableDistance}, mData.tGotoAction, mData);  
-    }, mData.tConstructDoorAction);
+        clearActions(replacementAction.actorId, mData);
+        createAction(replacementAction.actorId, replacementAction.aiType, replacementAction.taskId, replacementAction.taskType, mData);
+    }
 }

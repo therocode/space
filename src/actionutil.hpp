@@ -1,5 +1,23 @@
 #pragma once
 #include <data.hpp>
+#include <thero/optional.hpp>
+#include <thero/any.hpp>
+
+struct ActionVariant
+{
+    int32_t actorId;
+    th::Optional<int32_t> parentActionId;
+    Action::Type type;
+    th::Any actionData;
+};
+
+struct ActionCreateData
+{
+    int32_t actorId;
+    Ai::Type aiType;
+    int32_t taskId;
+    Task::Type taskType;
+};
 
 void clearActions(int32_t actorId, GameData& data);
 

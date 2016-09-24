@@ -4,6 +4,7 @@
 #include "../taskutil.hpp"
 #include "../doorutil.hpp"
 #include "../debug.hpp"
+#include "../actionutil.hpp"
 
 ActorLogic::ActorLogic(GameData& data):
     mData(data)
@@ -117,6 +118,7 @@ void ActorLogic::updateDeath()
         erase(id, mData.tBloodValues);
         erase(id, mData.tChoking);
 
+        clearActions(id, mData);
         erase(id, mData.tAi);
         erase(id, mData.humanAis);
         erase(id, mData.uninitializedAis);

@@ -5,11 +5,12 @@
 #include "../structuregui.hpp"
 #include <imgui.h>
 
-InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
+InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
 	mSpace(space),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
+    mStepAmount(stepAmount),
     mData(data),
     mShowZones(showZones),
     mShowAtmosphere(showAtmosphere)
@@ -22,6 +23,13 @@ void InterfaceLogic::update()
     ImGui::Begin("Space");
     ImGui::Text("%s", std::string(std::to_string(mFrameTimer.fps()) + " fps - " + std::to_string(mFrameTimer.avgFrameTime()) + " ms").c_str());
     ImGui::SliderInt("Game speed", &mGameSpeedMultiplier, 0, 16);
+    if(mGameSpeedMultiplier == 0)
+    {
+        if(ImGui::SmallButton("Step"))
+        {
+            mStepAmount = 1;
+        }
+    }
     ImGui::Text("%s", stateToString(mState).c_str());
 
     if(ImGui::SmallButton("Build Room"))

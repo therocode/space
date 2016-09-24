@@ -42,7 +42,7 @@ class InterfaceLogic
             INTERACT_STRUCTURE,
         };
 
-        InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
+        InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
         void update();
         void worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
@@ -62,6 +62,7 @@ class InterfaceLogic
 		Space& mSpace;
         fea::Renderer2D& mRenderer;
         int32_t& mGameSpeedMultiplier;
+        int32_t& mStepAmount;
         GameData& mData;
         bool& mShowZones;
         bool& mShowAtmosphere;

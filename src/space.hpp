@@ -61,6 +61,7 @@ class Space : public fea::Application,
 
         //system
         int32_t mGameSpeedMultiplier;
+        int32_t mStepAmount;
         bool mShowZones;
         bool mShowAtmosphere;
         th::Optional<int32_t> mClickedEntity;

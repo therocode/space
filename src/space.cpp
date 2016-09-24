@@ -56,7 +56,7 @@ Space::Space() :
     mZoneLogic(mData),
     mAtmosphereLogic(mData),
     mRenderLogic(mResources, mFeaRenderer, mData, mShowZones, mShowAtmosphere),
-    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mShowZones, mShowAtmosphere, mTaskIdPool, mData)
+    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mStepAmount, mShowZones, mShowAtmosphere, mTaskIdPool, mData)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
@@ -100,6 +100,10 @@ void Space::handleMessage(const KeyPressedMessage& message)
         mGameSpeedMultiplier = 4;
     if(message.key == fea::Keyboard::NUM4)
         mGameSpeedMultiplier = 8;
+    if(message.key == fea::Keyboard::TAB)
+    {
+        ++mStepAmount;
+    }
     mInterfaceLogic.keyPressed(message.key);
 }
 
@@ -258,7 +262,7 @@ void Space::loop()
 
     mRenderLogic.frameStart();
 
-    for(int32_t i = 0; i < mGameSpeedMultiplier; ++i)
+    for(int32_t i = 0; i < mGameSpeedMultiplier || mStepAmount > 0; ++i)
     {
         temp();
         mActorLogic.update();
@@ -271,6 +275,9 @@ void Space::loop()
         mStructureLogic.updateAfterWall();
         updateNeighbors(mData.atmosphereNeighbors, mData.atmosphere, mData.walls, mData.wallChanges);
         mAtmosphereLogic.update(mData.atmosphereNeighbors);
+
+        if(mStepAmount > 0)
+            --mStepAmount;
     }
 
     ImGui::ShowTestWindow();
