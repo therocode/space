@@ -508,6 +508,35 @@ namespace DebugGui
         };
     }
 
+    std::vector<std::string> debugHeaders(const TPath& table)
+    {
+        return {"Cost", "Tiles",};
+    }
+
+    void debugText(const Path& data, std::vector<std::vector<std::string>>& outText)
+    {
+        std::stringstream ss;
+
+        std::vector<std::string> strings;
+
+        for(auto& tile : data.path)
+        {
+            std::string entry = std::to_string(tile.x) + "," + std::to_string(tile.y);
+            strings.push_back(entry);
+            ss << entry << " ";
+        }
+
+        strings.insert(strings.begin(), ss.str());
+
+        outText =
+        {
+            {
+                std::to_string(data.cost),
+            },
+            strings,
+        };
+    }
+
     std::vector<std::string> debugHeaders(const TTask& table)
     {
         return {"Priority", "Type"};

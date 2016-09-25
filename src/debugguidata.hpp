@@ -81,6 +81,9 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TBusyWorker& table);
     void debugText(const BusyWorker& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TPath& table);
+    void debugText(const Path& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TTask& table);
     void debugText(const Task& data, std::vector<std::vector<std::string>>& outText);
 

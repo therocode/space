@@ -291,6 +291,7 @@ void Space::loop()
             mData.tAirlock, mData.tAirlockActivity,
             mData.tDoor, mData.tStructureDoorLock, mData.tZoneLeak, mData.openDoors, mData.lockedDoors,
             mData.tTask, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask,
+            mData.tPath,
             mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
 
     DebugGui::showInspector(io.MousePos, mData.zones, mData.atmosphere);
