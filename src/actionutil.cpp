@@ -5,50 +5,18 @@
 
 void clearActions(int32_t actorId, GameData& data)
 {
-    eraseIf([&] (int32_t id, const Action& action)
+    std::vector<int32_t> toDelete;
+
+    forEach([&] (int32_t id, const Action& action)
     {
         if(action.actorId == actorId)
         {
-            erase(id, data.leafActions);
-            if(action.type == Action::TotalPanic)
-                erase(id, data.tTotalPanicAction);
-            else if(action.type == Action::Goto)
-                erase(id, data.tGotoAction);
-            else if(action.type == Action::FindWorkTask)
-                erase(id, data.tFindWorkTaskAction);
-            else if(action.type == Action::ConstructWall)
-                erase(id, data.tConstructWallAction);
-            else if(action.type == Action::ConstructDoor)
-                erase(id, data.tConstructDoorAction);
-            else
-            {
-                TH_ASSERT(false, "No cleanup for action " << toString(action.type));
-            }
-
-            //What! How to remember to put stuff here?
-
-            auto foundTaskAction = findOne([&] (int32_t taskActionId, const TaskAction& taskAction)
-            {
-                return taskAction.actionId == id;
-            }, data.tTaskAction);
-
-            if(foundTaskAction)
-            {
-                int32_t taskId = foundTaskAction->data.taskId;
-
-                erase(taskId, data.tAssignedTask);
-                insert(taskId, data.unassignedTasks);
-
-                erase(action.actorId, data.tBusyWorker);
-                insert(action.actorId, data.freeWorkers);
-
-                erase(foundTaskAction->id, data.tTaskAction);      
-            }
-            erase(action.actorId, data.tWalkTarget);
-            return true;
+            toDelete.push_back(id);
         }
-        return false;
     }, data.tAction);
+
+    for(int32_t actionId : toDelete)
+        deleteAction(actionId, data);
 }
 
 void createAction(int32_t aiId, Ai::Type aiType, Incentive::Type incentiveType, GameData& data)
@@ -116,4 +84,55 @@ std::string toString(Action::Type type)
         TH_ASSERT(false, "unknown action");
         return "bleh";
     }
+}
+
+void deleteAction(int32_t actionId, GameData& data)
+{
+    const Action& action = get(actionId, data.tAction);
+    erase(actionId, data.leafActions);
+    if(action.type == Action::TotalPanic)
+        erase(actionId, data.tTotalPanicAction);
+    else if(action.type == Action::Goto)
+        erase(actionId, data.tGotoAction);
+    else if(action.type == Action::FindWorkTask)
+        erase(actionId, data.tFindWorkTaskAction);
+    else if(action.type == Action::ConstructWall)
+        erase(actionId, data.tConstructWallAction);
+    else if(action.type == Action::ConstructDoor)
+        erase(actionId, data.tConstructDoorAction);
+    else
+    {
+        TH_ASSERT(false, "No cleanup for action " << toString(action.type));
+    }
+
+    //What! How to remember to put stuff here?
+
+    auto foundTaskAction = findOne([&] (int32_t taskActionId, const TaskAction& taskAction)
+            {
+            return taskAction.actionId == actionId;
+            }, data.tTaskAction);
+
+    if(foundTaskAction)
+    {
+        int32_t taskId = foundTaskAction->data.taskId;
+
+        erase(taskId, data.tAssignedTask);
+        insert(taskId, data.unassignedTasks);
+
+        erase(action.actorId, data.tBusyWorker);
+        insert(action.actorId, data.freeWorkers);
+
+        erase(foundTaskAction->id, data.tTaskAction);      
+    }
+    erase(action.actorId, data.tWalkTarget);
+    erase(actionId, data.tAction);
+}
+
+void deleteLeafAction(int32_t leafActionId, GameData& data)
+{
+    erase(leafActionId, data.leafActions);
+    const Action& action = get(leafActionId, data.tAction);
+    if(action.parentAction)
+        insert(*action.parentAction, data.leafActions);
+    deleteAction(leafActionId, data);
 }

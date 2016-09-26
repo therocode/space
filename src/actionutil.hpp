@@ -11,6 +11,13 @@ struct ActionVariant
     th::Any actionData;
 };
 
+struct ActionResult
+{
+    enum Status { InProgress, Success, Fail };
+    Status status = InProgress;
+    th::Optional<ActionVariant> createdSubAction = {};
+};
+
 struct ActionCreateData
 {
     int32_t actorId;
@@ -42,3 +49,5 @@ int32_t addChildAction(int32_t aiId, int32_t parentActionId, ActionType action, 
     return newActionId;
 }
 std::string toString(Action::Type type);
+void deleteAction(int32_t actionId, GameData& data);
+void deleteLeafAction(int32_t leafActionId, GameData& data);

@@ -5,7 +5,7 @@
 #include "pathfindingutil.hpp"
 
 
-th::Optional<ActionVariant> humanGoto(int32_t aiId, int32_t actionId, GameData& data)
+ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
 {
     GotoAction& gotoAction = get(actionId, data.tGotoAction);
     const glm::vec2& position = get(aiId, data.tPosition);
@@ -23,7 +23,7 @@ th::Optional<ActionVariant> humanGoto(int32_t aiId, int32_t actionId, GameData& 
         else
         {
             std::cout << "I can't goto but I dunno how to fail\n";
-            //FAIL
+            return {ActionResult::Fail};
         }
     }
     else
@@ -53,7 +53,7 @@ th::Optional<ActionVariant> humanGoto(int32_t aiId, int32_t actionId, GameData& 
                 }
                 else
                 {
-                    std::cout << "I arrived!\n";
+                    return {ActionResult::Success};
                 }
             }
         }
@@ -67,7 +67,7 @@ th::Optional<ActionVariant> humanGoto(int32_t aiId, int32_t actionId, GameData& 
     return {};
 }
 
-th::Optional<ActionVariant> humanTotalPanic(int32_t aiId, int32_t actionId, GameData& data)
+ActionResult humanTotalPanic(int32_t aiId, int32_t actionId, GameData& data)
 {
     if(rand() % 10 == 0)
     {
@@ -92,7 +92,7 @@ th::Optional<ActionCreateData> humanFindWorkTask(int32_t aiId, int32_t actionId,
     return {};
 }
 
-th::Optional<ActionVariant> humanConstructWall(int32_t aiId, int32_t actionId, GameData& data)
+ActionResult humanConstructWall(int32_t aiId, int32_t actionId, GameData& data)
 {
     //check for completion
     const Action& action = get(actionId, data.tAction);
@@ -101,13 +101,31 @@ th::Optional<ActionVariant> humanConstructWall(int32_t aiId, int32_t actionId, G
             return tA.actionId == actionId;
             }, data.tTaskAction)->data;
 
-    const auto& position = get(taskAction.taskId, data.tWallTask).position;
+    const auto& targetTile = get(taskAction.taskId, data.tWallTask).position;
+    auto targetPosition = wallCenter(targetTile);
+    const auto& currentPosition = get(aiId, data.tPosition);
     float acceptableDistance = 50.0f;
-    
-    return {ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{wallCenter(position), acceptableDistance, {}, {}}}};
+
+    if(glm::distance(currentPosition, targetPosition) > acceptableDistance)
+    {
+        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}}}};
+    }
+    else
+    {
+        ConstructWallAction& constructWallAction = get(actionId, data.tConstructWallAction);
+        if(constructWallAction.workLeft > 0)
+            --constructWallAction.workLeft;
+        else
+        {
+            set(targetTile, 1, data.walls, data.wallChanges);
+            return {ActionResult::Success};
+        }
+    }
+
+    return {};
 }
 
-th::Optional<ActionVariant> humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
+ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
 {
     //check for completion
     const Action& action = get(actionId, data.tAction);
@@ -119,5 +137,5 @@ th::Optional<ActionVariant> humanConstructDoor(int32_t aiId, int32_t actionId, G
     const auto& position = get(taskAction.taskId, data.tDoorTask).position;
     float acceptableDistance = 50.0f;
     
-    return {ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{wallCenter(position), acceptableDistance, {}, {}}}};
+    return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{wallCenter(position), acceptableDistance, {}, {}}}};
 }

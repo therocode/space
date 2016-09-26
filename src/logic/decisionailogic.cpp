@@ -48,5 +48,15 @@ void DecisionAILogic::update()
             clearActions(aiId, mData);
             createAction(aiId, ai.type, get(mostImportantIncentive, mData.tIncentive).type, mData);
         }
+
+        if(!findOne([&] (int32_t id, const Action& action)
+        {
+            return action.actorId == aiId;
+        }, mData.tAction))
+        {
+            createAction(aiId, ai.type, get(mostImportantIncentive, mData.tIncentive).type, mData);
+        }   
+        //in case action is finished, make a new one
     }, mData.tAi);
+
 }

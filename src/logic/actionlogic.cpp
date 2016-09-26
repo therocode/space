@@ -22,6 +22,7 @@ void ActionLogic::update()
 {
     std::vector<ActionVariant> newActions;
     std::vector<ActionCreateData> replacementActions;
+    std::vector<int32_t> doneActions;
 
     forEach([&] (int32_t actionId)
     {
@@ -33,15 +34,19 @@ void ActionLogic::update()
             //solve actions here. Actions must be able to create actions without adding them in this loop since iterator invalidation
             if(action.type == Action::Goto)
             {
-                auto newAction = humanGoto(action.actorId, actionId, mData);
-                if(newAction)
-                    newActions.push_back(std::move(*newAction));
+                auto result = humanGoto(action.actorId, actionId, mData);
+                if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
+                    doneActions.push_back(actionId);
+                else if(result.createdSubAction)
+                    newActions.push_back(std::move(*result.createdSubAction));
             }
             else if(action.type == Action::TotalPanic)
             {
-                auto newAction = humanTotalPanic(action.actorId, actionId, mData);
-                if(newAction)
-                    newActions.push_back(std::move(*newAction));
+                auto result = humanTotalPanic(action.actorId, actionId, mData);
+                if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
+                    doneActions.push_back(actionId);
+                else if(result.createdSubAction)
+                    newActions.push_back(std::move(*result.createdSubAction));
             }
             else if(action.type == Action::FindWorkTask)
             {
@@ -51,15 +56,19 @@ void ActionLogic::update()
             }
             else if(action.type == Action::ConstructWall)
             {
-                auto newAction = humanConstructWall(action.actorId, actionId, mData);
-                if(newAction)
-                    newActions.push_back(std::move(*newAction));
+                auto result = humanConstructWall(action.actorId, actionId, mData);
+                if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
+                    doneActions.push_back(actionId);
+                else if(result.createdSubAction)
+                    newActions.push_back(std::move(*result.createdSubAction));
             }
             else if(action.type == Action::ConstructDoor)
             {
-                auto newAction = humanConstructDoor(action.actorId, actionId, mData);
-                if(newAction)
-                    newActions.push_back(std::move(*newAction));
+                auto result = humanConstructDoor(action.actorId, actionId, mData);
+                if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
+                    doneActions.push_back(actionId);
+                else if(result.createdSubAction)
+                    newActions.push_back(std::move(*result.createdSubAction));
             }
             else
             {
@@ -71,6 +80,11 @@ void ActionLogic::update()
         }
               
     }, mData.leafActions);
+
+    for(int32_t doneAction : doneActions)
+    {
+        deleteLeafAction(doneAction, mData);
+    }
 
     for(const ActionVariant& newAction : newActions)
     {
