@@ -73,7 +73,7 @@ void RenderLogic::renderStructures()
 
      forEach([&] (int32_t structureId, const Structure& structure)
     {
-        const StructureType& type = get(structure.structureType, mData.tStructureType);
+        const StructureType& type = get(structure.type, mData.tStructureType);
         const glm::vec2& position = structure.position * 32 + glm::ivec2(16, 16);
 
         orders.emplace_back(

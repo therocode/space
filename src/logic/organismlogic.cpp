@@ -35,7 +35,7 @@ void OrganismLogic::update()
 		    bloodValue.oxygen += amount;
 		    gases[Oxygen] -= amount;
 
-            if(bloodValue.oxygen < 500)
+            if(bloodValue.oxygen < 450)
             {
                 auto breatheIncentive = findOne([&] (int32_t incentiveId, const BreatheIncentive& incentive)
                 {

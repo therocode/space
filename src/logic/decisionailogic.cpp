@@ -49,6 +49,7 @@ void DecisionAILogic::update()
             createAction(aiId, ai.type, get(mostImportantIncentive, mData.tIncentive).type, mData);
         }
 
+        //in case action is finished, make a new one
         if(!findOne([&] (int32_t id, const Action& action)
         {
             return action.actorId == aiId;
@@ -56,7 +57,6 @@ void DecisionAILogic::update()
         {
             createAction(aiId, ai.type, get(mostImportantIncentive, mData.tIncentive).type, mData);
         }   
-        //in case action is finished, make a new one
     }, mData.tAi);
 
 }

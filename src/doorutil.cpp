@@ -66,3 +66,19 @@ glm::ivec2 otherSide(const Door& door)
 {
     return door.position.position + (door.position.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
 }
+
+th::Optional<int32_t> lockedDoorAt(const WallPosition& position, GameData& data)
+{
+    const auto& found = findOne([&] (int32_t id, const Door& door)
+    {
+        return door.position == position;
+    }, data.tDoor);
+
+
+    if(found && has(found->id, data.lockedDoors))
+    {
+        return {found->id};
+    }
+    else
+        return {};
+}

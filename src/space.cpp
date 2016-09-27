@@ -231,12 +231,12 @@ void Space::startScenario()
     mData.atmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mData.atmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
-    createStructure(Structure{offset + glm::ivec2(2, 0), Structures::Airlock}, mData);
-    createStructure(Structure{offset + glm::ivec2(0, 0), Structures::CryoPods}, mData);
-    createStructure(Structure{offset + glm::ivec2(0, 1), Structures::CryoPods}, mData);
-    createStructure(Structure{offset + glm::ivec2(1, 1), Structures::Battery}, mData);
-    createStructure(Structure{offset + glm::ivec2(1, 0), Structures::Toilet}, mData);
-    createStructure(Structure{offset + glm::ivec2(2, 1), Structures::Crate}, mData);
+    createStructure(Structure{offset + glm::ivec2(2, 0), Structure::Airlock}, mData);
+    createStructure(Structure{offset + glm::ivec2(0, 0), Structure::CryoPods}, mData);
+    createStructure(Structure{offset + glm::ivec2(0, 1), Structure::CryoPods}, mData);
+    createStructure(Structure{offset + glm::ivec2(1, 1), Structure::Battery}, mData);
+    createStructure(Structure{offset + glm::ivec2(1, 0), Structure::Toilet}, mData);
+    createStructure(Structure{offset + glm::ivec2(2, 1), Structure::Crate}, mData);
     //mData.atmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 

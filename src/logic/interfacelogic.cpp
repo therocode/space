@@ -230,7 +230,7 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
                 mStructureInteraction = StructureInteraction
                 {
                     structureAtClick->id,
-                    structureAtClick->data.structureType,
+                    structureAtClick->data.type,
                     {position},
                 };
             }

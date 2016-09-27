@@ -156,8 +156,9 @@ struct StructureType
 
 struct Structure
 {
+    enum Type {Airlock, CryoPods, Battery, Crate, Toilet};
     glm::ivec2 position;
-    int32_t structureType;
+    Type type;
 };
 
 struct Incentive

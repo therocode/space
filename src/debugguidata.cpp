@@ -368,7 +368,7 @@ namespace DebugGui
         outText =
         {
             {
-                std::to_string(data.structureType),
+                std::to_string(data.type),
             },
             {
                 vec2ToStringList(data.position),

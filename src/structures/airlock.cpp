@@ -75,7 +75,7 @@ void requestOpenAirlockDoor(int32_t id, int32_t doorId, GameData& data)
     if(!airlock.exit)
         return;
 
-    TH_ASSERT(std::find(airlock.doors.begin(), airlock.doors.end(), doorId) != airlock.doors.end(), "Invalid doorId given to airlock");
+    TH_ASSERT(std::find(airlock.doors.begin(), airlock.doors.end(), doorId) != airlock.doors.end(), "Invalid doorId given to airlock: " << doorId);
     Airlock::Mode targetMode = *airlock.exit == doorId ? Airlock::Out : Airlock::In;
 
     if(airlock.currentMode == targetMode)

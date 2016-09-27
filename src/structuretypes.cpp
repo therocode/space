@@ -4,27 +4,27 @@
 
 void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
 {
-    insert(Structures::Airlock, StructureType
+    insert(Structure::Airlock, StructureType
     {
         "Airlock",
         resources.textureFromName("airlock"),
     }, types);
-    insert(Structures::CryoPods, StructureType
+    insert(Structure::CryoPods, StructureType
     {
         "Cryo pods",
         resources.textureFromName("cryopods"),
     }, types);
-    insert(Structures::Battery, StructureType
+    insert(Structure::Battery, StructureType
     {
         "Battery",
         resources.textureFromName("battery"),
     }, types);
-    insert(Structures::Crate, StructureType
+    insert(Structure::Crate, StructureType
     {
         "Crate",
         resources.textureFromName("crate"),
     }, types);
-    insert(Structures::Toilet, StructureType
+    insert(Structure::Toilet, StructureType
     {
         "Toilet",
         resources.textureFromName("toilet"),
@@ -36,9 +36,9 @@ void createStructure(Structure structure, GameData& data)
     int32_t newId = insert(std::move(structure), data.tStructure).id;
     insert(newId, data.uninitializedStructures);
 
-    int32_t type = structure.structureType;
+    int32_t type = structure.type;
 
-    if(type == Structures::Airlock)
+    if(type == Structure::Airlock)
     {
         insert(newId, Airlock{Airlock::In, {}, {}}, data.tAirlock);
     }
@@ -46,9 +46,9 @@ void createStructure(Structure structure, GameData& data)
 
 void initializeStructure(int32_t id, const Structure& structure, GameData& data)
 {
-    int32_t type = structure.structureType;
+    int32_t type = structure.type;
 
-    if(type == Structures::Airlock)
+    if(type == Structure::Airlock)
     {
         discoverAirlockDoors(id, structure, data);
     }
@@ -57,9 +57,9 @@ void initializeStructure(int32_t id, const Structure& structure, GameData& data)
 th::Optional<int32_t> structureProvidesPath(int32_t structureId, const WallPosition& wallPosition, const GameData& data)
 {
     Structure structure = get(structureId, data.tStructure);
-    int32_t type = structure.structureType;
+    int32_t type = structure.type;
 
-    if(type == Structures::Airlock)
+    if(type == Structure::Airlock)
     {
         return airlockProvidesPath(structureId, wallPosition, data);
     }
