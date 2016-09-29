@@ -3,6 +3,7 @@
 #include "incentiveutil.hpp"
 #include "aiutil.hpp"
 #include "actionutil.hpp"
+#include "itemutil.hpp"
 #include <sstream>
 
 namespace DebugGui
@@ -620,6 +621,70 @@ namespace DebugGui
         {
             {
                 std::to_string(data.assigneeId),
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TItem& table)
+    {
+        return {"Type", "Weight"};
+    }
+
+    void debugText(const Item& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                toString(data.type),
+            },
+            {
+                std::to_string(data.weight),
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TWearable& table)
+    {
+        return {"Wearer",};
+    }
+
+    void debugText(const Wearable& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                data.wearer ? std::to_string(*data.wearer) : std::string("None"),
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TItemContainer& table)
+    {
+        return {"",};
+    }
+
+    void debugText(const ItemContainer& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {""},
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TItemStoring& table)
+    {
+        return {"Item ID", "Container ID"};
+    }
+
+    void debugText(const ItemStoring& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            {
+                std::to_string(data.itemId),
+            },
+            {
+                std::to_string(data.containerId),
             },
         };
     }

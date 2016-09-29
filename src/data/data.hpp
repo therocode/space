@@ -96,6 +96,28 @@ struct AssignedTask
     int32_t assigneeId;
 };
 
+struct Item
+{
+    enum Type { SpaceSuit };
+    Type type;
+    int32_t weight; //in grams
+};
+
+struct Wearable
+{
+    th::Optional<int32_t> wearer;
+};
+
+struct ItemContainer
+{
+};
+
+struct ItemStoring
+{
+    int32_t itemId;
+    int32_t containerId;
+};
+
 struct BusyWorker
 {
     int32_t taskId;
@@ -131,6 +153,11 @@ struct Airlock
     Mode currentMode;
     std::vector<int32_t> doors;
     th::Optional<int32_t> exit;
+};
+
+struct Crate
+{
+    int32_t containerId;
 };
 
 struct AirlockActivity
@@ -254,6 +281,12 @@ using TRoomTask = DataTable<RoomTask, true>;
 using TWallTask = DataTable<WallTask, true>;
 using TDoorTask = DataTable<DoorTask, true>;
 using TAssignedTask = DataTable<AssignedTask, true>;
+//items
+using TItem = DataTable<Item, false>; //np
+using TWearable = DataTable<Wearable, true>; //np
+//containers
+using TItemContainer = DataTable<ItemContainer, false>; //np
+using TItemStoring = DataTable<ItemStoring, false>; //np
 //world
 using TDoor = DataTable<Door, false>;
 using TStructureDoorLock = DataTable<StructureDoorLock, false>;
@@ -263,6 +296,7 @@ using TStructure = DataTable<Structure, false>;
 using TStructureType = DataTable<StructureType, true>;
 using TAirlock = DataTable<Airlock, true>;
 using TAirlockActivity = DataTable<AirlockActivity, true>;
+using TCrate = DataTable<Crate, true>;
 //gfx
 using TActorSprite = DataTable<ActorSprite, false>;
 
@@ -316,6 +350,12 @@ struct GameData
     TDoorTask tDoorTask = {"Door Task", "Represents all doors that need to be built"};
     IdSet unassignedTasks = {{}, {"Unassigned tasks", "All tasks which no worker is currently on"}};
     TAssignedTask tAssignedTask = {"Assigned tasks", "All tasks which are assigned to a worker"};
+    //items
+    TItem tItem = {"Item", "Represents all items"};
+    TWearable tWearable = {"Wearable", "Represents items that can be worn"};
+    TItemStoring tItemStoring = {"Item Storing", "Represents the fact than an item is stored in a container"};
+    //containers
+    TItemContainer tItemContainer = {"Item Container", "Everything that can contain items"};
 
     //world
     TDoor tDoor = {"Door", "Represents all doors"};
@@ -328,6 +368,7 @@ struct GameData
     TStructure tStructure = {"Structure", "All existing structures"};
     TStructureType tStructureType = {"Structure Type", "All types of structures"};
     TAirlock tAirlock = {"Airlock", "All existing airlocks"};
+    TCrate tCrate = {"Crate", "All existing crates"};
     TAirlockActivity tAirlockActivity = {"Airlock Activity", "Airlocks that are currently pumping air"};
     IdSet uninitializedStructures = {{}, {"Uninitialized Structures", "Structures that need initialization"}};
 

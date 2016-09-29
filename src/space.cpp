@@ -6,6 +6,7 @@
 #include "debug.hpp"
 #include "roomutil.hpp"
 #include "doorutil.hpp"
+#include "itemutil.hpp"
 #include "gridneighbors.hpp"
 #include <imgui.h>
 #include "structuretypes.hpp"
@@ -237,7 +238,10 @@ void Space::startScenario()
     createStructure(Structure{offset + glm::ivec2(0, 1), Structure::CryoPods}, mData);
     createStructure(Structure{offset + glm::ivec2(1, 1), Structure::Battery}, mData);
     createStructure(Structure{offset + glm::ivec2(1, 0), Structure::Toilet}, mData);
-    createStructure(Structure{offset + glm::ivec2(2, 1), Structure::Crate}, mData);
+    int32_t crateId = createStructure(Structure{offset + glm::ivec2(2, 1), Structure::Crate}, mData);
+    int32_t containerId = get(crateId, mData.tCrate).containerId;
+    createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
+    createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
     //mData.atmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 
@@ -295,6 +299,7 @@ void Space::loop()
             mData.tAirlock, mData.tAirlockActivity,
             mData.tDoor, mData.tStructureDoorLock, mData.tZoneLeak, mData.openDoors, mData.lockedDoors,
             mData.tTask, mData.tRoomTask, mData.tWallTask, mData.tDoorTask, mData.unassignedTasks, mData.tAssignedTask,
+            mData.tItem, mData.tWearable, mData.tItemContainer, mData.tItemStoring,
             mData.tPath,
             mData.builders, mData.freeWorkers, mData.tBusyWorker, mData.deadWorkers, mData.tActorSprite);
 

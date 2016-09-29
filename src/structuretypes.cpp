@@ -31,7 +31,7 @@ void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
     }, types);
 }
 
-void createStructure(Structure structure, GameData& data)
+int32_t createStructure(Structure structure, GameData& data)
 {
     int32_t newId = insert(std::move(structure), data.tStructure).id;
     insert(newId, data.uninitializedStructures);
@@ -42,6 +42,13 @@ void createStructure(Structure structure, GameData& data)
     {
         insert(newId, Airlock{Airlock::In, {}, {}}, data.tAirlock);
     }
+    else if(type == Structure::Crate)
+    {
+        const auto& containerEntry = insert({}, data.tItemContainer);
+        insert(newId, Crate{containerEntry.id}, data.tCrate);
+    }
+
+    return newId;
 }
 
 void initializeStructure(int32_t id, const Structure& structure, GameData& data)

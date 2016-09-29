@@ -1,6 +1,7 @@
 #include "structuregui.hpp"
 #include "structuretypes.hpp"
 #include "doorutil.hpp"
+#include "itemutil.hpp"
 #include "structures/airlock.hpp"
 #include <imgui.h>
 
@@ -52,7 +53,27 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
     }
     else if(structureTypeId == Structure::Crate)
     {
-        ImGui::Text("%s", "No one knows what this crate contains since it is closed");
+        const Crate& crate = get(structureId, data.tCrate);
+        int32_t containerId = crate.containerId;
+
+        std::vector<std::string> contentStrings;
+        int32_t itemCount = 0;
+
+        forEach([&] (int32_t itemStoringId, const ItemStoring itemStoring)
+        {
+            if(itemStoring.containerId == containerId)
+            {
+                ++itemCount;
+                const Item& item = get(itemStoring.itemId, data.tItem);
+                contentStrings.push_back(toString(item.type));
+            }
+        }, data.tItemStoring);
+
+        ImGui::Text("This is a magnificent crate with %d items in it", itemCount);
+        for(const auto& contentString : contentStrings)
+        {
+            ImGui::Text("%s", contentString.c_str());
+        }
     }
     else if(structureTypeId == Structure::Toilet)
     {

@@ -99,6 +99,18 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TAssignedTask& table);
     void debugText(const AssignedTask& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TItem& table);
+    void debugText(const Item& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TWearable& table);
+    void debugText(const Wearable& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TItemContainer& table);
+    void debugText(const ItemContainer& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TItemStoring& table);
+    void debugText(const ItemStoring& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TActorSprite& table);
     void debugText(const ActorSprite& data, std::vector<std::vector<std::string>>& outText);
 }
