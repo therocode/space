@@ -9,6 +9,7 @@
 #include "gridneighbors.hpp"
 #include <imgui.h>
 #include "structuretypes.hpp"
+#include "pathfindingutil.hpp"
 
 const glm::ivec2 cMapSize(256, 256);
 const Gases cDefaultAtmosphere
@@ -274,10 +275,13 @@ void Space::loop()
         mZoneLogic.update(mData.walls, mData.wallChanges);
         mStructureLogic.updateAfterWall();
         updateNeighbors(mData.atmosphereNeighbors, mData.atmosphere, mData.walls, mData.wallChanges);
+        invalidatePaths(mData);
         mAtmosphereLogic.update(mData.atmosphereNeighbors);
 
         if(mStepAmount > 0)
             --mStepAmount;
+
+        mData.wallChanges.clear();
     }
 
     ImGui::ShowTestWindow();

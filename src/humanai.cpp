@@ -112,8 +112,9 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
         }
         else
         {
-            std::cout << "My path expired\n";
+            //std::cout << "My path expired\n";
             gotoAction.pathId = {};
+            gotoAction.pathIndex = {};
         }
     }
 

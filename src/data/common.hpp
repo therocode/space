@@ -19,7 +19,7 @@ struct TableMeta
 {
     std::string name;
     th::Optional<std::string> description;
-    NumberPool<int32_t> idPool;
+    NumberPool<int32_t, false> idPool;
     //sort
     mutable bool sorted = true;
     mutable std::vector<size_t> permutationCache;

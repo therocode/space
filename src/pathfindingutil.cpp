@@ -1,4 +1,5 @@
 #include "pathfindingutil.hpp"
+#include "wallutil.hpp"
 
 th::Optional<PathEntry> findWorkerPath(const glm::ivec2& start, const glm::ivec2& end, GameData& data, int32_t maxCost)
 {
@@ -26,5 +27,35 @@ th::Optional<PathEntry> findWorkerPath(const glm::ivec2& start, const glm::ivec2
         }
         else
             return {};
+    }
+}
+
+bool wallObstructsPath(int32_t pathId, WallPosition wallPosition, GameData& data)
+{
+    const auto& path = get(pathId, data.tPath).path;
+
+    if(path.size() < 2)
+        return false;
+
+    for(size_t i = 0; i < path.size() - 1; ++i)
+    {
+        const auto& start = path[i];
+        const auto& end = path[i + 1];
+        if(wallBetween(start, end) == wallPosition)
+            return true;
+    }
+
+    return false;
+}
+
+void invalidatePaths(GameData& data)
+{
+    for(auto wallChanges : data.wallChanges)
+    {
+        WallPosition wallPosition = wallChanges.first;
+        eraseIf([&] (int32_t id, const Path& path)
+        {
+            return wallObstructsPath(id, wallPosition, data);
+        }, data.tPath);
     }
 }

@@ -3,7 +3,7 @@
 #include <set>
 #include <thero/assert.hpp>
 
-template <typename IntegralType>
+template <typename IntegralType, bool StoreReleased = true>
 class NumberPool
 {
     public:
@@ -32,9 +32,12 @@ class NumberPool
 
         void release(IntegralType value)
         {
-            TH_ASSERT(value < mNext, "Returning value " + std::to_string(value) + " which has never been given out");
-            TH_ASSERT(mReturned.count(value) == 0, "Returning value " + std::to_string(value) + " which has already been returned");
-            mReturned.emplace(value);
+            if(StoreReleased)
+            {
+                TH_ASSERT(value < mNext, "Returning value " + std::to_string(value) + " which has never been given out");
+                TH_ASSERT(mReturned.count(value) == 0, "Returning value " + std::to_string(value) + " which has already been returned");
+                mReturned.emplace(value);
+            }
         }
     private:
         IntegralType mNext;
