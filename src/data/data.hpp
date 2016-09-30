@@ -106,6 +106,7 @@ struct Item
 struct Wearable
 {
     th::Optional<int32_t> wearer;
+    th::Optional<int32_t> airTank;
 };
 
 struct ItemContainer
@@ -116,6 +117,12 @@ struct ItemStoring
 {
     int32_t itemId;
     int32_t containerId;
+};
+
+struct AirTank
+{
+    int32_t capacity;
+    Gases gases;
 };
 
 struct BusyWorker
@@ -282,11 +289,12 @@ using TWallTask = DataTable<WallTask, true>;
 using TDoorTask = DataTable<DoorTask, true>;
 using TAssignedTask = DataTable<AssignedTask, true>;
 //items
-using TItem = DataTable<Item, false>; //np
-using TWearable = DataTable<Wearable, true>; //np
+using TItem = DataTable<Item, false>;
+using TWearable = DataTable<Wearable, true>;
 //containers
-using TItemContainer = DataTable<ItemContainer, false>; //np
-using TItemStoring = DataTable<ItemStoring, false>; //np
+using TItemContainer = DataTable<ItemContainer, false>;
+using TItemStoring = DataTable<ItemStoring, false>;
+using TAirTank = DataTable<AirTank, false>;
 //world
 using TDoor = DataTable<Door, false>;
 using TStructureDoorLock = DataTable<StructureDoorLock, false>;
@@ -356,6 +364,7 @@ struct GameData
     TItemStoring tItemStoring = {"Item Storing", "Represents the fact than an item is stored in a container"};
     //containers
     TItemContainer tItemContainer = {"Item Container", "Everything that can contain items"};
+    TAirTank tAirTank = {"Air Tank", "Containers that contain gases"};
 
     //world
     TDoor tDoor = {"Door", "Represents all doors"};

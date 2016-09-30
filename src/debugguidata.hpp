@@ -111,6 +111,9 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TItemStoring& table);
     void debugText(const ItemStoring& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TAirTank& table);
+    void debugText(const AirTank& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TActorSprite& table);
     void debugText(const ActorSprite& data, std::vector<std::vector<std::string>>& outText);
 }

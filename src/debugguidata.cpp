@@ -645,7 +645,7 @@ namespace DebugGui
 
     std::vector<std::string> debugHeaders(const TWearable& table)
     {
-        return {"Wearer",};
+        return {"Wearer", "Air tank"};
     }
 
     void debugText(const Wearable& data, std::vector<std::vector<std::string>>& outText)
@@ -654,6 +654,9 @@ namespace DebugGui
         {
             {
                 data.wearer ? std::to_string(*data.wearer) : std::string("None"),
+            },
+            {
+                data.airTank ? std::to_string(*data.airTank) : std::string("None"),
             },
         };
     }
@@ -685,6 +688,31 @@ namespace DebugGui
             },
             {
                 std::to_string(data.containerId),
+            },
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TAirTank& table)
+    {
+        return {"Capacity", "Oxygen", "Carbon Dioxide", "Nitrogen"};
+    }
+
+    void debugText(const AirTank& data, std::vector<std::vector<std::string>>& outText)
+    {
+        int64_t totalAmount = data.gases[Gas::Oxygen] + data.gases[Gas::CarbonDioxide] + data.gases[Gas::Nitrogen];
+        outText =
+        {
+            {
+                std::to_string(data.capacity) + " - " + std::to_string(static_cast<float>(totalAmount) / data.capacity) + "% filled",
+            },
+            {
+                std::to_string(data.gases[Gas::Oxygen]) + " - " + std::to_string(static_cast<float>(data.gases[Gas::Oxygen]) / totalAmount) + "%",
+            },
+            {
+                std::to_string(data.gases[Gas::CarbonDioxide]) + " - " + std::to_string(static_cast<float>(data.gases[Gas::CarbonDioxide]) / totalAmount) + "%",
+            },
+            {
+                std::to_string(data.gases[Gas::Nitrogen]) + " - " + std::to_string(static_cast<float>(data.gases[Gas::Nitrogen]) / totalAmount) + "%",
             },
         };
     }

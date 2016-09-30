@@ -9,6 +9,15 @@ int32_t createItem(Item item, GameData& data)
     if(type == Item::SpaceSuit)
     {
         insert(newId, {}, data.tWearable);
+        insert(newId, 
+        {
+            5000000,
+            {{
+                static_cast<int32_t>(5000000 * 0.209f), //oxygene
+                static_cast<int32_t>(5000000 * 0.78f), //nitrogen
+                static_cast<int32_t>(5000000 * 0.004f), //carbondioxide
+            }},
+        }, data.tAirTank);
     }
 
     return newId;
