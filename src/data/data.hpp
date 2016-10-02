@@ -213,7 +213,7 @@ struct WorkIncentive
 
 struct Action
 {
-    enum Type {Goto, TotalPanic, FindWorkTask, ConstructWall, ConstructDoor};
+    enum Type {Goto, EquipSpaceSuit, TotalPanic, FindWorkTask, ConstructWall, ConstructDoor};
     int32_t actorId;
     th::Optional<int32_t> parentAction;
     Type type;
@@ -232,6 +232,11 @@ struct GotoAction
     th::Optional<int32_t> pathId;
     th::Optional<size_t> pathIndex;
     static constexpr Action::Type type = Action::Goto;
+};
+
+struct EquipSpaceSuitAction
+{
+    static constexpr Action::Type type = Action::EquipSpaceSuit;
 };
 
 struct TotalPanicAction
@@ -278,6 +283,7 @@ using TPath = DataTable<Path, false>;
 using TAction = DataTable<Action, false>;
 using TTaskAction = DataTable<TaskAction, false>;
 using TGotoAction = DataTable<GotoAction, true>;
+using TEquipSpaceSuitAction = DataTable<EquipSpaceSuitAction, true>; //np
 using TTotalPanicAction = DataTable<TotalPanicAction, true>;
 using TFindWorkTaskAction = DataTable<FindWorkTaskAction, true>;
 using TConstructWallAction = DataTable<ConstructWallAction, true>;
@@ -341,6 +347,7 @@ struct GameData
     IdSet leafActions = {{}, {"Leaf actions", "Actions that have no children."}};
     TTaskAction tTaskAction = {"Task Action", "Actions that are for a task"};
     TGotoAction tGotoAction = {"Goto action", "Current goto actions"};
+    TEquipSpaceSuitAction tEquipSpaceSuitAction = {"Equip Space Suit action", "Current actions to obtain and equip space suits"};
     TTotalPanicAction tTotalPanicAction = {"Total Panic Action", "Current total panic actions"};
     TFindWorkTaskAction tFindWorkTaskAction = {"Find Work Task Action", "Current find work task actions"};
     TConstructWallAction tConstructWallAction = {"Construct wall action", "Current construct wall actions"};

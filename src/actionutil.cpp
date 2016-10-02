@@ -79,6 +79,8 @@ std::string toString(Action::Type type)
         return {"Construct Wall"};
     else if(type == Action::ConstructDoor)
         return {"Construct Door"};
+    else if(type == Action::EquipSpaceSuit)
+        return {"Equip space suit"};
     else
     {
         TH_ASSERT(false, "unknown action");
@@ -100,6 +102,8 @@ void deleteAction(int32_t actionId, GameData& data)
         erase(actionId, data.tConstructWallAction);
     else if(action.type == Action::ConstructDoor)
         erase(actionId, data.tConstructDoorAction);
+    else if(action.type == Action::EquipSpaceSuit)
+        erase(actionId, data.tEquipSpaceSuitAction);
     else
     {
         TH_ASSERT(false, "No cleanup for action " << toString(action.type));

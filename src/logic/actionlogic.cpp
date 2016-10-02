@@ -70,6 +70,14 @@ void ActionLogic::update()
                 else if(result.createdSubAction)
                     newActions.push_back(std::move(*result.createdSubAction));
             }
+            else if(action.type == Action::EquipSpaceSuit)
+            {
+                auto result = humanEquipSpaceSuit(action.actorId, actionId, mData);
+                if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
+                    doneActions.push_back(actionId);
+                else if(result.createdSubAction)
+                    newActions.push_back(std::move(*result.createdSubAction));
+            }
             else
             {
                 TH_ASSERT(false, "unimplemented action: " << toString(action.type));
@@ -107,6 +115,10 @@ void ActionLogic::update()
         else if(newAction.type == Action::ConstructDoor)
         {
             addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<ConstructDoorAction>()), mData.tConstructDoorAction, mData);  
+        }
+        else if(newAction.type == Action::EquipSpaceSuit)
+        {
+            addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<EquipSpaceSuitAction>()), mData.tEquipSpaceSuitAction, mData);  
         }
         else
         {

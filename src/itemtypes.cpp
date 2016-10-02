@@ -8,8 +8,7 @@ int32_t createItem(Item item, GameData& data)
 
     if(type == Item::SpaceSuit)
     {
-        insert(newId, {}, data.tWearable);
-        insert(newId, 
+        int32_t airTank = insert(newId, 
         {
             5000000,
             {{
@@ -17,7 +16,8 @@ int32_t createItem(Item item, GameData& data)
                 static_cast<int32_t>(5000000 * 0.78f), //nitrogen
                 static_cast<int32_t>(5000000 * 0.004f), //carbondioxide
             }},
-        }, data.tAirTank);
+        }, data.tAirTank).id;
+        insert(newId, {{}, {airTank}}, data.tWearable);
     }
 
     return newId;

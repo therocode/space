@@ -5,6 +5,8 @@
 #include "pathfindingutil.hpp"
 #include "doorutil.hpp"
 #include "structures/airlock.hpp"
+#include "itemutil.hpp"
+#include "structureutil.hpp"
 
 
 ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
@@ -34,6 +36,15 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
 
         if(path)
         {
+            if(needsSpaceSuit(*path, data))
+            {
+                if(!hasSpaceSuit(aiId, data))
+                {
+                    const Action& action = get(actionId, data.tAction);
+                    return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, EquipSpaceSuitAction::type, EquipSpaceSuitAction{}}};
+                }
+            }
+
             if(*gotoAction.pathIndex < path->path.size() - 1)
             {
                 const glm::ivec2& nextTile = path->path[*gotoAction.pathIndex];
@@ -192,4 +203,31 @@ ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
     float acceptableDistance = 50.0f;
     
     return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{wallCenter(position), acceptableDistance, {}, {}}}};
+}
+
+ActionResult humanEquipSpaceSuit(int32_t aiId, int32_t actionId, GameData& data)
+{
+    ActionResult result;
+
+    const Action& action = get(actionId, data.tAction);
+    forEach([&] (int32_t itemId, const Wearable& wearable)
+    {
+        if(!wearable.wearer && wearable.airTank)
+        {
+            th::Optional<glm::vec2> itemPosition;
+            forEach([&](int32_t, const ItemStoring& itemStoring)
+            {
+                if(itemStoring.itemId == itemId)
+                {
+                    itemPosition = containerPosition(itemStoring.containerId, data);
+                }
+            }, data.tItemStoring);
+
+            float acceptableDistance = 50.0f;
+
+            if(itemPosition)
+                result = ActionResult{ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{*itemPosition, acceptableDistance, {}, {}}}};
+        }
+    }, data.tWearable);
+    return result;
 }

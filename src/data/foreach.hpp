@@ -1,6 +1,8 @@
 #pragma once
 #include "common.hpp"
 
+enum LoopResult { Continue, Break };
+
 template <typename Functor>
 void forEach(Functor f, IdSet& idSet)
 {
