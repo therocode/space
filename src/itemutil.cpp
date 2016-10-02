@@ -65,3 +65,18 @@ bool hasSpaceSuit(int32_t actorId, GameData& data)
 
     return hasSuit;
 }
+
+void takeOutItem(int32_t itemId, GameData& data)
+{
+    int32_t erasedAmount = eraseIf([&] (int32_t id, const ItemStoring& storing)
+    {
+        return storing.itemId == itemId;
+    }, data.tItemStoring);
+
+    TH_ASSERT(erasedAmount == 1, "Item should have been taken out 1 time but was taken out " << erasedAmount << " times");
+}
+
+void putOnWearable(int32_t actorId, int32_t wearableId, GameData& data)
+{
+    get(wearableId, data.tWearable).wearer = actorId;
+}

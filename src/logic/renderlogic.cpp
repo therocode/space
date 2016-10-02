@@ -40,11 +40,20 @@ void RenderLogic::renderSprites()
     {
         const glm::vec2& position = get(sprite.actorId, mData.tPosition);
 
+        fea::Color color = sprite.color;
+        if(findOne([&](int32_t id, const Wearable& wearable)
+        {
+            return wearable.airTank && wearable.wearer && *wearable.wearer == actorId;
+        }, mData.tWearable))
+        {
+            color = fea::Color::Blue;
+        }
+
         orders.emplace_back(
                 RenderOrder{
                 position,
                 sprite.textureId,
-                sprite.color,
+                color,
                 {},
                 FillType::Solid,
                 //sprite.rotation,

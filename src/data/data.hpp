@@ -227,10 +227,12 @@ struct TaskAction
 
 struct GotoAction
 {
+    enum AllowUnbreathable { Allow, Disallow };
     glm::vec2 target;
     float acceptableDistance;
     th::Optional<int32_t> pathId;
     th::Optional<size_t> pathIndex;
+    AllowUnbreathable allowUnbreathable;
     static constexpr Action::Type type = Action::Goto;
 };
 

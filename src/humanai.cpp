@@ -18,7 +18,7 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
 
     if(!gotoAction.pathId)
     {
-        auto path = findWorkerPath(start, end, data);
+        auto path = findWorkerPath(start, end, data); //todo: pass in if you're allowed to get paths through hazard atmosphere
         if(path)
         {
             gotoAction.pathId = path->pathId;
@@ -38,9 +38,16 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
         {
             if(needsSpaceSuit(*path, data))
             {
+                if(gotoAction.allowUnbreathable == GotoAction::Disallow)
+                {//I need a space suit but I am not allowed to find one
+                    return {ActionResult::Fail};
+                }
+
                 if(!hasSpaceSuit(aiId, data))
                 {
                     const Action& action = get(actionId, data.tAction);
+                    gotoAction.pathId = {};
+                    gotoAction.pathIndex = {};
                     return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, EquipSpaceSuitAction::type, EquipSpaceSuitAction{}}};
                 }
             }
@@ -169,11 +176,11 @@ ActionResult humanConstructWall(int32_t aiId, int32_t actionId, GameData& data)
     const auto& targetTile = get(taskAction.taskId, data.tWallTask).position;
     auto targetPosition = wallCenter(targetTile);
     const auto& currentPosition = get(aiId, data.tPosition);
-    float acceptableDistance = 50.0f;
+    float acceptableDistance = 15.0f;
 
     if(glm::distance(currentPosition, targetPosition) > acceptableDistance)
     {
-        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}}}};
+        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}, GotoAction::Allow}}};
     }
     else
     {
@@ -200,34 +207,61 @@ ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
             }, data.tTaskAction)->data;
 
     const auto& position = get(taskAction.taskId, data.tDoorTask).position;
-    float acceptableDistance = 50.0f;
+    float acceptableDistance = 15.0f;
     
-    return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{wallCenter(position), acceptableDistance, {}, {}}}};
+    return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{wallCenter(position), acceptableDistance, {}, {}, GotoAction::Allow}}};
 }
 
 ActionResult humanEquipSpaceSuit(int32_t aiId, int32_t actionId, GameData& data)
 {
-    ActionResult result;
-
     const Action& action = get(actionId, data.tAction);
+
+    th::Optional<glm::vec2> itemPosition;
+    th::Optional<int32_t> item;
     forEach([&] (int32_t itemId, const Wearable& wearable)
     {
         if(!wearable.wearer && wearable.airTank)
         {
-            th::Optional<glm::vec2> itemPosition;
             forEach([&](int32_t, const ItemStoring& itemStoring)
             {
                 if(itemStoring.itemId == itemId)
                 {
                     itemPosition = containerPosition(itemStoring.containerId, data);
+                    item = itemStoring.itemId;
                 }
             }, data.tItemStoring);
 
-            float acceptableDistance = 50.0f;
-
             if(itemPosition)
-                result = ActionResult{ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{*itemPosition, acceptableDistance, {}, {}}}};
+                return LoopResult::Break;
+            else
+                return LoopResult::Continue;
         }
+
+        return LoopResult::Continue;
     }, data.tWearable);
-    return result;
+
+    if(itemPosition)
+    {
+        const glm::vec2& position = get(aiId, data.tPosition);
+
+        float acceptableDistance = 15.0f;
+
+        if(glm::distance(position, *itemPosition) > acceptableDistance)
+        {
+            return ActionResult{ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{*itemPosition, acceptableDistance, {}, {}, GotoAction::Disallow}}};
+        }
+        else
+        {
+            takeOutItem(*item, data);
+            putOnWearable(aiId, *item, data);
+            return {ActionResult::Success};
+        }
+    }
+    else
+    {
+        //no free space suit :<
+        return {ActionResult::Fail};
+    }
+
+    return {};
 }

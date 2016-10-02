@@ -49,7 +49,7 @@ Space::Space() :
     subscribe(mBus, *this, false);
 
     mData.walls = {cMapSize};
-    mData.atmosphere = {cMapSize, cHealthyAtmosphere};
+    mData.atmosphere = {cMapSize, cDefaultAtmosphere};
     init(cMapSize, 0, mData.zones);
 
     //imgui
@@ -190,7 +190,7 @@ void Space::startScenario()
     }
 
     mData.walls.fill(0);
-    mData.atmosphere.fill(cHealthyAtmosphere);
+    mData.atmosphere.fill(cDefaultAtmosphere);
     glm::ivec2 offset(7, 7);
     set({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
     set({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);

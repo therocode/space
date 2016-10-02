@@ -14,7 +14,16 @@ void OrganismLogic::update()
     {
         glm::ivec2 tile = position / 32.0f;       
 
-        Gases& gases = mData.atmosphere.at(tile);
+        th::Optional<int32_t> airTank;
+        auto entry = findOne([&](int32_t wearableId, const Wearable& wearable)
+        {
+            return wearable.airTank && wearable.wearer && *wearable.wearer == id;
+        }, mData.tWearable);
+
+        if(entry)
+            airTank = *entry->data.airTank;
+
+        Gases& gases = airTank ? get(*airTank, mData.tAirTank).gases : mData.atmosphere.at(tile);
         int64_t totalGasAmount = pressure(gases);
         float pressure = pressurePercent(gases);
         float oxygenPercent = gases[Oxygen] / static_cast<float>(totalGasAmount);

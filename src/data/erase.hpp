@@ -37,17 +37,19 @@ void erase(int32_t id, DataTable<DataType, false>& table)
 }
 
 template <typename Functor>
-void eraseIf(Functor f, IdSet& idSet)
+int32_t eraseIf(Functor f, IdSet& idSet)
 {
     ++idSet.meta.metrics[AccessType::Iteration];
 
     size_t beforeSize = idSet.ids.size();
+    int32_t erasedAmount = 0;
     for(auto iter = idSet.ids.begin(); iter != idSet.ids.end();)
     {
         if(f(*iter))
         {
             ++idSet.meta.metrics[AccessType::Deletion];
             iter = idSet.ids.erase(iter);
+            ++erasedAmount;
         }
         else
         {
@@ -57,16 +59,19 @@ void eraseIf(Functor f, IdSet& idSet)
 
     if(beforeSize != idSet.ids.size())
         idSet.meta.sorted = false;
+
+    return erasedAmount;
 }
 
 template <typename Functor, typename DataType>
-void eraseIf(Functor f, DataTable<DataType, true>& table)
+int32_t eraseIf(Functor f, DataTable<DataType, true>& table)
 {
     ++table.meta.metrics[AccessType::Iteration];
     auto idIter = table.ids.begin();
     auto dataIter = table.data.begin();
 
     size_t beforeSize = table.ids.size();
+    int32_t erasedAmount = 0;
     for(; idIter != table.ids.end();)
     {
         if(f(*idIter, *dataIter))
@@ -74,6 +79,7 @@ void eraseIf(Functor f, DataTable<DataType, true>& table)
             ++table.meta.metrics[AccessType::Deletion];
             idIter = table.ids.erase(idIter);
             dataIter = table.data.erase(dataIter);
+            ++erasedAmount;
         }
         else
         {
@@ -84,16 +90,19 @@ void eraseIf(Functor f, DataTable<DataType, true>& table)
 
     if(beforeSize != table.ids.size())
         table.meta.sorted = false;
+
+    return erasedAmount;
 }
 
 template <typename Functor, typename DataType>
-void eraseIf(Functor f, DataTable<DataType, false>& table)
+int32_t eraseIf(Functor f, DataTable<DataType, false>& table)
 {
     ++table.meta.metrics[AccessType::Iteration];
     auto idIter = table.ids.begin();
     auto dataIter = table.data.begin();
 
     size_t beforeSize = table.ids.size();
+    int32_t erasedAmount = 0;
     for(; idIter != table.ids.end();)
     {
         if(f(*idIter, *dataIter))
@@ -102,6 +111,7 @@ void eraseIf(Functor f, DataTable<DataType, false>& table)
             table.meta.idPool.release(*idIter);
             idIter = table.ids.erase(idIter);
             dataIter = table.data.erase(dataIter);
+            ++erasedAmount;
         }
         else
         {
@@ -112,4 +122,6 @@ void eraseIf(Functor f, DataTable<DataType, false>& table)
 
     if(beforeSize != table.ids.size())
         table.meta.sorted = false;
+
+    return erasedAmount;
 }
