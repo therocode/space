@@ -154,6 +154,10 @@ void InterfaceLogic::update()
 
             reset();
         }
+        else if(ImGui::SmallButton("Cancel"))
+        {
+            reset();
+        }
 
         ImGui::End();
     }
