@@ -22,7 +22,8 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
         if(path)
         {
             gotoAction.pathId = path->pathId;
-            gotoAction.pathIndex = 0;
+
+            gotoAction.pathIndex = path->path.path.size() > 1 ? 1 : 0;
         }
         else
         {
