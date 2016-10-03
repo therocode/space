@@ -66,6 +66,7 @@ void startPumpDoor(int32_t id, Airlock::Mode targetMode, Airlock::Mode pumpMode,
         erase(existing->leakId, data.tZoneLeak);
         int32_t leakId = insert(ZoneLeak{start, end, 400, 10000}, data.tZoneLeak).id;
         existing->currentlyPumping = pumpMode;
+        existing->leakId = leakId;
     }
 }
 
