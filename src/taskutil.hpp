@@ -34,3 +34,5 @@ std::string toString(Task::Type type);
 
 bool hasWallTask(WallPosition position, GameData& data);
 bool hasDoorTask(WallPosition position, GameData& data);
+float distanceToTask(const glm::vec2& position, int32_t taskId, GameData& data);
+int32_t closestTask(const glm::vec2& position, const IdSet& taskIds, GameData& data);

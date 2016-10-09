@@ -159,7 +159,8 @@ th::Optional<ActionCreateData> humanFindWorkTask(int32_t aiId, int32_t actionId,
 {
     if(count(data.unassignedTasks) > 0)
     {
-        int32_t takenTask = extractOne(data.unassignedTasks);
+        int32_t takenTask = closestTask(get(aiId, data.tPosition), data.unassignedTasks, data);
+        erase(takenTask, data.unassignedTasks);
         assignTask(takenTask, aiId, data);
         const Task& task = get(takenTask, data.tTask);
         
