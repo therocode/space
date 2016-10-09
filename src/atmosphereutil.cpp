@@ -14,6 +14,5 @@ bool approxEquals(const Gases& gasA, const Gases& gasB, int64_t tolerance)
 
 bool healthyAtmosphere(const Gases& gas)
 {
-    approxEquals(gas, cHealthyAtmosphere, 1000);
-    return true;
+    return approxEquals(gas, cHealthyAtmosphere, 1000);
 }
