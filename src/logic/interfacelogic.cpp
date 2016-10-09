@@ -4,6 +4,7 @@
 #include "../space.hpp"
 #include "../structuregui.hpp"
 #include <imgui.h>
+#include "../imguiutil.hpp"
 
 InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
@@ -78,6 +79,7 @@ void InterfaceLogic::update()
             mRoomPlan->initialPos = {};
         }
         ImGui::Begin("New Room");
+        ImGui::Text("click the walls to add/remove doors");
 
         ImGui::Text("%s", std::string("Position: " + std::to_string(mRoomPlan->start.x) + " " + std::to_string(mRoomPlan->start.y)).c_str());
         ImGui::Text("%s", std::string("Size: " + std::to_string(mRoomPlan->end.x - mRoomPlan->start.x) + " " + std::to_string(mRoomPlan->end.y - mRoomPlan->start.y)).c_str());
@@ -85,21 +87,7 @@ void InterfaceLogic::update()
 
         bool hasAtLeastOneDoor = !mRoomPlan->doors.empty();
 
-        if(!hasAtLeastOneDoor)
-        {
-            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1.0f, 0.0f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1.0f, 0.0f, 0.5f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1.0f, 0.0f, 0.5f));
-        }
-        bool clickedDone = ImGui::SmallButton("Done");
-        if(!hasAtLeastOneDoor)
-        {
-            ImGui::SameLine();
-            ImGui::Text("- add at least one door");
-            ImGui::PopStyleColor(3);
-        }
-
-        if(clickedDone && hasAtLeastOneDoor)
+        if(SmallDisableButton("Done", !hasAtLeastOneDoor))
         {
             //addTask(RoomTask
             //{
@@ -178,7 +166,12 @@ void InterfaceLogic::update()
 
             reset();
         }
-        else if(ImGui::SmallButton("Cancel"))
+        if(!hasAtLeastOneDoor)
+        {
+            ImGui::SameLine();
+            ImGui::Text("- add at least one door");
+        }
+        if(ImGui::SmallButton("Cancel"))
         {
             reset();
         }
