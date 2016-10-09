@@ -264,7 +264,7 @@ void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
     if(button == fea::Mouse::MIDDLE)
         return;
 
-    if(mState == DRAGGING_ROOM)
+    if(mState == DRAGGING_ROOM && mDragStart)
     {
         if(!mDragEnd)
             mDragEnd = glm::ivec2();
