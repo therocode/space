@@ -82,3 +82,11 @@ th::Optional<int32_t> lockedDoorAt(const WallPosition& position, GameData& data)
     else
         return {};
 }
+
+bool hasDoor(const WallPosition& position, GameData& data)
+{
+    return static_cast<bool>(findOne([&](int32_t id, const Door& door)
+    {
+        return door.position == position;
+    }, data.tDoor));
+}

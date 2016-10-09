@@ -6,6 +6,7 @@
 #include "doorutil.hpp"
 #include "structures/airlock.hpp"
 #include "itemutil.hpp"
+#include "moveutil.hpp"
 #include "structureutil.hpp"
 
 ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
@@ -81,6 +82,7 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
                             
                             if(structure.type == Structure::Airlock)
                             {
+                                standStill(aiId, data);
                                 if(!has(structureId, data.tAirlockActivity))
                                 {
                                     requestOpenAirlockDoor(structureId, *lockedDoorId, data);

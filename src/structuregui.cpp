@@ -38,7 +38,6 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
             ImGui::SameLine(150);
             if(ImGui::SmallButton((std::string("Open##") + std::to_string(doorId)).c_str()))
             {
-                std::cout << "want to open: " << doorId << "\n";
                 requestOpenAirlockDoor(structureId, doorId, data);
             }
         }
