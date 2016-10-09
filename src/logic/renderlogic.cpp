@@ -67,7 +67,7 @@ void RenderLogic::renderSprites()
             const auto textureIter = std::find_if(mResources.textures().begin(), mResources.textures().end(), [&] (const Texture& disp) { return disp.textureId == sprite.textureId; });
 
             LineRect rect(textureIter->size);
-            rect.setPosition(position);
+            rect.setPosition(position - textureIter->size / 2.0f);
             rect.setColor(fea::Color::Yellow);
             mFeaRenderer.render(rect);
         }

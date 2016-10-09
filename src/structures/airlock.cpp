@@ -1,6 +1,8 @@
 #include "airlock.hpp"
 #include "../structureutil.hpp"
 #include "../doorutil.hpp"
+#include "../wallutil.hpp"
+#include "../atmosphereutil.hpp"
 
 void discoverAirlockDoors(int32_t id, const Structure& structure, GameData& data)
 {
@@ -24,11 +26,43 @@ void discoverAirlockDoors(int32_t id, const Structure& structure, GameData& data
     }, data.tDoor);
 }
 
+void autoDetectAirlockMode(int32_t id, GameData& data)
+{
+    Airlock& airlock = get(id, data.tAirlock);
+
+    airlock.exit = {};
+    for(int32_t doorId : airlock.doors)
+    {
+        if(doorBordersZone(doorId, 0, data))
+        {
+            if(!airlock.exit)
+                airlock.exit = doorId;
+            else
+            {
+                airlock.exit = {};
+                break;
+            }
+        }
+    }
+
+    if(airlock.exit)
+    {
+        if(healthyAtmosphere(data.atmosphere.at(get(id, data.tStructure).position)))
+        {
+            airlock.currentMode = Airlock::In;
+        }
+        else
+        {
+            airlock.currentMode = Airlock::Out;
+        }
+    }
+}
+
 void requestMode(int32_t id, Airlock::Mode mode, GameData& data)
 {
     const Structure& structure = get(id, data.tStructure);
     Airlock& airlock = get(id, data.tAirlock);
-    if(!airlock.exit)
+    if(!airlock.exit || airlock.coolDown > 0)
         return;
 
     if(airlock.currentMode != mode && airlock.currentMode != Airlock::Pumping)
@@ -50,7 +84,7 @@ void startPumpDoor(int32_t id, Airlock::Mode targetMode, Airlock::Mode pumpMode,
     if(pumpingDoor.position.position != start)
         end = pumpingDoor.position.position;
     else
-        end = otherSide(pumpingDoor);
+        end = otherSide(pumpingDoor.position);
 
     if(targetMode == pumpMode)
         std::swap(start, end);
@@ -118,14 +152,18 @@ void airlockUpdate(GameData& data)
             {
                 erase(airlockActivity.leakId, data.tZoneLeak);
                 airlock.currentMode = airlockActivity.targetMode;
+                airlock.coolDown = 120;
                 return true;
             }
         }
         return false;
     }, data.tAirlockActivity);
 
-    forEach([&] (int32_t id, const Airlock& airlock)
+    forEach([&] (int32_t id, Airlock& airlock)
     {
+        if(airlock.coolDown > 0)
+            --airlock.coolDown;
+
         if(airlock.currentMode == Airlock::In)
         {
             for(int32_t door : airlock.doors)

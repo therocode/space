@@ -1,4 +1,5 @@
 #include "doorutil.hpp"
+#include "wallutil.hpp"
 #include "gases.hpp"
 
 void createDoor(Door door, GameData& data)
@@ -62,11 +63,6 @@ int64_t doorPressureDiff(int32_t doorId, GameData& data)
     return startPressure - endPressure;
 }
 
-glm::ivec2 otherSide(const Door& door)
-{
-    return door.position.position + (door.position.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
-}
-
 th::Optional<int32_t> lockedDoorAt(const WallPosition& position, GameData& data)
 {
     const auto& found = findOne([&] (int32_t id, const Door& door)
@@ -81,4 +77,18 @@ th::Optional<int32_t> lockedDoorAt(const WallPosition& position, GameData& data)
     }
     else
         return {};
+}
+
+bool hasDoor(const WallPosition& position, GameData& data)
+{
+    return static_cast<bool>(findOne([&](int32_t id, const Door& door)
+    {
+        return door.position == position;
+    }, data.tDoor));
+}
+
+bool doorBordersZone(int32_t doorId, int32_t zoneId, GameData& data)
+{
+    const WallPosition& position = get(doorId, data.tDoor).position;
+    return data.zones.zones.at(position.position) == zoneId || data.zones.zones.at(otherSide(position)) == zoneId;
 }

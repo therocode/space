@@ -40,7 +40,7 @@ int32_t createStructure(Structure structure, GameData& data)
 
     if(type == Structure::Airlock)
     {
-        insert(newId, Airlock{Airlock::In, {}, {}}, data.tAirlock);
+        insert(newId, Airlock{Airlock::In, {}, {}, {}}, data.tAirlock);
     }
     else if(type == Structure::Crate)
     {
@@ -58,6 +58,7 @@ void initializeStructure(int32_t id, const Structure& structure, GameData& data)
     if(type == Structure::Airlock)
     {
         discoverAirlockDoors(id, structure, data);
+        autoDetectAirlockMode(id, data);
     }
 }
 

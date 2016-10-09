@@ -21,3 +21,8 @@ WallPosition wallBetween(const glm::ivec2& a, const glm::ivec2& b)
         return {{std::max(a.x, b.x), a.y}, Orientation::Vertical};
     }
 }
+
+glm::ivec2 otherSide(const WallPosition& position)
+{
+    return position.position + (position.orientation == Orientation::Vertical ? glm::ivec2(-1, 0) : glm::ivec2(0, -1));
+}

@@ -22,3 +22,19 @@ std::string toString(Task::Type type)
         return "bleh";
     }
 }
+
+bool hasWallTask(WallPosition position, GameData& data)
+{
+    return static_cast<bool>(findOne([&] (int32_t id, const WallTask& wallTask)
+    {
+        return wallTask.position == position;
+    }, data.tWallTask));
+}
+
+bool hasDoorTask(WallPosition position, GameData& data)
+{
+    return static_cast<bool>(findOne([&] (int32_t id, const DoorTask& doorTask)
+    {
+        return doorTask.position == position;
+    }, data.tDoorTask));
+}

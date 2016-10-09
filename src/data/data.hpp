@@ -158,6 +158,7 @@ struct Airlock
 {
     enum Mode { In, Out, Pumping};
     Mode currentMode;
+    int32_t coolDown = 0;
     std::vector<int32_t> doors;
     th::Optional<int32_t> exit;
 };
