@@ -83,7 +83,23 @@ void InterfaceLogic::update()
         ImGui::Text("%s", std::string("Size: " + std::to_string(mRoomPlan->end.x - mRoomPlan->start.x) + " " + std::to_string(mRoomPlan->end.y - mRoomPlan->start.y)).c_str());
         ImGui::Text("%s", std::string("Doors: " + std::to_string(mRoomPlan->doors.size())).c_str());
 
-        if(ImGui::SmallButton("Done"))
+        bool hasAtLeastOneDoor = !mRoomPlan->doors.empty();
+
+        if(!hasAtLeastOneDoor)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImColor::HSV(1.0f, 0.0f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor::HSV(1.0f, 0.0f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImColor::HSV(1.0f, 0.0f, 0.5f));
+        }
+        bool clickedDone = ImGui::SmallButton("Done");
+        if(!hasAtLeastOneDoor)
+        {
+            ImGui::SameLine();
+            ImGui::Text("- add at least one door");
+            ImGui::PopStyleColor(3);
+        }
+
+        if(clickedDone && hasAtLeastOneDoor)
         {
             //addTask(RoomTask
             //{
@@ -98,58 +114,66 @@ void InterfaceLogic::update()
 
             for(int32_t x = mDragStart->x; x <= mDragEnd->x; ++x)
             {
-                if(hasDoor({{x, mDragStart->y}, Orientation::Horizontal}))
-                    addTask(DoorTask
-                    {
-                        {{x, mDragStart->y},
-                        Orientation::Horizontal},
-                    }, mData.tDoorTask, mData);
-                else
-                    addTask(WallTask
-                    {
-                        {{x, mDragStart->y},
-                        Orientation::Horizontal},
-                    }, mData.tWallTask, mData);
-                if(hasDoor({{x, mDragEnd->y + 1}, Orientation::Horizontal}))
-                    addTask(DoorTask
-                    {
-                        {{x, mDragEnd->y + 1},
-                            Orientation::Horizontal},
-                    }, mData.tDoorTask, mData);
-                else
-                    addTask(WallTask
-                    {
-                        {{x, mDragEnd->y + 1},
-                            Orientation::Horizontal,}
-                    }, mData.tWallTask, mData);
+                WallPosition taskPos = {{x, mDragStart->y}, Orientation::Horizontal};
+                if(!hasDoorTask(taskPos, mData) && !hasWallTask(taskPos, mData))
+                {
+                    if(hasDoor(taskPos))
+                        addTask(DoorTask
+                        {
+                            taskPos,
+                        }, mData.tDoorTask, mData);
+                    else
+                        addTask(WallTask
+                        {
+                            taskPos,
+                        }, mData.tWallTask, mData);
+                }
+                taskPos = {{x, mDragEnd->y + 1}, Orientation::Horizontal};
+                if(!hasDoorTask(taskPos, mData) && !hasWallTask(taskPos, mData))
+                {
+                    if(hasDoor(taskPos))
+                        addTask(DoorTask
+                        {
+                            taskPos,
+                        }, mData.tDoorTask, mData);
+                    else
+                        addTask(WallTask
+                        {
+                            taskPos
+                        }, mData.tWallTask, mData);
+                }
             }
 
             for(int32_t y = mDragStart->y; y <= mDragEnd->y; ++y)
             {
-                if(hasDoor({{mDragStart->x, y}, Orientation::Vertical}))
-                    addTask(DoorTask
-                    {
-                        {{mDragStart->x, y},
-                            Orientation::Vertical,}
-                    }, mData.tDoorTask, mData);
-                else
-                    addTask(WallTask
-                    {
-                        {{mDragStart->x, y},
-                            Orientation::Vertical,}
-                    }, mData.tWallTask, mData);
-                if(hasDoor({{mDragEnd->x + 1, y}, Orientation::Vertical}))
-                    addTask(DoorTask
-                    {
-                        {{mDragEnd->x + 1, y},
-                            Orientation::Vertical,}
-                    }, mData.tDoorTask, mData);
-                else
-                    addTask(WallTask
-                    {
-                        {{mDragEnd->x + 1, y},
-                            Orientation::Vertical,}
-                    }, mData.tWallTask, mData);
+                WallPosition taskPos = {{mDragStart->x, y}, Orientation::Vertical};
+                if(!hasDoorTask(taskPos, mData) && !hasWallTask(taskPos, mData))
+                {
+                    if(hasDoor(taskPos))
+                        addTask(DoorTask
+                        {
+                            taskPos
+                        }, mData.tDoorTask, mData);
+                    else
+                        addTask(WallTask
+                        {
+                            taskPos
+                        }, mData.tWallTask, mData);
+                }
+                taskPos = {{mDragEnd->x + 1, y}, Orientation::Vertical};
+                if(!hasDoorTask(taskPos, mData) && !hasWallTask(taskPos, mData))
+                {
+                    if(hasDoor(taskPos))
+                        addTask(DoorTask
+                        {
+                            taskPos
+                        }, mData.tDoorTask, mData);
+                    else
+                        addTask(WallTask
+                        {
+                            taskPos
+                        }, mData.tWallTask, mData);
+                }
             }
 
             reset();

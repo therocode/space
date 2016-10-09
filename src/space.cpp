@@ -225,6 +225,8 @@ void Space::startScenario()
     int32_t containerId = get(crateId, mData.tCrate).containerId;
     createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
     createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
+    createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
+    createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
     //mData.atmosphere.set(offset + glm::ivec2(-1, -1), cWtfAtmosphere);
 
 

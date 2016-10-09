@@ -31,3 +31,6 @@ void eraseTask(int32_t id, TaskTable& table, GameData& data)
 void assignTask(int32_t taskId, int32_t actorId, GameData& data);
 
 std::string toString(Task::Type type);
+
+bool hasWallTask(WallPosition position, GameData& data);
+bool hasDoorTask(WallPosition position, GameData& data);

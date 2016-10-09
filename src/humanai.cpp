@@ -8,7 +8,6 @@
 #include "itemutil.hpp"
 #include "structureutil.hpp"
 
-
 ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
 {
     GotoAction& gotoAction = get(actionId, data.tGotoAction);
@@ -27,7 +26,6 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
         }
         else
         {
-            //std::cout << "I can't goto but I dunno how to fail\n";
             return {ActionResult::Fail};
         }
     }
@@ -95,9 +93,6 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
                                 //no idea how to open this door
                                 return {ActionResult::Fail};
                             }
-                        ////if owned by airlock
-                        ////toggle airlock and set that mode
-                            
                         }
                         else
                         {
@@ -125,7 +120,14 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
                 }
                 else
                 {
-                    return {ActionResult::Success};
+                    if(glm::distance(position, gotoAction.target) > gotoAction.acceptableDistance)
+                    {
+                        set(aiId, gotoAction.target, data.tWalkTarget);
+                    }
+                    else
+                    {
+                        return {ActionResult::Success};
+                    }
                 }
             }
         }
@@ -167,12 +169,11 @@ th::Optional<ActionCreateData> humanFindWorkTask(int32_t aiId, int32_t actionId,
 
 ActionResult humanConstructWall(int32_t aiId, int32_t actionId, GameData& data)
 {
-    //check for completion
     const Action& action = get(actionId, data.tAction);
     const TaskAction& taskAction = findOne([&] (int32_t id, const TaskAction& tA)
-            {
-            return tA.actionId == actionId;
-            }, data.tTaskAction)->data;
+    {
+        return tA.actionId == actionId;
+    }, data.tTaskAction)->data;
 
     const auto& targetTile = get(taskAction.taskId, data.tWallTask).position;
     auto targetPosition = wallCenter(targetTile);
@@ -200,17 +201,34 @@ ActionResult humanConstructWall(int32_t aiId, int32_t actionId, GameData& data)
 
 ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
 {
-    //check for completion
     const Action& action = get(actionId, data.tAction);
     const TaskAction& taskAction = findOne([&] (int32_t id, const TaskAction& tA)
-            {
-            return tA.actionId == actionId;
-            }, data.tTaskAction)->data;
+    {
+        return tA.actionId == actionId;
+    }, data.tTaskAction)->data;
 
-    const auto& position = get(taskAction.taskId, data.tDoorTask).position;
+    const auto& targetTile = get(taskAction.taskId, data.tDoorTask).position;
+    auto targetPosition = wallCenter(targetTile);
+    const auto& currentPosition = get(aiId, data.tPosition);
     float acceptableDistance = 15.0f;
-    
-    return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{wallCenter(position), acceptableDistance, {}, {}, GotoAction::Allow}}};
+
+    if(glm::distance(currentPosition, targetPosition) > acceptableDistance)
+    {
+        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}, GotoAction::Allow}}};
+    }
+    else
+    {
+        ConstructDoorAction& constructDoorAction = get(actionId, data.tConstructDoorAction);
+        if(constructDoorAction.workLeft > 0)
+            --constructDoorAction.workLeft;
+        else
+        {
+            createDoor(Door{{targetTile}}, data);
+            return {ActionResult::Success};
+        }
+    }
+
+    return {};
 }
 
 ActionResult humanEquipSpaceSuit(int32_t aiId, int32_t actionId, GameData& data)
