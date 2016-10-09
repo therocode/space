@@ -12,6 +12,7 @@
 #include "structuretypes.hpp"
 #include "pathfindingutil.hpp"
 #include "atmosphereutil.hpp"
+#include "worldutil.hpp"
 
 const glm::ivec2 cMapSize(256, 256);
 
