@@ -1,5 +1,6 @@
 #include "atmosphereutil.hpp"
 #include <cstdint>
+#include <cstdlib>
 
 bool approxEquals(const Gases& gasA, const Gases& gasB, int64_t tolerance)
 {
