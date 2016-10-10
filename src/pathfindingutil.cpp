@@ -59,3 +59,15 @@ void invalidatePaths(GameData& data)
         }, data.tPath);
     }
 }
+
+th::Optional<int32_t> findWorkerPathCost(const glm::vec2& start, const glm::vec2& end, GameData& data)
+{
+    auto path = findWorkerPath(start, end, data);
+
+    if(path)
+    {
+        return path->path.cost;
+    }
+    else
+        return {};
+}

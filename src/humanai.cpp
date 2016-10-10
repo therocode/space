@@ -210,8 +210,42 @@ ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
         return tA.actionId == actionId;
     }, data.tTaskAction)->data;
 
-    const auto& targetTile = get(taskAction.taskId, data.tDoorTask).position;
-    auto targetPosition = wallCenter(targetTile);
+    const auto& targetWall = get(taskAction.taskId, data.tDoorTask).position;
+    const auto& targetTile = targetWall.position;
+    auto targetPosition = wallCenter(targetWall);
+    bool changingWall = hasWall(targetWall, data);
+    if(changingWall)
+    {
+        glm::ivec2 startTile = get(aiId, data.tPosition) / 32.0f;
+        glm::ivec2 otherTile = otherSide(targetWall);
+        auto pathCost1 = findWorkerPathCost(startTile, targetTile, data);
+        auto pathCost2 = findWorkerPathCost(startTile, otherTile, data);
+
+        bool toOther = false;
+        if(pathCost1 && pathCost2)
+        {
+            if(*pathCost1 > *pathCost2)
+            {
+                toOther = true;
+            }
+        }
+        else if(pathCost2)
+        {
+            toOther = true;
+        }
+        else if(!pathCost1)
+        {
+            return {ActionResult::Fail};
+        }
+
+        float offset = toOther ? -5.0f : 5.0f;
+
+        if(targetWall.orientation == Orientation::Vertical)
+            targetPosition.x += offset;
+        else
+            targetPosition.y += offset;
+    }
+
     const auto& currentPosition = get(aiId, data.tPosition);
     float acceptableDistance = 15.0f;
 
@@ -226,7 +260,7 @@ ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
             --constructDoorAction.workLeft;
         else
         {
-            createDoor(Door{{targetTile}}, data);
+            createDoor(Door{{targetWall}}, data);
             return {ActionResult::Success};
         }
     }

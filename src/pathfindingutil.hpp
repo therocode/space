@@ -10,3 +10,4 @@ struct PathEntry
 th::Optional<PathEntry> findWorkerPath(const glm::ivec2& start, const glm::ivec2& end, GameData& data, int32_t maxCost = -1);
 bool wallObstructsPath(int32_t pathId, WallPosition wallPosition, GameData& data);
 void invalidatePaths(GameData& data);
+th::Optional<int32_t> findWorkerPathCost(const glm::vec2& start, const glm::vec2& end, GameData& data);
