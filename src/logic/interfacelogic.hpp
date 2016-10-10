@@ -22,6 +22,12 @@ class InterfaceLogic
         std::unordered_set<WallPosition> doors;
     };
 
+    struct DoorsPlanInfo
+    {
+        std::unordered_set<WallPosition> doors;
+        th::Optional<glm::ivec2> initialPos;
+    };
+
     struct StructureInteraction
     {
         int32_t structureId;
@@ -40,6 +46,7 @@ class InterfaceLogic
             IDLE,
             DRAGGING_ROOM, PLANNING_ROOM,
             INTERACT_STRUCTURE,
+            PLACING_DOORS,
         };
 
         InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
@@ -56,6 +63,7 @@ class InterfaceLogic
         th::Optional<glm::ivec2> mDragStart;
         th::Optional<glm::ivec2> mDragEnd;
         th::Optional<RoomPlanInfo> mRoomPlan;
+        th::Optional<DoorsPlanInfo> mDoorsPlan;
 
         th::Optional<StructureInteraction> mStructureInteraction;
 

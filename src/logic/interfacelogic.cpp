@@ -7,6 +7,7 @@
 #include "../imguiutil.hpp"
 #include "../roomutil.hpp"
 #include "../doorutil.hpp"
+#include "../wallutil.hpp"
 
 InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
@@ -38,6 +39,11 @@ void InterfaceLogic::update()
     if(ImGui::SmallButton("Build Room"))
     {
         mState = DRAGGING_ROOM;
+    }
+    if(ImGui::SmallButton("Convert to Door"))
+    {
+        mState = PLACING_DOORS;
+        mDoorsPlan = {{}};
     }
 
     ImGui::Checkbox("Show zones", &mShowZones);
@@ -78,6 +84,45 @@ void InterfaceLogic::update()
                 mRenderer.render(doorRect);
             }
         }
+    }
+
+    //render door plan
+    if(mDoorsPlan)
+    {
+        for(const auto& door : mDoorsPlan->doors)
+        {
+            LineRect doorRect(door.orientation == Orientation::Horizontal ? glm::vec2(32.0f, 8.0f): glm::vec2(8.0f, 32.0f));
+            doorRect.setColor(fea::Color::Green);
+            doorRect.setPosition(static_cast<glm::vec2>(door.position * 32) + (door.orientation == Orientation::Horizontal ? glm::vec2(0.0f, -4.0f): glm::vec2(-4.0f, 0.0f)));
+
+            mRenderer.render(doorRect);
+        }
+
+        if(mDoorsPlan->initialPos)
+        {
+            ImGui::SetNextWindowPos(ImVec2(*mDoorsPlan->initialPos));
+            mDoorsPlan->initialPos = {};
+        }
+        ImGui::Begin("Convert walls to doors");
+        ImGui::Text("click the walls to add doors");
+
+        ImGui::Text("%s", std::string("Doors: " + std::to_string(mDoorsPlan->doors.size())).c_str());
+
+        bool hasAtLeastOneDoor = !mDoorsPlan->doors.empty();
+
+        if(SmallDisableButton("Done", !hasAtLeastOneDoor))
+        {
+            for(const auto& door : mDoorsPlan->doors)
+            {
+                addTask(DoorTask
+                {
+                    door,
+                }, mData.tDoorTask, mData);
+            }
+
+            reset();
+        }
+        ImGui::End();
     }
 
     //render room plan
@@ -279,6 +324,18 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
                 };
             }
         }
+        else if(mState == PLACING_DOORS)
+        {
+            auto clickedWall = positionToWall(position, 10.0f);
+
+            if(clickedWall && hasWall(*clickedWall, mData) && !hasDoorTask(*clickedWall, mData))
+            {
+                if(mDoorsPlan->doors.count(*clickedWall) == 0)
+                    mDoorsPlan->doors.emplace(*clickedWall);
+                else
+                    mDoorsPlan->doors.erase(*clickedWall);
+            }
+        }
     }
 }
 
@@ -338,6 +395,8 @@ std::string InterfaceLogic::stateToString(State state) const
         return "Plan Room";
     else if(state == INTERACT_STRUCTURE)
         return "Structure Interaction";
+    else if(state == PLACING_DOORS)
+        return "Place doors on walls";
     else
         return "None";
 }
@@ -348,5 +407,6 @@ void InterfaceLogic::reset()
     mDragStart = {};
     mDragEnd = {};
     mRoomPlan = {};
+    mDoorsPlan = {};
     mStructureInteraction = {};
 }
