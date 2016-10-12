@@ -31,7 +31,7 @@ namespace DebugGui
             text(("Entries: " + std::to_string(idSet.ids.size())).c_str());
             text(idSet.meta.sorted ? "sorted" : "unsorted");
 
-            static bool showData = false;
+            bool showData = false;
 
             MemoryInfo memory = memoryInfo(idSet);
             text("Memory: " + formatMemory(memory.dataSize) + " (" + formatMemory(memory.totalSize) + ")");
