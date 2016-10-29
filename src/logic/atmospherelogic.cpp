@@ -8,6 +8,9 @@ AtmosphereLogic::AtmosphereLogic(GameData& data):
 
 void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
 {
+    (void)mData;
+    updateBigChanges();
+    updatePassive();
     if(mAtmosphereDifference.size().x == 0)
         mAtmosphereDifference = {mData.atmosphere.size(), Gases{}};
 
@@ -108,4 +111,12 @@ void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
             }
         }
     }, mData.tZoneLeak);
+}
+
+void AtmosphereLogic::updateBigChanges()
+{
+}
+
+void AtmosphereLogic::updatePassive()
+{
 }
