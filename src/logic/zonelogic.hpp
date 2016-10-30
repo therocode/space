@@ -1,6 +1,5 @@
 #pragma once
 #include "data.hpp"
-#include "../util/numberpool.hpp"
 #include "../wallmap.hpp"
 #include "../zones.hpp"
 

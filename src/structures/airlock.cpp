@@ -49,35 +49,35 @@ void autoDetectAirlockMode(int32_t id, GameData& data)
     {
         if(healthyAtmosphere(data.atmosphere.at(get(id, data.tStructure).position)))
         {
-            airlock.currentMode = Airlock::In;
+            airlock.currentMode = AirlockMode::In;
         }
         else
         {
-            airlock.currentMode = Airlock::Out;
+            airlock.currentMode = AirlockMode::Out;
         }
     }
 }
 
-void requestMode(int32_t id, Airlock::Mode mode, GameData& data)
+void requestMode(int32_t id, AirlockMode mode, GameData& data)
 {
     const Structure& structure = get(id, data.tStructure);
     Airlock& airlock = get(id, data.tAirlock);
     if(!airlock.exit || airlock.coolDown > 0)
         return;
 
-    if(airlock.currentMode != mode && airlock.currentMode != Airlock::Pumping)
+    if(airlock.currentMode != mode && airlock.currentMode != AirlockMode::Pumping)
     {
-        airlock.currentMode = Airlock::Pumping;
+        airlock.currentMode = AirlockMode::Pumping;
 
-        startPumpDoor(id, mode, mode == Airlock::In ? Airlock::Out : Airlock::In, data);
+        startPumpDoor(id, mode, mode == AirlockMode::In ? AirlockMode::Out : AirlockMode::In, data);
     }   
 }
 
-void startPumpDoor(int32_t id, Airlock::Mode targetMode, Airlock::Mode pumpMode, GameData& data)
+void startPumpDoor(int32_t id, AirlockMode targetMode, AirlockMode pumpMode, GameData& data)
 {
     const Structure& structure = get(id, data.tStructure);
     const Airlock& airlock = get(id, data.tAirlock);
-    const Door& pumpingDoor = pumpMode == Airlock::In ? get(airlock.doors[0], data.tDoor) : get(*airlock.exit, data.tDoor);
+    const Door& pumpingDoor = pumpMode == AirlockMode::In ? get(airlock.doors[0], data.tDoor) : get(*airlock.exit, data.tDoor);
 
     glm::ivec2 start = structure.position;
     glm::ivec2 end;
@@ -111,13 +111,13 @@ void requestOpenAirlockDoor(int32_t id, int32_t doorId, GameData& data)
         return;
 
     TH_ASSERT(std::find(airlock.doors.begin(), airlock.doors.end(), doorId) != airlock.doors.end(), "Invalid doorId given to airlock: " << doorId);
-    Airlock::Mode targetMode = *airlock.exit == doorId ? Airlock::Out : Airlock::In;
+    AirlockMode targetMode = *airlock.exit == doorId ? AirlockMode::Out : AirlockMode::In;
 
     if(airlock.currentMode == targetMode)
     {
         openDoor(doorId, data);
     }
-    else if(airlock.currentMode == Airlock::Pumping)
+    else if(airlock.currentMode == AirlockMode::Pumping)
     {
         return;
     }
@@ -164,7 +164,7 @@ void airlockUpdate(GameData& data)
         if(airlock.coolDown > 0)
             --airlock.coolDown;
 
-        if(airlock.currentMode == Airlock::In)
+        if(airlock.currentMode == AirlockMode::In)
         {
             for(int32_t door : airlock.doors)
                 unlockDoor(door, data);
@@ -172,7 +172,7 @@ void airlockUpdate(GameData& data)
             if(airlock.exit)
                 structureLockDoor(id, *airlock.exit, data);
         }
-        else if(airlock.currentMode == Airlock::Out)
+        else if(airlock.currentMode == AirlockMode::Out)
         {
             for(int32_t door : airlock.doors)
             {

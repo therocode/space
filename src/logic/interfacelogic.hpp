@@ -5,7 +5,6 @@
 #include <fea/render2d.hpp>
 #include <fea/userinterface.hpp>
 #include <data.hpp>
-#include "../util/numberpool.hpp"
 #include <fea/util.hpp>
 #include <unordered_set>
 #include "../wallposition.hpp"

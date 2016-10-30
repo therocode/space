@@ -3,8 +3,8 @@
 #include <imgui.h>
 #include <string>
 #include <vector>
-#include "data/memory.hpp"
-#include "data/accesspattern.hpp"
+#include <tables.hpp>
+#include <tables.hpp>
 #include <iostream>
 #include "zones.hpp"
 #include "gases.hpp"
@@ -29,10 +29,7 @@ namespace DebugGui
         {
             text(("Name: " + table.meta.name).c_str());
 
-            if(table.meta.description)
-            {
-                text(("Description: " + *table.meta.description).c_str());
-            }
+            text(("Description: " + table.meta.description).c_str());
 
             text(("Entries: " + std::to_string(table.ids.size())).c_str());
             text(table.meta.sorted ? "sorted" : "unsorted");

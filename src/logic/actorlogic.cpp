@@ -13,7 +13,7 @@ ActorLogic::ActorLogic(GameData& data):
 
 int32_t ActorLogic::addActor(Actor actor)
 {
-    int32_t id = *tableEmplaceOptional(std::move(actor.position), mData.tPosition);
+    int32_t id = insert(actor.position, mData.tPosition).id;
     tableEmplaceOptional(id, std::move(actor.physics), mData.tPhysics);
     tableEmplaceOptional(id, std::move(actor.collisionBox), mData.tCollisionBox);
     tableEmplaceOptional(id, std::move(actor.moveAbility), mData.tMoveAbility);
@@ -35,9 +35,9 @@ int32_t ActorLogic::addActor(Actor actor)
     {
         Ai newAi;
 
-        if(*actor.ai == Ai::Human)
+        if(*actor.ai == AiType::Human)
         {
-            newAi.type = Ai::Human;
+            newAi.type = AiType::Human;
             insert(id, mData.humanAis);
         }
         insert(id, std::move(newAi), mData.tAi);
@@ -193,12 +193,12 @@ void ActorLogic::calculateMoveIntention()
     {
     }, mData.died);
 
-    join([&] (int32_t id, const glm::vec2& walkTarget, const glm::vec2& position)
+    join([&] (int32_t id, const WalkTarget& walkTarget, const Position& position)
     {
-        if(walkTarget != position)
+        if(glm::distance(walkTarget.position, position.position) > 5.0f)
         {
             MoveIntention moveIntention;
-            moveIntention.direction = glm::normalize(walkTarget - position);
+            moveIntention.direction = glm::normalize(walkTarget.position - position.position);
             moveIntention.speedPercent = 0.5f;
             set(id, std::move(moveIntention), mData.tMoveIntention);
         }
@@ -218,17 +218,18 @@ void ActorLogic::applyMoveIntention()
 
 void ActorLogic::applyPhysics()
 {
-    join([] (int32_t id, glm::vec2& position, Physics& physics)
+    join([] (int32_t id, Position& position, Physics& physics)
     {
         physics.velocity += physics.acceleration;
-        position += physics.velocity;
+        position.position += physics.velocity;
     }, mData.tPosition, mData.tPhysics);
 }
 
 void ActorLogic::applyCollisions()
 {
-    join([&] (int32_t id, glm::vec2& position, Physics& physics, const CollisionBox& collisionBox)
+    join([&] (int32_t id, Position& positionStruct, Physics& physics, const CollisionBox& collisionBox)
     {
+        glm::vec2& position = positionStruct.position;
         glm::ivec2 currentTile = position / 32.0f;
 
         glm::vec2 min = position - collisionBox.size / 2.0f;

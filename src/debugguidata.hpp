@@ -9,6 +9,12 @@ namespace DebugGui
     std::vector<std::string> debugHeaders(const TPhysics& table);
     void debugText(const Physics& data, std::vector<std::vector<std::string>>& outText);
 
+    std::vector<std::string> debugHeaders(const TPosition& table);
+    void debugText(const Position& data, std::vector<std::vector<std::string>>& outText);
+
+    std::vector<std::string> debugHeaders(const TWalkTarget& table);
+    void debugText(const WalkTarget& data, std::vector<std::vector<std::string>>& outText);
+
     std::vector<std::string> debugHeaders(const TCollisionBox& table);
     void debugText(const CollisionBox& data, std::vector<std::vector<std::string>>& outText);
 

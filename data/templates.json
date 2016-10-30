@@ -7,7 +7,10 @@
         {
             "size": {"x": 20, "y": 20}
         },
-        "blood_values": {},
+        "blood_values":
+        {
+            "oxygen": 600
+        },
         "move_ability":
         {
             "max_speed": 4.0,

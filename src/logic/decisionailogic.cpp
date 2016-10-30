@@ -14,10 +14,10 @@ void DecisionAILogic::update()
     {
         if(has(id, mData.humanAis))
         {
-            int32_t newId = insert(Incentive{id, 0, Incentive::Breathe}, mData.tIncentive).id;
+            int32_t newId = insert(Incentive{Incentive::BreatheIncentive, id, 0}, mData.tIncentive).id;
             insert(newId, BreatheIncentive{}, mData.tBreatheIncentive);
 
-            newId = insert(Incentive{id, 0, Incentive::Work}, mData.tIncentive).id;
+            newId = insert(Incentive{Incentive::WorkIncentive, id, 0}, mData.tIncentive).id;
             insert(newId, WorkIncentive{}, mData.tWorkIncentive);
         }
     }, mData.uninitializedAis);

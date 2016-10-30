@@ -4,7 +4,7 @@
 #include <string>
 #include <fea/render2d.hpp>
 #include "renderdata.hpp"
-#include "util/numberpool.hpp"
+#include <numberpool.hpp>
 
 class ResourceManager
 {

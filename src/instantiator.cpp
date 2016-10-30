@@ -18,7 +18,7 @@ Instantiator::Instantiator(const ResourceManager& resources)
 
         if(position)
         {
-            templateToStore.position = extractVec2(*position, "position", {0.0f, 0.0f});
+            templateToStore.position = Position{extractVec2(*position, "position", {0.0f, 0.0f})};
         }
 
         auto physics = extractOptional(templateEntry, "physics");
@@ -47,13 +47,13 @@ Instantiator::Instantiator(const ResourceManager& resources)
 
         if(bloodValues)
         {
-            templateToStore.bloodValues = BloodValues{};
+            templateToStore.bloodValues = BloodValues{(*bloodValues)["oxygen"]};
         }
 
         templateToStore.worker = templateEntry["worker"];
         std::string ai = templateEntry["ai"];
         if(ai == "human")
-            templateToStore.ai = Ai::Human;
+            templateToStore.ai = AiType::Human;
 
         //auto walkSpeed = extractOptional(templateEntry, "walk_speed");
 
@@ -101,8 +101,7 @@ Actor Instantiator::instantiate(int32_t instanceId, const glm::vec2& position)
 {
     auto newActor = mTemplates.at(instanceId);
 
-    if(newActor.position)
-        newActor.position = position;
+    newActor.position = Position{position};
 
     return newActor;
 }

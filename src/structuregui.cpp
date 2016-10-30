@@ -19,9 +19,9 @@ bool showStructureGui(int32_t structureId, int32_t structureTypeId, GameData& da
         ImGui::Text("%s", "This airlock is neat!");
 
         std::string mode = "In";
-        if(airlock.currentMode == Airlock::Out)
+        if(airlock.currentMode == AirlockMode::Out)
             mode = "Out";
-        else if(airlock.currentMode == Airlock::Pumping)
+        else if(airlock.currentMode == AirlockMode::Pumping)
             mode = "Pumping";
 
         ImGui::Text("Current mode is %s", mode.c_str());

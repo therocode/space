@@ -2,9 +2,9 @@
 
 std::string toString(Incentive::Type type)
 {
-    if(type == Incentive::Breathe)
+    if(type == Incentive::BreatheIncentive)
         return "Breathe";
-    else if(type == Incentive::Work)
+    else if(type == Incentive::WorkIncentive)
         return "Work";
     else
     {

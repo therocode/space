@@ -58,28 +58,15 @@ namespace DebugGui
         return result;
     }
 
-    std::vector<std::string> airlockModeToStringList(Airlock::Mode mode)
+    std::vector<std::string> airlockModeToStringList(AirlockMode mode)
     {
-        if(mode == Airlock::In)
+        if(mode == AirlockMode::In)
             return {"In"};
-        else if(mode == Airlock::Out)
+        else if(mode == AirlockMode::Out)
             return {"Out"};
-        else if(mode == Airlock::Pumping)
+        else if(mode == AirlockMode::Pumping)
             return {"Pumping"};
         return {"Unknown"};
-    }
-
-    std::vector<std::string> debugHeaders(const TPosition& table)
-    {
-        return {"Position"};
-    }
-
-    void debugText(const glm::vec2& data, std::vector<std::vector<std::string>>& outText)
-    {
-        outText =
-        {
-            vec2ToStringList(data),
-        };
     }
 
     std::vector<std::string> debugHeaders(const TPhysics& table)
@@ -93,6 +80,33 @@ namespace DebugGui
         {
             vec2ToStringList(data.acceleration),
             vec2ToStringList(data.velocity),
+        };
+    }
+
+    std::vector<std::string> debugHeaders(const TPosition& table)
+    {
+        return {"Position",};
+    }
+
+    void debugText(const Position& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            vec2ToStringList(data.position),
+        };
+    }
+
+
+    std::vector<std::string> debugHeaders(const TWalkTarget& table)
+    {
+        return {"Position",};
+    }
+
+    void debugText(const WalkTarget& data, std::vector<std::vector<std::string>>& outText)
+    {
+        outText =
+        {
+            vec2ToStringList(data.position),
         };
     }
 
@@ -520,7 +534,7 @@ namespace DebugGui
 
         std::vector<std::string> strings;
 
-        for(auto& tile : data.path)
+        for(auto& tile : data.path.path)
         {
             std::string entry = std::to_string(tile.x) + "," + std::to_string(tile.y);
             strings.push_back(entry);
@@ -532,7 +546,7 @@ namespace DebugGui
         outText =
         {
             {
-                std::to_string(data.cost),
+                std::to_string(data.path.cost),
             },
             strings,
         };

@@ -13,7 +13,7 @@ ActionLogic::ActionLogic(GameData& data):
 struct NewTaskAction
 {
     int32_t aiId;
-    Ai::Type aiType;
+    AiType aiType;
     int32_t taskId;
     Task::Type taskType;
 };
@@ -29,10 +29,10 @@ void ActionLogic::update()
         const Action& action = get(actionId, mData.tAction);
         const Ai& ai = get(action.actorId, mData.tAi);
 
-        if(ai.type == Ai::Human)
+        if(ai.type == AiType::Human)
         {
             //solve actions here. Actions must be able to create actions without adding them in this loop since iterator invalidation
-            if(action.type == Action::Goto)
+            if(action.type == Action::GotoAction)
             {
                 auto result = humanGoto(action.actorId, actionId, mData);
                 if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
@@ -40,7 +40,7 @@ void ActionLogic::update()
                 else if(result.createdSubAction)
                     newActions.push_back(std::move(*result.createdSubAction));
             }
-            else if(action.type == Action::TotalPanic)
+            else if(action.type == Action::TotalPanicAction)
             {
                 auto result = humanTotalPanic(action.actorId, actionId, mData);
                 if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
@@ -48,13 +48,13 @@ void ActionLogic::update()
                 else if(result.createdSubAction)
                     newActions.push_back(std::move(*result.createdSubAction));
             }
-            else if(action.type == Action::FindWorkTask)
+            else if(action.type == Action::FindWorkTaskAction)
             {
                 auto replacementAction = humanFindWorkTask(action.actorId, actionId, mData);
                 if(replacementAction)
                     replacementActions.push_back(std::move(*replacementAction));
             }
-            else if(action.type == Action::ConstructWall)
+            else if(action.type == Action::ConstructWallAction)
             {
                 auto result = humanConstructWall(action.actorId, actionId, mData);
                 if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
@@ -62,7 +62,7 @@ void ActionLogic::update()
                 else if(result.createdSubAction)
                     newActions.push_back(std::move(*result.createdSubAction));
             }
-            else if(action.type == Action::ConstructDoor)
+            else if(action.type == Action::ConstructDoorAction)
             {
                 auto result = humanConstructDoor(action.actorId, actionId, mData);
                 if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
@@ -70,7 +70,7 @@ void ActionLogic::update()
                 else if(result.createdSubAction)
                     newActions.push_back(std::move(*result.createdSubAction));
             }
-            else if(action.type == Action::EquipSpaceSuit)
+            else if(action.type == Action::EquipSpaceSuitAction)
             {
                 auto result = humanEquipSpaceSuit(action.actorId, actionId, mData);
                 if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
@@ -96,27 +96,27 @@ void ActionLogic::update()
 
     for(const ActionVariant& newAction : newActions)
     {
-        if(newAction.type == Action::Goto)
+        if(newAction.type == Action::GotoAction)
         {
             addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<GotoAction>()), mData.tGotoAction, mData);  
         }
-        else if(newAction.type == Action::TotalPanic)
+        else if(newAction.type == Action::TotalPanicAction)
         {
             addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<TotalPanicAction>()), mData.tTotalPanicAction, mData);  
         }
-        else if(newAction.type == Action::FindWorkTask)
+        else if(newAction.type == Action::FindWorkTaskAction)
         {
             TH_ASSERT(false, "can never be childtask");
         }
-        else if(newAction.type == Action::ConstructWall)
+        else if(newAction.type == Action::ConstructWallAction)
         {
             addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<ConstructWallAction>()), mData.tConstructWallAction, mData);  
         }
-        else if(newAction.type == Action::ConstructDoor)
+        else if(newAction.type == Action::ConstructDoorAction)
         {
             addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<ConstructDoorAction>()), mData.tConstructDoorAction, mData);  
         }
-        else if(newAction.type == Action::EquipSpaceSuit)
+        else if(newAction.type == Action::EquipSpaceSuitAction)
         {
             addChildAction(newAction.actorId, *newAction.parentActionId, std::move(newAction.actionData.get<EquipSpaceSuitAction>()), mData.tEquipSpaceSuitAction, mData);  
         }

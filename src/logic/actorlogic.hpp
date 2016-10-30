@@ -1,5 +1,5 @@
 #pragma once
-#include "data.hpp"
+#include <data.hpp>
 #include "../actor.hpp"
 
 class ActorLogic

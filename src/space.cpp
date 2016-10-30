@@ -174,7 +174,7 @@ void Space::handleMessage(const MouseWheelMessage& message)
 void Space::startScenario()
 {
 	std::vector<int32_t> toRemove;
-	forEach([&] (const int32_t id, const glm::vec2&)
+	forEach([&] (const int32_t id, const Position&)
     {
 		toRemove.push_back(id);
     }, mData.tPosition);
@@ -217,12 +217,12 @@ void Space::startScenario()
     mData.atmosphere.set(offset + glm::ivec2(1, 1), cHealthyAtmosphere);
     mData.atmosphere.set(offset + glm::ivec2(2, 1), cHealthyAtmosphere);
 
-    createStructure(Structure{offset + glm::ivec2(2, 0), Structure::Airlock}, mData);
-    createStructure(Structure{offset + glm::ivec2(0, 0), Structure::CryoPods}, mData);
-    createStructure(Structure{offset + glm::ivec2(0, 1), Structure::CryoPods}, mData);
-    createStructure(Structure{offset + glm::ivec2(1, 1), Structure::Battery}, mData);
-    createStructure(Structure{offset + glm::ivec2(1, 0), Structure::Toilet}, mData);
-    int32_t crateId = createStructure(Structure{offset + glm::ivec2(2, 1), Structure::Crate}, mData);
+    createStructure(Structure{Structure::Airlock, offset + glm::ivec2(2, 0)}, mData);
+    createStructure(Structure{Structure::CryoPods, offset + glm::ivec2(0, 0)}, mData);
+    createStructure(Structure{Structure::CryoPods, offset + glm::ivec2(0, 1)}, mData);
+    createStructure(Structure{Structure::Battery, offset + glm::ivec2(1, 1)}, mData);
+    createStructure(Structure{Structure::Toilet, offset + glm::ivec2(1, 0)}, mData);
+    int32_t crateId = createStructure(Structure{Structure::Crate, offset + glm::ivec2(2, 1)}, mData);
     int32_t containerId = get(crateId, mData.tCrate).containerId;
     createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
     createItemInContainer(Item{Item::SpaceSuit, 100}, containerId, mData);
