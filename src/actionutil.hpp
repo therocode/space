@@ -21,7 +21,7 @@ struct ActionResult
 struct ActionCreateData
 {
     int32_t actorId;
-    Ai::Type aiType;
+    AiType aiType;
     int32_t taskId;
     Task::Type taskType;
 };
@@ -31,18 +31,18 @@ void clearActions(int32_t actorId, GameData& data);
 template <typename ActionType, typename DataTable>
 int32_t addAction(int32_t aiId, ActionType action, DataTable& table, GameData& data)
 {
-    int32_t newActionId = insert(Action{aiId, {}, ActionType::type}, data.tAction).id;
+    int32_t newActionId = insert(Action{ActionType::type, aiId, {}}, data.tAction).id;
     insert(newActionId, std::move(action), table);
     insert(newActionId, data.leafActions);
     return newActionId;
 }
 
-void createAction(int32_t aiId, Ai::Type aiType, Incentive::Type incentiveType, GameData& data);
-void createAction(int32_t aiId, Ai::Type aiType, int32_t taskId, Task::Type taskType, GameData& data);
+void createAction(int32_t aiId, AiType aiType, Incentive::Type incentiveType, GameData& data);
+void createAction(int32_t aiId, AiType aiType, int32_t taskId, Task::Type taskType, GameData& data);
 template <typename ActionType, typename DataTable>
 int32_t addChildAction(int32_t aiId, int32_t parentActionId, ActionType action, DataTable& table, GameData& data)
 {
-    int32_t newActionId = insert(Action{aiId, {parentActionId}, ActionType::type}, data.tAction).id;
+    int32_t newActionId = insert(Action{ActionType::type, aiId, {parentActionId}}, data.tAction).id;
     insert(newActionId, std::move(action), table);
     erase(parentActionId, data.leafActions);
     insert(newActionId, data.leafActions);

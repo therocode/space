@@ -11,11 +11,11 @@ void assignTask(int32_t taskId, int32_t actorId, GameData& data)
 
 std::string toString(Task::Type type)
 {
-    if(type == Task::Room)
+    if(type == Task::RoomTask)
         return "Room";
-    else if(type == Task::Door)
+    else if(type == Task::DoorTask)
         return "Door";
-    else if(type == Task::Wall)
+    else if(type == Task::WallTask)
         return "Wall";
     else
     {
@@ -44,12 +44,12 @@ float distanceToTask(const glm::vec2& position, int32_t taskId, GameData& data)
 {
     const Task& task = get(taskId, data.tTask);
 
-    if(task.type == Task::Wall)
+    if(task.type == Task::WallTask)
     {
         const WallTask& wallTask = get(taskId, data.tWallTask);
         return glm::distance(position, wallCenter(wallTask.position));
     }
-    else if(task.type == Task::Door)
+    else if(task.type == Task::DoorTask)
     {
         const DoorTask& doorTask = get(taskId, data.tDoorTask);
         return glm::distance(position, wallCenter(doorTask.position));

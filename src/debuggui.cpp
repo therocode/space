@@ -1,4 +1,5 @@
 #include "debuggui.hpp"
+#include "atmosphereutil.hpp"
 
 namespace DebugGui
 {
@@ -23,15 +24,12 @@ namespace DebugGui
         {
             text(("Name: " + idSet.meta.name).c_str());
 
-            if(idSet.meta.description)
-            {
-                text(("Description: " + *idSet.meta.description).c_str());
-            }
+            text(("Description: " + idSet.meta.description).c_str());
 
             text(("Entries: " + std::to_string(idSet.ids.size())).c_str());
             text(idSet.meta.sorted ? "sorted" : "unsorted");
 
-            static bool showData = false;
+            bool showData = false;
 
             MemoryInfo memory = memoryInfo(idSet);
             text("Memory: " + formatMemory(memory.dataSize) + " (" + formatMemory(memory.totalSize) + ")");

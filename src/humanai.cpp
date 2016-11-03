@@ -12,7 +12,7 @@
 ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
 {
     GotoAction& gotoAction = get(actionId, data.tGotoAction);
-    const glm::vec2& position = get(aiId, data.tPosition);
+    const glm::vec2& position = get(aiId, data.tPosition).position;
     glm::ivec2 start = position / 32.0f;
     glm::ivec2 end = gotoAction.target / 32.0f;
 
@@ -23,7 +23,7 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
         {
             gotoAction.pathId = path->pathId;
 
-            gotoAction.pathIndex = path->path.path.size() > 1 ? 1 : 0;
+            gotoAction.pathIndex = path->path.path.path.size() > 1 ? 1 : 0;
         }
         else
         {
@@ -38,7 +38,7 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
         {
             if(needsSpaceSuit(*path, data))
             {
-                if(gotoAction.allowUnbreathable == GotoAction::Disallow)
+                if(gotoAction.allowUnbreathable == AllowUnbreathable::Disallow)
                 {//I need a space suit but I am not allowed to find one
                     return {ActionResult::Fail};
                 }
@@ -52,9 +52,9 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
                 }
             }
 
-            if(*gotoAction.pathIndex < path->path.size() - 1)
+            if(*gotoAction.pathIndex < path->path.path.size() - 1)
             {
-                const glm::ivec2& nextTile = path->path[*gotoAction.pathIndex];
+                const glm::ivec2& nextTile = path->path.path[*gotoAction.pathIndex];
                 glm::vec2 nextPos = tileCenter(nextTile);
                 glm::ivec2 currentTile = static_cast<glm::ivec2>(position / 32.0f);
 
@@ -106,7 +106,7 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
 
                 if(glm::distance(position, nextPos) > 5.0f)
                 {
-                    set(aiId, nextPos, data.tWalkTarget);
+                    set(aiId, {nextPos}, data.tWalkTarget);
                 }
                 else
                 {
@@ -115,16 +115,16 @@ ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
             }
             else
             {
-                glm::vec2 nextPos = tileCenter(path->path[*gotoAction.pathIndex]);
+                glm::vec2 nextPos = tileCenter(path->path.path[*gotoAction.pathIndex]);
                 if(glm::distance(position, nextPos) > gotoAction.acceptableDistance)
                 {
-                    set(aiId, nextPos, data.tWalkTarget);
+                    set(aiId, {nextPos}, data.tWalkTarget);
                 }
                 else
                 {
                     if(glm::distance(position, gotoAction.target) > gotoAction.acceptableDistance)
                     {
-                        set(aiId, gotoAction.target, data.tWalkTarget);
+                        set(aiId, {gotoAction.target}, data.tWalkTarget);
                     }
                     else
                     {
@@ -148,8 +148,8 @@ ActionResult humanTotalPanic(int32_t aiId, int32_t actionId, GameData& data)
 {
     if(rand() % 10 == 0)
     {
-        auto newTarget = get(aiId, data.tPosition) + glm::circularRand(10.0f);
-        set(aiId, newTarget, data.tWalkTarget);
+        auto newTarget = get(aiId, data.tPosition).position + glm::circularRand(10.0f);
+        set(aiId, {newTarget}, data.tWalkTarget);
     }
 
     return {};
@@ -159,12 +159,12 @@ th::Optional<ActionCreateData> humanFindWorkTask(int32_t aiId, int32_t actionId,
 {
     if(count(data.unassignedTasks) > 0)
     {
-        int32_t takenTask = closestTask(get(aiId, data.tPosition), data.unassignedTasks, data);
+        int32_t takenTask = closestTask(get(aiId, data.tPosition).position, data.unassignedTasks, data);
         erase(takenTask, data.unassignedTasks);
         assignTask(takenTask, aiId, data);
         const Task& task = get(takenTask, data.tTask);
         
-        return {ActionCreateData{aiId, Ai::Human, takenTask, task.type}};
+        return {ActionCreateData{aiId, AiType::Human, takenTask, task.type}};
     }
 
     return {};
@@ -180,12 +180,12 @@ ActionResult humanConstructWall(int32_t aiId, int32_t actionId, GameData& data)
 
     const auto& targetTile = get(taskAction.taskId, data.tWallTask).position;
     auto targetPosition = wallCenter(targetTile);
-    const auto& currentPosition = get(aiId, data.tPosition);
+    const auto& currentPosition = get(aiId, data.tPosition).position;
     float acceptableDistance = 15.0f;
 
     if(glm::distance(currentPosition, targetPosition) > acceptableDistance)
     {
-        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}, GotoAction::Allow}}};
+        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}, AllowUnbreathable::Allow}}};
     }
     else
     {
@@ -216,7 +216,7 @@ ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
     bool changingWall = hasWall(targetWall, data);
     if(changingWall)
     {
-        glm::ivec2 startTile = get(aiId, data.tPosition) / 32.0f;
+        glm::ivec2 startTile = get(aiId, data.tPosition).position / 32.0f;
         glm::ivec2 otherTile = otherSide(targetWall);
         auto pathCost1 = findWorkerPathCost(startTile, targetTile, data);
         auto pathCost2 = findWorkerPathCost(startTile, otherTile, data);
@@ -246,12 +246,12 @@ ActionResult humanConstructDoor(int32_t aiId, int32_t actionId, GameData& data)
             targetPosition.y += offset;
     }
 
-    const auto& currentPosition = get(aiId, data.tPosition);
+    const auto& currentPosition = get(aiId, data.tPosition).position;
     float acceptableDistance = 15.0f;
 
     if(glm::distance(currentPosition, targetPosition) > acceptableDistance)
     {
-        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}, GotoAction::Allow}}};
+        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}, AllowUnbreathable::Allow}}};
     }
     else
     {
@@ -298,13 +298,13 @@ ActionResult humanEquipSpaceSuit(int32_t aiId, int32_t actionId, GameData& data)
 
     if(itemPosition)
     {
-        const glm::vec2& position = get(aiId, data.tPosition);
+        const glm::vec2& position = get(aiId, data.tPosition).position;
 
         float acceptableDistance = 15.0f;
 
         if(glm::distance(position, *itemPosition) > acceptableDistance)
         {
-            return ActionResult{ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{*itemPosition, acceptableDistance, {}, {}, GotoAction::Disallow}}};
+            return ActionResult{ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{*itemPosition, acceptableDistance, {}, {}, AllowUnbreathable::Disallow}}};
         }
         else
         {

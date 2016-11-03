@@ -40,7 +40,7 @@ int32_t createStructure(Structure structure, GameData& data)
 
     if(type == Structure::Airlock)
     {
-        insert(newId, Airlock{Airlock::In, {}, {}, {}}, data.tAirlock);
+        insert(newId, Airlock{AirlockMode::In, {}, {}, {}}, data.tAirlock);
     }
     else if(type == Structure::Crate)
     {

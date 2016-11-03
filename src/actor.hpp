@@ -6,12 +6,12 @@ enum ActorType { ENGINEER, };
 
 struct Actor
 {
-    th::Optional<glm::vec2> position;
+    Position position;
     th::Optional<Physics> physics;
     th::Optional<CollisionBox> collisionBox;
     th::Optional<MoveAbility> moveAbility;
     th::Optional<BloodValues> bloodValues;
     std::vector<ActorSprite> actorSprites;
     bool worker;
-    th::Optional<int32_t> ai;
+    th::Optional<AiType> ai;
 };

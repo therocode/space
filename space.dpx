@@ -1,0 +1,893 @@
+{
+    "data_types": [
+        {
+            "dependencies": [
+                "#include <cstdint>"
+            ],
+            "name": "int32",
+            "output": "int32_t"
+        },
+        {
+            "dependencies": [
+                "#include \"common.hpp\""
+            ],
+            "name": "table_id",
+            "output": "int32_t"
+        },
+        {
+            "dependencies": [
+                "#include <glm.hpp>"
+            ],
+            "name": "vec2",
+            "output": "glm::vec2"
+        },
+        {
+            "dependencies": [
+                "#include <fea/rendering/color.hpp>"
+            ],
+            "name": "color",
+            "output": "fea::Color"
+        },
+        {
+            "dependencies": [],
+            "name": "float",
+            "output": "float"
+        },
+        {
+            "dependencies": [
+                "#include <glm.hpp>"
+            ],
+            "name": "ivec2",
+            "output": "glm::ivec2"
+        },
+        {
+            "dependencies": [
+                "#include <wallposition.hpp>"
+            ],
+            "name": "wall_position",
+            "output": "WallPosition"
+        },
+        {
+            "dependencies": [
+                "#include <gases.hpp>"
+            ],
+            "name": "gases",
+            "output": "Gases"
+        },
+        {
+            "dependencies": [
+                "#include <airlockmode.hpp>"
+            ],
+            "name": "airlock_mode",
+            "output": "AirlockMode"
+        },
+        {
+            "dependencies": [
+                "#include <string>"
+            ],
+            "name": "string",
+            "output": "std::string"
+        },
+        {
+            "dependencies": [
+                "#include <cstring>"
+            ],
+            "name": "size_t",
+            "output": "size_t"
+        },
+        {
+            "dependencies": [
+                "#include <allowunbreathable.hpp>"
+            ],
+            "name": "allow_unbreathable",
+            "output": "AllowUnbreathable"
+        },
+        {
+            "dependencies": [
+                "#include <ai.hpp>"
+            ],
+            "name": "ai_type",
+            "output": "AiType"
+        },
+        {
+            "dependencies": [
+                "#include \"workerpathadaptor.hpp\""
+            ],
+            "name": "path",
+            "output": "fea::Pathfinder<WorkerPathAdaptor>::Result"
+        }
+    ],
+    "field_types": [
+        {
+            "dependencies": [],
+            "name": "default",
+            "output": "|type| |name|;"
+        },
+        {
+            "dependencies": [
+                "#include <thero/optional.hpp>"
+            ],
+            "name": "nullable",
+            "output": "th::Optional<|type|> |name|;"
+        },
+        {
+            "dependencies": [
+                "#include <vector>"
+            ],
+            "name": "list",
+            "output": "std::vector<|type|> |name|;"
+        }
+    ],
+    "settings": {
+        "human_readable": true,
+        "output_directory": "generated",
+        "templates": [
+            "dophax/templates/tables.dpt",
+            "dophax/templates/static_reflect.dpt",
+            "templates/gamedata.dpt"
+        ]
+    },
+    "tables": [
+        {
+            "columns": [
+                {
+                    "data_type": "vec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "acceleration"
+                },
+                {
+                    "data_type": "vec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "velocity"
+                }
+            ],
+            "description": "An entity's physics values",
+            "display_name": "Physics",
+            "external_id": true,
+            "inherits": null,
+            "name": "physics"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "actorId"
+                },
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "textureId"
+                },
+                {
+                    "data_type": "color",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "color"
+                }
+            ],
+            "description": "Many to many relationship between actors and sprites",
+            "display_name": "Actor Sprite",
+            "external_id": false,
+            "inherits": null,
+            "name": "actor_sprite"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "vec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "size"
+                }
+            ],
+            "description": "Collision volume of an entity",
+            "display_name": "Collision Box",
+            "external_id": true,
+            "inherits": null,
+            "name": "collision_box"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "vec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "direction"
+                },
+                {
+                    "data_type": "float",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "speedPercent"
+                }
+            ],
+            "description": "How entities intends to move",
+            "display_name": "Move Intention",
+            "external_id": true,
+            "inherits": null,
+            "name": "move_intention"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "ai_type",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "type"
+                }
+            ],
+            "description": "Information on the AI of an entity",
+            "display_name": "AI",
+            "external_id": true,
+            "inherits": null,
+            "name": "ai"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "priority"
+                }
+            ],
+            "description": "Base for different tasks",
+            "display_name": "Task",
+            "external_id": false,
+            "inherits": null,
+            "name": "task"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "ivec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                },
+                {
+                    "data_type": "ivec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "size"
+                }
+            ],
+            "description": "Task to build a room",
+            "display_name": "Room Task",
+            "external_id": true,
+            "inherits": "task",
+            "name": "room_task"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "wall_position",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                }
+            ],
+            "description": "Task to build a wall",
+            "display_name": "Wall Task",
+            "external_id": true,
+            "inherits": "task",
+            "name": "wall_task"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "wall_position",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                }
+            ],
+            "description": "Task to build a door",
+            "display_name": "Door Task",
+            "external_id": true,
+            "inherits": "task",
+            "name": "door_task"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "assigneeId"
+                }
+            ],
+            "description": "Task data showing who the task is assigned to",
+            "display_name": "Assigned Task",
+            "external_id": true,
+            "inherits": null,
+            "name": "assigned_task"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "weight"
+                }
+            ],
+            "description": "Base of items",
+            "display_name": "Item",
+            "external_id": false,
+            "inherits": null,
+            "name": "item"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "nullable",
+                    "field_type_variables": [],
+                    "name": "wearer"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "nullable",
+                    "field_type_variables": [],
+                    "name": "airTank"
+                }
+            ],
+            "description": "Item data that represents that it is wearable",
+            "display_name": "Wearable",
+            "external_id": true,
+            "inherits": null,
+            "name": "wearable"
+        },
+        {
+            "columns": [],
+            "description": "Container for items",
+            "display_name": "Item Container",
+            "external_id": false,
+            "inherits": null,
+            "name": "item_container"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "itemId"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "containerId"
+                }
+            ],
+            "description": "Many to many relationship describing what container an item is stored in",
+            "display_name": "Item Storing",
+            "external_id": false,
+            "inherits": null,
+            "name": "item_storing"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "capacity"
+                },
+                {
+                    "data_type": "gases",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "gases"
+                }
+            ],
+            "description": "A tank that carries air of a certain composition",
+            "display_name": "Air Tank",
+            "external_id": true,
+            "inherits": null,
+            "name": "air_tank"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "taskId"
+                }
+            ],
+            "description": "Worker busy information",
+            "display_name": "Busy Worker",
+            "external_id": true,
+            "inherits": null,
+            "name": "busy_worker"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "float",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "breathingCapability"
+                }
+            ],
+            "description": "Information on the choking level of an entity",
+            "display_name": "Choking",
+            "external_id": true,
+            "inherits": null,
+            "name": "choking"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "wall_position",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                }
+            ],
+            "description": "A door",
+            "display_name": "Door",
+            "external_id": false,
+            "inherits": null,
+            "name": "door"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "doorId"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "structureId"
+                }
+            ],
+            "description": "Many to many relationship indicating that a structure has locked a door",
+            "display_name": "Structure Door Lock",
+            "external_id": false,
+            "inherits": null,
+            "name": "structure_door_lock"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "ivec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "start"
+                },
+                {
+                    "data_type": "ivec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "end"
+                },
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "size"
+                },
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "pumpForce"
+                }
+            ],
+            "description": "Describes a leak between atmosphere zones",
+            "display_name": "Zone Leak",
+            "external_id": false,
+            "inherits": null,
+            "name": "zone_leak"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "ivec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                }
+            ],
+            "description": "Base for a structure",
+            "display_name": "Structure",
+            "external_id": false,
+            "inherits": null,
+            "name": "structure"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "airlock_mode",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "currentMode"
+                },
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "coolDown"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "list",
+                    "field_type_variables": [],
+                    "name": "doors"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "nullable",
+                    "field_type_variables": [],
+                    "name": "exit"
+                }
+            ],
+            "description": "Structure capable of locking doors and pumping gas to avoid air escaping a base",
+            "display_name": "Airlock",
+            "external_id": true,
+            "inherits": "structure",
+            "name": "airlock"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "containerId"
+                }
+            ],
+            "description": "A box for storing items",
+            "display_name": "Crate",
+            "external_id": true,
+            "inherits": "structure",
+            "name": "crate"
+        },
+        {
+            "columns": [],
+            "description": "Humans can be stored in this structure",
+            "display_name": "Cryo Pods",
+            "external_id": true,
+            "inherits": "structure",
+            "name": "cryo_pods"
+        },
+        {
+            "columns": [],
+            "description": "This structure can store and give back electricity",
+            "display_name": "Battery",
+            "external_id": true,
+            "inherits": "structure",
+            "name": "battery"
+        },
+        {
+            "columns": [],
+            "description": "Important structure in any facility. Has no toilet paper",
+            "display_name": "Toilet",
+            "external_id": true,
+            "inherits": "structure",
+            "name": "toilet"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "airlock_mode",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "targetMode"
+                },
+                {
+                    "data_type": "airlock_mode",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "currentlyPumping"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "leakId"
+                }
+            ],
+            "description": "Data for active airlocks",
+            "display_name": "Airlock Activity",
+            "external_id": true,
+            "inherits": null,
+            "name": "airlock_activity"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "oxygen"
+                }
+            ],
+            "description": "Current blood values of an entity",
+            "display_name": "Blood Values",
+            "external_id": true,
+            "inherits": null,
+            "name": "blood_values"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "string",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "name"
+                },
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "texture"
+                }
+            ],
+            "description": "Data for a specific type of structure",
+            "display_name": "Structure Type",
+            "external_id": true,
+            "inherits": null,
+            "name": "structure_type"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "actorId"
+                },
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "importance"
+                }
+            ],
+            "description": "Base type for different incentives",
+            "display_name": "Incentive",
+            "external_id": false,
+            "inherits": null,
+            "name": "incentive"
+        },
+        {
+            "columns": [],
+            "description": "Incentive to breathe to not die",
+            "display_name": "Breathe Incentive",
+            "external_id": true,
+            "inherits": "incentive",
+            "name": "breathe_incentive"
+        },
+        {
+            "columns": [],
+            "description": "Incentive to work to fulfil duties",
+            "display_name": "Work Incentive",
+            "external_id": true,
+            "inherits": "incentive",
+            "name": "work_incentive"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "actorId"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "nullable",
+                    "field_type_variables": [],
+                    "name": "parentAction"
+                }
+            ],
+            "description": "Base type for actions that agents perform to solve things",
+            "display_name": "Action",
+            "external_id": false,
+            "inherits": null,
+            "name": "action"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "actionId"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "taskId"
+                }
+            ],
+            "description": "Many to many relationship describing that a task is being solved by an action",
+            "display_name": "Task Action",
+            "external_id": false,
+            "inherits": null,
+            "name": "task_action"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "vec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "target"
+                },
+                {
+                    "data_type": "float",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "acceptableDistance"
+                },
+                {
+                    "data_type": "table_id",
+                    "field_type": "nullable",
+                    "field_type_variables": [],
+                    "name": "pathId"
+                },
+                {
+                    "data_type": "size_t",
+                    "field_type": "nullable",
+                    "field_type_variables": [],
+                    "name": "pathIndex"
+                },
+                {
+                    "data_type": "allow_unbreathable",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "allowUnbreathable"
+                }
+            ],
+            "description": "The action of going to a specific spot",
+            "display_name": "Goto Action",
+            "external_id": true,
+            "inherits": "action",
+            "name": "goto_action"
+        },
+        {
+            "columns": [],
+            "description": "The action of getting and putting on a space suit",
+            "display_name": "Equip Space Suit Action",
+            "external_id": true,
+            "inherits": "action",
+            "name": "equip_space_suit_action"
+        },
+        {
+            "columns": [],
+            "description": "The action of panicking",
+            "display_name": "Total Panic Action",
+            "external_id": true,
+            "inherits": "action",
+            "name": "total_panic_action"
+        },
+        {
+            "columns": [],
+            "description": "The action of finding a new task to solve",
+            "display_name": "Find Work Task Action",
+            "external_id": true,
+            "inherits": "action",
+            "name": "find_work_task_action"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "workLeft"
+                }
+            ],
+            "description": "The action of constructing a wall",
+            "display_name": "Construct Wall Action",
+            "external_id": true,
+            "inherits": "action",
+            "name": "construct_wall_action"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "workLeft"
+                }
+            ],
+            "description": "The action of constructing a door",
+            "display_name": "Construct Door Action",
+            "external_id": true,
+            "inherits": "action",
+            "name": "construct_door_action"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "vec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                }
+            ],
+            "description": "The position of an entity",
+            "display_name": "Position",
+            "external_id": false,
+            "inherits": null,
+            "name": "position"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "path",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "path"
+                }
+            ],
+            "description": "A path in the world",
+            "display_name": "Path",
+            "external_id": false,
+            "inherits": null,
+            "name": "path"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "vec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                }
+            ],
+            "description": "Target for walking for an entity",
+            "display_name": "Walk Target",
+            "external_id": true,
+            "inherits": null,
+            "name": "walk_target"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "float",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "maxSpeed"
+                },
+                {
+                    "data_type": "float",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "maxAcceleration"
+                }
+            ],
+            "description": "How well an entity can move",
+            "display_name": "Move Ability",
+            "external_id": true,
+            "inherits": null,
+            "name": "move_ability"
+        },
+        {
+            "columns": [],
+            "description": "Space suit item",
+            "display_name": "",
+            "external_id": true,
+            "inherits": "item",
+            "name": "space_suit"
+        }
+    ]
+}

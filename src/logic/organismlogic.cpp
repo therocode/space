@@ -1,4 +1,5 @@
 #include "organismlogic.hpp"
+#include "../atmosphereutil.hpp"
 
 OrganismLogic::OrganismLogic(GameData& data):
     mData(data)
@@ -10,8 +11,9 @@ void OrganismLogic::update()
     clear(mData.died);
     clear(mData.tChoking);
 
-    join([&] (int32_t id, const glm::vec2& position, BloodValues& bloodValue)
+    join([&] (int32_t id, const Position& positionStruct, BloodValues& bloodValue)
     {
+        const glm::vec2& position = positionStruct.position;
         glm::ivec2 tile = position / 32.0f;       
 
         th::Optional<int32_t> airTank;
@@ -44,16 +46,20 @@ void OrganismLogic::update()
 		    bloodValue.oxygen += amount;
 		    gases[Oxygen] -= amount;
 
-            if(bloodValue.oxygen < 450)
+            auto breatheIncentive = findOne([&] (int32_t incentiveId, const BreatheIncentive& incentive)
             {
-                auto breatheIncentive = findOne([&] (int32_t incentiveId, const BreatheIncentive& incentive)
-                {
-                    return get(incentiveId, mData.tIncentive).actorId == id;
-                }, mData.tBreatheIncentive);
+                return get(incentiveId, mData.tIncentive).actorId == id;
+            }, mData.tBreatheIncentive);
 
-                if(breatheIncentive)
+            if(breatheIncentive)
+            {
+                if(bloodValue.oxygen < 450)
                 {
                     get(breatheIncentive->id, mData.tIncentive).importance = 550-bloodValue.oxygen;
+                }
+                else
+                {
+                    get(breatheIncentive->id, mData.tIncentive).importance = 0;
                 }
             }
         }

@@ -5,7 +5,7 @@
 template <typename TaskTable>
 void addTask(typename TaskTable::Type taskData, TaskTable& table, GameData& data)
 {
-    int32_t newId = insert({100, TaskTable::Type::type}, data.tTask).id;
+    int32_t newId = insert({TaskTable::Type::type, 100}, data.tTask).id;
     insert(newId, std::move(taskData), table);
     insert(newId, data.unassignedTasks);
 }

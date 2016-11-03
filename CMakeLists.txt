@@ -10,8 +10,15 @@ project(${project_name})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -Wall -Wextra -Werror -Wshadow -Wconversion -Wno-long-long -pedantic -Wno-unused-parameter -Wno-unused-variable -Wno-format-pedantic -Wno-conversion")
 
+add_custom_target(
+    dophax_gen
+    COMMAND dophax_gen ${CMAKE_CURRENT_LIST_DIR}/space.dpx
+)
+
 file(GLOB_RECURSE source_files "src/*.cpp")
 file(GLOB_RECURSE header_files "src/*.hpp")
+file(GLOB_RECURSE generated_source_files "generated/*.cpp")
+file(GLOB_RECURSE generated_header_files "generated/*.hpp")
 
 if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
@@ -51,11 +58,17 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
 endif()
 
 include_directories("json/src")
-include_directories("src/data")
+
+include_directories("dophax/datatables")
+include_directories("generated")
+include_directories("src")
+file(GLOB_RECURSE dophax_source_files "dophax/datatables/*.cpp")
+file(GLOB_RECURSE dophax_header_files "dophax/datatables/*.h")
 
 include_directories("imgui")
 file(GLOB_RECURSE imgui_source_files "imgui/*.cpp")
 file(GLOB_RECURSE imgui_header_files "imgui/*.h")
 
-add_executable(${executable_name} ${header_files} ${source_files} ${imgui_header_files} ${imgui_source_files})
+add_executable(${executable_name} ${header_files} ${source_files} ${generated_header_files} ${generated_source_files} ${dophax_source_files} ${dophax_header_files} ${imgui_header_files} ${imgui_source_files})
+add_dependencies(${executable_name} dophax_gen)
 target_link_libraries(${executable_name} ${FEATHERKIT_LIBRARIES} ${OPENGL_LIBRARIES})

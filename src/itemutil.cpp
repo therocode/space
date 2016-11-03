@@ -27,7 +27,7 @@ std::string toString(Item::Type type)
 bool needsSpaceSuit(const Path& path, GameData& data)
 {
     bool needsSuit = false;
-    for(const glm::ivec2& tile : path.path)
+    for(const glm::ivec2& tile : path.path.path)
     {
         const Gases& gases = data.atmosphere.at(tile);
 

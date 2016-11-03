@@ -1,8 +1,8 @@
 #include "aiutil.hpp"
 
-std::string toString(Ai::Type type)
+std::string toString(AiType type)
 {
-    if(type == Ai::Human)
+    if(type == AiType::Human)
         return "Human";
     else
     {

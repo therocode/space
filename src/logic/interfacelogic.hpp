@@ -5,10 +5,10 @@
 #include <fea/render2d.hpp>
 #include <fea/userinterface.hpp>
 #include <data.hpp>
-#include "../util/numberpool.hpp"
 #include <fea/util.hpp>
 #include <unordered_set>
 #include "../wallposition.hpp"
+#include "../atmosphereutil.hpp"
 
 class Space;
 
@@ -47,6 +47,7 @@ class InterfaceLogic
             DRAGGING_ROOM, PLANNING_ROOM,
             INTERACT_STRUCTURE,
             PLACING_DOORS,
+            PAINT_ATMOSPHERE,
         };
 
         InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
@@ -64,6 +65,7 @@ class InterfaceLogic
         th::Optional<glm::ivec2> mDragEnd;
         th::Optional<RoomPlanInfo> mRoomPlan;
         th::Optional<DoorsPlanInfo> mDoorsPlan;
+        Gases mAtmosphereColor = cHealthyAtmosphere;
 
         th::Optional<StructureInteraction> mStructureInteraction;
 

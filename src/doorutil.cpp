@@ -1,6 +1,7 @@
 #include "doorutil.hpp"
 #include "wallutil.hpp"
 #include "gases.hpp"
+#include "atmosphereutil.hpp"
 
 void createDoor(Door door, GameData& data)
 {

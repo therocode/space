@@ -8,7 +8,7 @@ th::Optional<PathEntry> findWorkerPath(const glm::ivec2& start, const glm::ivec2
 
     auto pathEntry = findOne([&](int32_t id, const Path& path)
     {
-        return path.path.front() == start && path.path.back() == end;
+        return path.path.path.front() == start && path.path.path.back() == end;
     }, data.tPath);
 
     if(pathEntry)
@@ -17,9 +17,9 @@ th::Optional<PathEntry> findWorkerPath(const glm::ivec2& start, const glm::ivec2
     }
     else
     {
-        Path path = pathfinder.findPath(adaptor, start, end);
+        Path path = {pathfinder.findPath(adaptor, start, end)};
 
-        if(path.path.size() > 0)
+        if(path.path.path.size() > 0)
         {
             auto added  = insert(std::move(path), data.tPath);
 
@@ -32,7 +32,7 @@ th::Optional<PathEntry> findWorkerPath(const glm::ivec2& start, const glm::ivec2
 
 bool wallObstructsPath(int32_t pathId, WallPosition wallPosition, GameData& data)
 {
-    const auto& path = get(pathId, data.tPath).path;
+    const auto& path = get(pathId, data.tPath).path.path;
 
     if(path.size() < 2)
         return false;
@@ -66,7 +66,7 @@ th::Optional<int32_t> findWorkerPathCost(const glm::vec2& start, const glm::vec2
 
     if(path)
     {
-        return path->path.cost;
+        return path->path.path.cost;
     }
     else
         return {};

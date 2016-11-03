@@ -8,6 +8,7 @@
 #include "../roomutil.hpp"
 #include "../doorutil.hpp"
 #include "../wallutil.hpp"
+#include "../atmosphereutil.hpp"
 
 InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
@@ -52,6 +53,11 @@ void InterfaceLogic::update()
     if(ImGui::SmallButton("Create scenario"))
     {
 		mSpace.startScenario();
+    }
+
+    if(ImGui::SmallButton("Paint atmosphere"))
+    {
+        mState = PAINT_ATMOSPHERE;
     }
 
     ImGui::End();
@@ -336,6 +342,10 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
                     mDoorsPlan->doors.erase(*clickedWall);
             }
         }
+        else if(mState == PAINT_ATMOSPHERE)
+        {
+            setAtmosphere(tile, mAtmosphereColor, mData);
+        }
     }
 }
 
@@ -347,6 +357,10 @@ void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
     if(mState == DRAGGING_ROOM && mDragStart)
     {
         mDragStart = tile;
+    }
+    else if(mState == PAINT_ATMOSPHERE)
+    {
+        setAtmosphere(tile, mAtmosphereColor, mData);
     }
 }
 
@@ -397,6 +411,8 @@ std::string InterfaceLogic::stateToString(State state) const
         return "Structure Interaction";
     else if(state == PLACING_DOORS)
         return "Place doors on walls";
+    else if(state == PAINT_ATMOSPHERE)
+        return "Paint atmosphere";
     else
         return "None";
 }

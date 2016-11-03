@@ -38,7 +38,7 @@ void RenderLogic::renderSprites()
 
      forEach([&] (int32_t actorId, const ActorSprite& sprite)
     {
-        const glm::vec2& position = get(sprite.actorId, mData.tPosition);
+        const glm::vec2& position = get(sprite.actorId, mData.tPosition).position;
 
         fea::Color color = sprite.color;
         if(findOne([&](int32_t id, const Wearable& wearable)

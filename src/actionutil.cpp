@@ -19,15 +19,15 @@ void clearActions(int32_t actorId, GameData& data)
         deleteAction(actionId, data);
 }
 
-void createAction(int32_t aiId, Ai::Type aiType, Incentive::Type incentiveType, GameData& data)
+void createAction(int32_t aiId, AiType aiType, Incentive::Type incentiveType, GameData& data)
 {
-    if(aiType == Ai::Human)
+    if(aiType == AiType::Human)
     {
-        if(incentiveType == Incentive::Breathe)
+        if(incentiveType == Incentive::BreatheIncentive)
         {
             addAction(aiId, TotalPanicAction{}, data.tTotalPanicAction, data);
         }
-        else if(incentiveType == Incentive::Work)
+        else if(incentiveType == Incentive::WorkIncentive)
         {
             addAction(aiId, FindWorkTaskAction{}, data.tFindWorkTaskAction, data);
         }
@@ -42,16 +42,16 @@ void createAction(int32_t aiId, Ai::Type aiType, Incentive::Type incentiveType, 
     }
 }
 
-void createAction(int32_t aiId, Ai::Type aiType, int32_t taskId, Task::Type taskType, GameData& data)
+void createAction(int32_t aiId, AiType aiType, int32_t taskId, Task::Type taskType, GameData& data)
 {
-    if(aiType == Ai::Human)
+    if(aiType == AiType::Human)
     {
-        if(taskType == Task::Door)
+        if(taskType == Task::DoorTask)
         {
             int32_t newActionId = addAction(aiId, ConstructDoorAction{100}, data.tConstructDoorAction, data);
             insert({newActionId, taskId}, data.tTaskAction);
         }
-        else if(taskType == Task::Wall)
+        else if(taskType == Task::WallTask)
         {
             int32_t newActionId = addAction(aiId, ConstructWallAction{100}, data.tConstructWallAction, data);
             insert({newActionId, taskId}, data.tTaskAction);
@@ -69,17 +69,17 @@ void createAction(int32_t aiId, Ai::Type aiType, int32_t taskId, Task::Type task
 
 std::string toString(Action::Type type)
 {
-    if(type == Action::Goto)
+    if(type == Action::GotoAction)
         return {"Goto"};
-    else if(type == Action::TotalPanic)
+    else if(type == Action::TotalPanicAction)
         return {"Total Panic"};
-    else if(type == Action::FindWorkTask)
+    else if(type == Action::FindWorkTaskAction)
         return {"Find work task"};
-    else if(type == Action::ConstructWall)
+    else if(type == Action::ConstructWallAction)
         return {"Construct Wall"};
-    else if(type == Action::ConstructDoor)
+    else if(type == Action::ConstructDoorAction)
         return {"Construct Door"};
-    else if(type == Action::EquipSpaceSuit)
+    else if(type == Action::EquipSpaceSuitAction)
         return {"Equip space suit"};
     else
     {
@@ -92,17 +92,17 @@ void deleteAction(int32_t actionId, GameData& data)
 {
     const Action& action = get(actionId, data.tAction);
     erase(actionId, data.leafActions);
-    if(action.type == Action::TotalPanic)
+    if(action.type == Action::TotalPanicAction)
         erase(actionId, data.tTotalPanicAction);
-    else if(action.type == Action::Goto)
+    else if(action.type == Action::GotoAction)
         erase(actionId, data.tGotoAction);
-    else if(action.type == Action::FindWorkTask)
+    else if(action.type == Action::FindWorkTaskAction)
         erase(actionId, data.tFindWorkTaskAction);
-    else if(action.type == Action::ConstructWall)
+    else if(action.type == Action::ConstructWallAction)
         erase(actionId, data.tConstructWallAction);
-    else if(action.type == Action::ConstructDoor)
+    else if(action.type == Action::ConstructDoorAction)
         erase(actionId, data.tConstructDoorAction);
-    else if(action.type == Action::EquipSpaceSuit)
+    else if(action.type == Action::EquipSpaceSuitAction)
         erase(actionId, data.tEquipSpaceSuitAction);
     else
     {
