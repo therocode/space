@@ -1,4 +1,5 @@
 #include "debuggui.hpp"
+#include "atmosphereutil.hpp"
 
 namespace DebugGui
 {

@@ -8,6 +8,7 @@
 #include "../roomutil.hpp"
 #include "../doorutil.hpp"
 #include "../wallutil.hpp"
+#include "../atmosphereutil.hpp"
 
 InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
@@ -343,7 +344,7 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
         }
         else if(mState == PAINT_ATMOSPHERE)
         {
-            mData.atmosphere.set(tile, mAtmosphereColor);
+            setAtmosphere(tile, mAtmosphereColor, mData);
         }
     }
 }
@@ -359,7 +360,7 @@ void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
     }
     else if(mState == PAINT_ATMOSPHERE)
     {
-        mData.atmosphere.set(tile, mAtmosphereColor);
+        setAtmosphere(tile, mAtmosphereColor, mData);
     }
 }
 

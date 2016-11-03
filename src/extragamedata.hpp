@@ -18,3 +18,10 @@ WallChanges wallChanges;
 Zones zones;
 Grid<Gases> atmosphere;
 Grid<GridNeighbors<Gases>> atmosphereNeighbors;
+
+Gases defaultAtmosphere =
+{{
+    static_cast<int32_t>(50000 * 0.0f), //oxygene
+    static_cast<int32_t>(50000 * 0.0f), //nitrogen
+    static_cast<int32_t>(50000 * 0.0f), //carbondioxide
+}};

@@ -1,4 +1,5 @@
 #include "organismlogic.hpp"
+#include "../atmosphereutil.hpp"
 
 OrganismLogic::OrganismLogic(GameData& data):
     mData(data)

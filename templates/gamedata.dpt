@@ -14,4 +14,10 @@ struct GameData
 
 #include <extragamedata.hpp>
 };
+
+template <typename F>
+void forEachTable(F f, GameData& data)
+{
+    //f(data.t);
+}
 @end@
