@@ -1,4 +1,5 @@
 #include "atmosphereutil.hpp"
+#include "tileutil.hpp"
 #include <cstdint>
 #include <cstdlib>
 #include <numeric>
@@ -34,5 +35,5 @@ float pressurePercent(const Gases& gases)
 void setAtmosphere(glm::ivec2 tile, const Gases& gases, GameData& data)
 {
     data.atmosphere.set(tile, gases);
-    //fill data on what tiles are active
+    data.activeAtmosphereIndices.insert(toIndex(tile, data.atmosphere));
 }

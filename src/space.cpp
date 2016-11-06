@@ -312,6 +312,4 @@ void Space::temp()
             closeDoor(id, mData);
         }
     }, mData.tDoor);
-
-    mAtmosphereLogic.scanActive(); //gather this data in setAtmosphere
 }

@@ -65,7 +65,7 @@ class InterfaceLogic
         th::Optional<glm::ivec2> mDragEnd;
         th::Optional<RoomPlanInfo> mRoomPlan;
         th::Optional<DoorsPlanInfo> mDoorsPlan;
-        Gases mAtmosphereColor = cHealthyAtmosphere;
+        Gases mAtmosphereColor = cWtfAtmosphere;
 
         th::Optional<StructureInteraction> mStructureInteraction;
 

@@ -18,6 +18,7 @@ WallChanges wallChanges;
 Zones zones;
 Grid<Gases> atmosphere;
 Grid<GridNeighbors<Gases>> atmosphereNeighbors;
+std::set<size_t> activeAtmosphereIndices;
 
 Gases defaultAtmosphere =
 {{
