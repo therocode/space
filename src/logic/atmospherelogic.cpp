@@ -1,9 +1,11 @@
 #include "atmospherelogic.hpp"
 #include "atmosphereutil.hpp"
+#include "tileutil.hpp"
 #include "../debug.hpp"
 
 AtmosphereLogic::AtmosphereLogic(GameData& data):
-    mData(data)
+    mData(data),
+    mRandomGen(0)
 {
 }
 
@@ -17,11 +19,11 @@ struct PressureDifference
 
 void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
 {
-    (void)mData;
-    updateBigChanges();
-    updatePassive();
+    mActiveToAdd.clear();
     if(mAtmosphereDifference.size().x == 0)
         mAtmosphereDifference = {mData.atmosphere.size(), Gases{}};
+
+    size_t before = mData.activeAtmosphereIndices.size();
 
     mAtmosphereDifference.fill(Gases{});
 
@@ -33,23 +35,28 @@ void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
 
     std::vector<PressureDifference> pressureDifferences;
     std::vector<size_t> recentDifferences;
-    pressureDifferences.reserve(mActive.size());
+    pressureDifferences.reserve(mData.activeAtmosphereIndices.size());
 
-    for(size_t activeTileIndex : mActive)
+    //big changes 
+
+    for(size_t activeTileIndex : mData.activeAtmosphereIndices)
     {
         const GridNeighbors<Gases>& neighbors = startNeighborsPointer[activeTileIndex];
         const Gases& currentGases = startGasesPointer[activeTileIndex];
+        int32_t totalGas = pressure(currentGases);
         
         size_t neighborAmount = neighbors.neighborCount;
         std::fill(neighborDifferences.begin(), neighborDifferences.end(), 0);
         
         int32_t totalDifference = 0;
         recentDifferences.clear();
+
+        int32_t neighborsWithDifferences = 0;
         for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
         {
             const Gases& neighborGases = *neighbors.neighbors[neighborIndex].second;
 
-            int64_t pressureDifference = pressure(currentGases) - pressure(neighborGases);
+            int64_t pressureDifference = totalGas - pressure(neighborGases);
             if(pressureDifference > 0)
             {
                 pressureDifferences.push_back(PressureDifference
@@ -61,13 +68,14 @@ void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
                 });
                 totalDifference += pressureDifferences.back().difference;
                 recentDifferences.push_back(pressureDifferences.size() - 1);
+                ++neighborsWithDifferences;
             }
         }
 
         for(size_t diffIndex : recentDifferences)
         {
             auto& diff = pressureDifferences[diffIndex];
-            diff.percent = (static_cast<float>(diff.difference) / totalDifference) / 4.0f;
+            diff.percent = (static_cast<float>(diff.difference) / totalGas) / static_cast<float>(neighborsWithDifferences + 1);
         }
     }
 
@@ -78,77 +86,60 @@ void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
         auto& sourceGasesDifference = startGasesDifferencePointer[pressureDifference.source];
         auto& targetGasesDifference = startGasesDifferencePointer[pressureDifference.target];
 
+
+        bool didChange = false;
+
         for(size_t gasIndex = 0; gasIndex < targetGasesDifference.size(); ++gasIndex)
         {
-            int32_t toTransfer = static_cast<int32_t>((sourceGases[gasIndex] - targetGases[gasIndex]) * pressureDifference.percent);
+            int32_t toTransfer = static_cast<int32_t>(sourceGases[gasIndex] * pressureDifference.percent);
+
 
             if(toTransfer > 0)
             {
                 targetGasesDifference[gasIndex] += toTransfer;
                 sourceGasesDifference[gasIndex] -= toTransfer;
+                didChange = true;
+            }
+        }
+
+        if(didChange)
+            mActiveToAdd.insert(pressureDifference.target);
+    }
+
+    //random variations
+
+    std::uniform_int_distribution<> randomPercent(0, 100);
+    std::uniform_int_distribution<> randomGas(0, Gas_Count - 1);
+    std::uniform_int_distribution<> randomTransferAmount(0, 20);
+
+    for(size_t sourceIndex : mData.activeAtmosphereIndices)
+    {
+        const GridNeighbors<Gases>& neighbors = startNeighborsPointer[sourceIndex];
+        for(size_t neighborIndex = 0; neighborIndex < neighbors.neighborCount; ++ neighborIndex)
+        {
+            if(randomPercent(mRandomGen) < 10)
+            {
+                size_t gasIndex = static_cast<size_t>(randomGas(mRandomGen));
+                int64_t transferAmount = 5 + randomTransferAmount(mRandomGen);
+
+                size_t targetIndex = neighbors.neighbors[neighborIndex].first;
+                int32_t& targetGasDifference = startGasesDifferencePointer[targetIndex][gasIndex];
+                int32_t& sourceGasDifference = startGasesDifferencePointer[sourceIndex][gasIndex];
+                int64_t targetGasAmount = startGasesPointer[targetIndex][gasIndex] + targetGasDifference;
+                int64_t sourceGasAmount = startGasesPointer[sourceIndex][gasIndex] + sourceGasDifference;
+                transferAmount = std::min(sourceGasAmount, transferAmount);
+
+                if(transferAmount > 0)
+                {
+                    targetGasDifference += transferAmount;
+                    sourceGasDifference -= transferAmount;
+                    mActiveToAdd.insert(targetIndex);
+                }
             }
         }
     }
-       
-    //for every neighbour
-    //   fill list of differences in pressure, storing 2 tiles, source and target and write to a second structure how big the difference is or something
-    //
-    //for every tile in list of differences in pressure
-    //   calculate how much to spread and write differences to mAtmosphereDifference
-    //
-    //apply mAtmosphereDifference
 
-    //const int32_t* startZoneIdPointer = &mData.zones.zones.at({0, 0});
-    //size_t amount = static_cast<size_t>(mData.zones.zones.size().x * mData.zones.zones.size().y);
-    //for(size_t currentTileIndex = 0; currentTileIndex < amount; ++currentTileIndex)
-    //{
-    //    const GridNeighbors<Gases>& neighbors = startNeighborsPointer[currentTileIndex];
-    //    Gases gasDifference;
-    //    int32_t zoneId = startZoneIdPointer[currentTileIndex];
-    //    const Gases& currentGases = startGasesPointer[currentTileIndex];
-    //    size_t neighborAmount = neighbors.neighborCount;
-    //    std::fill(neighborDifferences.begin(), neighborDifferences.end(), 0);
-
-    //    for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
-    //    {
-    //        const Gases& neighborGases = *neighbors.neighbors[neighborIndex].second;
-
-    //        for(size_t gasIndex = 0; gasIndex < currentGases.size(); ++gasIndex)
-    //        {
-    //            neighborDifferences[neighborIndex] += (currentGases[gasIndex] - neighborGases[gasIndex]);
-    //        }
-    //    }
-
-    //    int32_t totalDifference = 0;
-    //    for(size_t differenceIndex = 0; differenceIndex < neighborAmount; ++differenceIndex)
-    //        totalDifference += neighborDifferences[differenceIndex];
-
-    //    float transferRate = std::abs(totalDifference / 10000.0f) / neighborAmount;
-    //    transferRate = std::min(0.0625f, std::max(0.05f, transferRate));
-
-    //    if(totalDifference)
-    //    {
-    //        auto& sourceGasesDifference = startGasesDifferencePointer[currentTileIndex];
-    //        for(size_t neighborIndex = 0; neighborIndex < neighborAmount; ++neighborIndex)
-    //        {
-    //            auto& targetGasesDifference = startGasesDifferencePointer[neighbors.neighbors[neighborIndex].first];
-    //            const Gases& neighborGases = *neighbors.neighbors[neighborIndex].second;
-
-    //            if(neighborDifferences[neighborIndex])
-    //            {
-    //                for(size_t gasIndex = 0; gasIndex < targetGasesDifference.size(); ++gasIndex)
-    //                {
-    //                    int32_t toTransfer = static_cast<int32_t>((currentGases[gasIndex] - neighborGases[gasIndex]) * transferRate);
-    //                    if(toTransfer > 0)
-    //                    {
-    //                        targetGasesDifference[gasIndex] += toTransfer;
-    //                        sourceGasesDifference[gasIndex] -= toTransfer;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+    //apply diff
 
     size_t amount = static_cast<size_t>(mData.zones.zones.size().x * mData.zones.zones.size().y);
     for(size_t currentTileIndex = 0; currentTileIndex < amount; ++currentTileIndex)
@@ -188,29 +179,72 @@ void AtmosphereLogic::update(const Grid<GridNeighbors<Gases>>& allNeighbors)
                 sourceGases[gasIndex] -= toTransfer;
             }
         }
+
+        mActiveToAdd.insert(toIndex(leak.end, mData.atmosphere));
     }, mData.tZoneLeak);
+
+    mData.activeAtmosphereIndices.insert(mActiveToAdd.begin(), mActiveToAdd.end());
+
+    //fade to normal atmos
+
+    std::vector<size_t> toErase;
+
+    for(size_t activeTile : mData.activeAtmosphereIndices)
+    {
+        if(mData.zones.zones.at(fromIndex(activeTile, mData.atmosphere)) == 0)
+        {
+            Gases& gases = startGasesPointer[activeTile];
+
+            if(gases != mData.defaultAtmosphere)
+            {
+                for(size_t gasIndex = 0; gasIndex < Gas_Count; ++gasIndex)
+                {
+                    int64_t fadeAmount = std::min(10, std::max(-10, mData.defaultAtmosphere[gasIndex] - gases[gasIndex]));
+
+                    gases[gasIndex] += fadeAmount;
+                }
+            }
+            else
+                toErase.push_back(activeTile);
+        }
+    }
+
+    for(size_t erase : toErase)
+    {
+        mData.activeAtmosphereIndices.erase(erase);
+    }
+
+    TH_ASSERT(assertSanity(), "");
 }
 
 void AtmosphereLogic::scanActive()
 {
-    mActive.clear();
+    mData.activeAtmosphereIndices.clear();
     const auto& defaultAtmosphere = mData.defaultAtmosphere;
     size_t index = 0;
+
     for(int32_t y = 0; y < mData.atmosphere.size().y; ++y)
     {
         for(int32_t x = 0; x < mData.atmosphere.size().x; ++x)
         {
             if(mData.atmosphere.at({x, y}) != defaultAtmosphere)
-                mActive.push_back(index);
+                mData.activeAtmosphereIndices.insert(index);
             ++index;
         }
     }
 }
 
-void AtmosphereLogic::updateBigChanges()
+bool AtmosphereLogic::assertSanity()
 {
-}
+    std::array<int64_t, Gas_Count> amounts = {};
 
-void AtmosphereLogic::updatePassive()
-{
+    for(size_t i = 0; i < static_cast<size_t>(mData.atmosphere.size().x * mData.atmosphere.size().y); ++i)
+    {
+        for(size_t gasIndex = 0; gasIndex < Gas_Count; ++gasIndex)
+        {
+            TH_ASSERT(mData.atmosphere.at(i)[gasIndex] >= 0, "Negative gas!!!");
+        }
+    }
+
+    return true;
 }

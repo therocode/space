@@ -37,5 +37,3 @@ class WallMap
         std::vector<int32_t> mHorizontalWalls;
         std::vector<int32_t> mVerticalWalls;
 };
-
-void set(const WallPosition& position, int32_t type, const WallMap& walls, WallChanges& changes);

@@ -35,6 +35,19 @@ class InterfaceLogic
         th::Optional<glm::ivec2> initialPos;
     };
 
+    struct PaintAtmosphereInfo
+    {
+        Gases atmosphereColor = cHealthyAtmosphere;
+    };
+
+    struct EditWallsDoorsInfo
+    {
+        enum PlaceState { Walls, Doors, Lock };
+        enum ToggleState { On, Off };
+        PlaceState placeState = Walls;
+        ToggleState toggleState = On;
+    };
+
     public:
         struct Output
         {
@@ -48,6 +61,7 @@ class InterfaceLogic
             INTERACT_STRUCTURE,
             PLACING_DOORS,
             PAINT_ATMOSPHERE,
+            EDIT_WALLS_DOORS,
         };
 
         InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
@@ -59,13 +73,15 @@ class InterfaceLogic
     private:
         std::string stateToString(State state) const;
         void reset();
+        void applyEditWallsDoors(const WallPosition& position);
         State mState;
 
         th::Optional<glm::ivec2> mDragStart;
         th::Optional<glm::ivec2> mDragEnd;
         th::Optional<RoomPlanInfo> mRoomPlan;
         th::Optional<DoorsPlanInfo> mDoorsPlan;
-        Gases mAtmosphereColor = cHealthyAtmosphere;
+        PaintAtmosphereInfo mPaintAtmosphereInfo;
+        EditWallsDoorsInfo mEditWallsDoorsInfo;
 
         th::Optional<StructureInteraction> mStructureInteraction;
 

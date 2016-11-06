@@ -1,5 +1,6 @@
 #pragma once
 #include <data.hpp>
+#include <random>
 
 class AtmosphereLogic
 {
@@ -8,9 +9,9 @@ class AtmosphereLogic
         void update(const Grid<GridNeighbors<Gases>>& neighbors);
         void scanActive();
     private:
-        void updateBigChanges();
-        void updatePassive();
+        bool assertSanity();
         GameData& mData;
+        std::mt19937 mRandomGen;
         Grid<Gases> mAtmosphereDifference;
-        std::vector<size_t> mActive;
+        std::set<size_t> mActiveToAdd;
 };

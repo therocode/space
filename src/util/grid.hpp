@@ -60,6 +60,22 @@ class Grid
         {
             return position.x >= 0 && position.y >= 0 && position.x < mSize.x && position.y < mSize.y;
         }
+
+        bool operator==(const Grid<Type>& other) const
+        {
+            return !(*this != other);
+        }
+
+        bool operator!=(const Grid<Type>& other) const
+        {
+            for(size_t i = 0; i < mCells.size(); ++i)
+            {
+                if(other.at(i) != mCells[i])
+                    return false;
+            }
+
+            return true;
+        }
     private:
         size_t toIndex(const glm::ivec2& position) const
         {

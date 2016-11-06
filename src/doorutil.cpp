@@ -9,6 +9,20 @@ void createDoor(Door door, GameData& data)
     closeDoor(doorId, data);
 }
 
+void removeDoorAt(const WallPosition& position, GameData& data)
+{
+    auto door = doorAt(position, data);
+
+    if(door)
+    {
+        int32_t toRemove = *door;
+        erase(toRemove, data.tDoor);
+        erase(toRemove, data.openDoors);
+        erase(toRemove, data.lockedDoors);
+        setWall(position, 1, data);
+    }
+}
+
 void toggleDoor(int32_t doorId, GameData& data)
 {
     if(has(doorId, data.openDoors))
@@ -21,7 +35,7 @@ void closeDoor(int32_t doorId, GameData& data)
 {
     const auto& door = get(doorId, data.tDoor);
     erase(doorId, data.openDoors);
-    set(door.position, 1, data.walls, data.wallChanges);
+    setWall(door.position, 1, data);
 }
 
 void openDoor(int32_t doorId, GameData& data)
@@ -30,7 +44,7 @@ void openDoor(int32_t doorId, GameData& data)
     {
         const auto& door = get(doorId, data.tDoor);
         insert(doorId, data.openDoors);
-        set(door.position, 0, data.walls, data.wallChanges);
+        setWall(door.position, 0, data);
     }
 }
 
@@ -64,7 +78,7 @@ int64_t doorPressureDiff(int32_t doorId, GameData& data)
     return startPressure - endPressure;
 }
 
-th::Optional<int32_t> lockedDoorAt(const WallPosition& position, GameData& data)
+th::Optional<int32_t> doorAt(const WallPosition& position, GameData& data)
 {
     const auto& found = findOne([&] (int32_t id, const Door& door)
     {
@@ -72,9 +86,21 @@ th::Optional<int32_t> lockedDoorAt(const WallPosition& position, GameData& data)
     }, data.tDoor);
 
 
-    if(found && has(found->id, data.lockedDoors))
+    if(found)
     {
         return {found->id};
+    }
+    else
+        return {};
+}
+
+th::Optional<int32_t> lockedDoorAt(const WallPosition& position, GameData& data)
+{
+    auto door = doorAt(position, data);
+
+    if(door && has(*door, data.lockedDoors))
+    {
+        return {*door};
     }
     else
         return {};

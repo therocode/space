@@ -13,6 +13,7 @@
 #include "pathfindingutil.hpp"
 #include "atmosphereutil.hpp"
 #include "worldutil.hpp"
+#include "wallutil.hpp"
 
 const glm::ivec2 cMapSize(256, 256);
 
@@ -162,8 +163,11 @@ void Space::handleMessage(const MouseMoveMessage& message)
     position.x = std::max(position.x, 0);
     position.y = std::max(position.y, 0);
 
-    if(message.drag)
-        mInterfaceLogic.worldMouseDrag(message.position, message.position / 32, fea::Mouse::LEFT);
+    if(!mGuiBlocksMouse)
+    {
+        if(message.drag)
+            mInterfaceLogic.worldMouseDrag(message.position, message.position / 32, fea::Mouse::LEFT);
+    }
 }
 
 void Space::handleMessage(const MouseWheelMessage& message)
@@ -194,18 +198,18 @@ void Space::startScenario()
     mData.walls.fill(0);
     mData.atmosphere.fill(mData.defaultAtmosphere);
     glm::ivec2 offset(7, 7);
-    set({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(1, 1), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(2, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(0, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(0, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(3, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
+    setWall({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(1, 1), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(2, 2), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(0, 0), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(0, 1), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(3, 0), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mData);
 
     createDoor(Door{{offset + glm::ivec2(1, 0), Orientation::Vertical}}, mData);
     createDoor(Door{{{9, 8}, Orientation::Horizontal}}, mData);
@@ -312,6 +316,4 @@ void Space::temp()
             closeDoor(id, mData);
         }
     }, mData.tDoor);
-
-    mAtmosphereLogic.scanActive(); //gather this data in setAtmosphere
 }

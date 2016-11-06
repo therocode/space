@@ -8,3 +8,4 @@ WallPosition wallBetween(const glm::ivec2& a, const glm::ivec2& b);
 glm::ivec2 otherSide(const WallPosition& position);
 th::Optional<WallPosition> positionToWall(const glm::vec2& position, float thickness);
 bool hasWall(const WallPosition& position, const GameData& data);
+void setWall(const WallPosition& position, int32_t type, GameData& data);
