@@ -35,6 +35,10 @@ class InterfaceLogic
         th::Optional<glm::ivec2> initialPos;
     };
 
+    struct PaintAtmosphereInfo
+    {
+        Gases atmosphereColor = cHealthyAtmosphere;
+    };
     public:
         struct Output
         {
@@ -65,7 +69,7 @@ class InterfaceLogic
         th::Optional<glm::ivec2> mDragEnd;
         th::Optional<RoomPlanInfo> mRoomPlan;
         th::Optional<DoorsPlanInfo> mDoorsPlan;
-        Gases mAtmosphereColor = cWtfAtmosphere;
+        PaintAtmosphereInfo mPaintAtmosphereInfo;
 
         th::Optional<StructureInteraction> mStructureInteraction;
 

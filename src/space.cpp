@@ -162,8 +162,11 @@ void Space::handleMessage(const MouseMoveMessage& message)
     position.x = std::max(position.x, 0);
     position.y = std::max(position.y, 0);
 
-    if(message.drag)
-        mInterfaceLogic.worldMouseDrag(message.position, message.position / 32, fea::Mouse::LEFT);
+    if(!mGuiBlocksMouse)
+    {
+        if(message.drag)
+            mInterfaceLogic.worldMouseDrag(message.position, message.position / 32, fea::Mouse::LEFT);
+    }
 }
 
 void Space::handleMessage(const MouseWheelMessage& message)

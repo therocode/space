@@ -12,6 +12,7 @@
 
 InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
+    mPaintAtmosphereInfo({cHealthyAtmosphere}),
 	mSpace(space),
     mRenderer(renderer),
     mGameSpeedMultiplier(gameSpeedMultiplier),
@@ -239,6 +240,33 @@ void InterfaceLogic::update()
 
         ImGui::End();
     }
+
+    //render atmosphere paint
+    if(mState == PAINT_ATMOSPHERE)
+    {
+        ImGui::Begin("Atmosphere values");
+        ImGui::Text("Drag sliders to change what composition you paint");
+
+        ImGui::SliderInt("Oxygen", &mPaintAtmosphereInfo.atmosphereColor[Oxygen], 0, 500000, NULL);
+        ImGui::SliderInt("Carbon Dioxide", &mPaintAtmosphereInfo.atmosphereColor[CarbonDioxide], 0, 500000, NULL);
+        ImGui::SliderInt("Nitrogen", &mPaintAtmosphereInfo.atmosphereColor[Nitrogen], 0, 500000, NULL);
+
+        if(ImGui::SmallButton("Healthy Atmosphere"))
+        {
+            mPaintAtmosphereInfo.atmosphereColor = cHealthyAtmosphere;
+        }
+        if(ImGui::SmallButton("Ambient Atmosphere"))
+        {
+            mPaintAtmosphereInfo.atmosphereColor = mData.defaultAtmosphere;
+        }
+        if(ImGui::SmallButton("Vacuum"))
+        {
+            mPaintAtmosphereInfo.atmosphereColor = {};
+        }
+
+        ImGui::End();
+    }
+
     if(mStructureInteraction)
     {
         if(mStructureInteraction->initialPos)
@@ -344,7 +372,7 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
         }
         else if(mState == PAINT_ATMOSPHERE)
         {
-            setAtmosphere(tile, mAtmosphereColor, mData);
+            setAtmosphere(tile, mPaintAtmosphereInfo.atmosphereColor, mData);
         }
     }
 }
@@ -360,7 +388,7 @@ void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
     }
     else if(mState == PAINT_ATMOSPHERE)
     {
-        setAtmosphere(tile, mAtmosphereColor, mData);
+        setAtmosphere(tile, mPaintAtmosphereInfo.atmosphereColor, mData);
     }
 }
 
