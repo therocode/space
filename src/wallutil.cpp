@@ -51,3 +51,13 @@ bool hasWall(const WallPosition& position, const GameData& data)
 {
     return data.walls.at(position) != 0 && !hasDoor(position, data);
 }
+
+void setWall(const WallPosition& position, int32_t type, GameData& data)
+{
+    int32_t oldType = data.walls.at(position);
+
+    if(oldType != type)
+    {
+        data.wallChanges[position] = {oldType, type};
+    }
+}

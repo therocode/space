@@ -194,7 +194,7 @@ ActionResult humanConstructWall(int32_t aiId, int32_t actionId, GameData& data)
             --constructWallAction.workLeft;
         else
         {
-            set(targetTile, 1, data.walls, data.wallChanges);
+            setWall(targetTile, 1, data);
             return {ActionResult::Success};
         }
     }

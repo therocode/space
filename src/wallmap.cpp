@@ -102,13 +102,3 @@ size_t WallMap::toIndex(const glm::ivec2& position) const
 {
     return static_cast<size_t>(position.x + position.y * mSize.x);
 }
-
-void set(const WallPosition& position, int32_t type, const WallMap& walls, WallChanges& changes)
-{
-    int32_t oldType = walls.at(position);
-
-    if(oldType != type)
-    {
-        changes[position] = {oldType, type};
-    }
-}

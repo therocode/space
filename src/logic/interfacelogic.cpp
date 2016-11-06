@@ -61,6 +61,11 @@ void InterfaceLogic::update()
         mState = PAINT_ATMOSPHERE;
     }
 
+    if(ImGui::SmallButton("Edit walls/doors"))
+    {
+        mState = EDIT_WALLS_DOORS;
+    }
+
     ImGui::End();
 
     if(mDragStart && mDragEnd)
@@ -250,6 +255,7 @@ void InterfaceLogic::update()
         ImGui::SliderInt("Oxygen", &mPaintAtmosphereInfo.atmosphereColor[Oxygen], 0, 500000, NULL);
         ImGui::SliderInt("Carbon Dioxide", &mPaintAtmosphereInfo.atmosphereColor[CarbonDioxide], 0, 500000, NULL);
         ImGui::SliderInt("Nitrogen", &mPaintAtmosphereInfo.atmosphereColor[Nitrogen], 0, 500000, NULL);
+        ImGui::Text("Pressure: %d%%", static_cast<int32_t>(static_cast<float>(pressure(mPaintAtmosphereInfo.atmosphereColor))/pressure(cHealthyAtmosphere) * 100.0f));
 
         if(ImGui::SmallButton("Healthy Atmosphere"))
         {
@@ -263,6 +269,28 @@ void InterfaceLogic::update()
         {
             mPaintAtmosphereInfo.atmosphereColor = {};
         }
+
+        ImGui::End();
+    }
+
+    //render wall door box
+    if(mState == EDIT_WALLS_DOORS)
+    {
+        ImGui::Begin("Edit walls and doors");
+
+        if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Walls)
+            ImGui::Text("Click/drag to toggle walls");
+        if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Doors)
+            ImGui::Text("Click/drag to toggle doors on walls");
+        if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Lock)
+            ImGui::Text("Click/drag to lock/unlock doors");
+
+        if(ImGui::SmallButton("Edit walls"))
+            mEditWallsDoorsInfo.placeState = EditWallsDoorsInfo::Walls;
+        if(ImGui::SmallButton("Edit doors"))
+            mEditWallsDoorsInfo.placeState = EditWallsDoorsInfo::Doors;
+        if(ImGui::SmallButton("Edit locking"))
+            mEditWallsDoorsInfo.placeState = EditWallsDoorsInfo::Lock;
 
         ImGui::End();
     }
@@ -285,7 +313,9 @@ void InterfaceLogic::update()
 void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button)
 {
     if(button == fea::Mouse::MIDDLE)
+    {
         return;
+    }
     else if(button == fea::Mouse::RIGHT)
     {
         reset();
@@ -374,6 +404,39 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
         {
             setAtmosphere(tile, mPaintAtmosphereInfo.atmosphereColor, mData);
         }
+        else if(mState == EDIT_WALLS_DOORS)
+        {
+            auto maybeWall = positionToWall(position, 10.0f);
+
+            if(maybeWall)
+            {
+                WallPosition wallPosition = *maybeWall;
+
+                if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Walls)
+                {
+                    if(!hasWall(wallPosition, mData))
+                        mEditWallsDoorsInfo.toggleState = EditWallsDoorsInfo::On;
+                    else
+                        mEditWallsDoorsInfo.toggleState = EditWallsDoorsInfo::Off;
+                }
+                else if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Doors)
+                {
+                    if(hasDoor(wallPosition, mData))
+                        mEditWallsDoorsInfo.toggleState = EditWallsDoorsInfo::Off;
+                    else
+                        mEditWallsDoorsInfo.toggleState = EditWallsDoorsInfo::On;
+                }
+                else if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Lock)
+                {
+                    if(lockedDoorAt(wallPosition, mData))
+                        mEditWallsDoorsInfo.toggleState = EditWallsDoorsInfo::Off;
+                    else
+                        mEditWallsDoorsInfo.toggleState = EditWallsDoorsInfo::On;
+                }
+
+                applyEditWallsDoors(wallPosition);
+            }
+        }
     }
 }
 
@@ -389,6 +452,16 @@ void InterfaceLogic::worldMouseDrag(const glm::ivec2& position, const glm::ivec2
     else if(mState == PAINT_ATMOSPHERE)
     {
         setAtmosphere(tile, mPaintAtmosphereInfo.atmosphereColor, mData);
+    }
+    else if(mState == EDIT_WALLS_DOORS)
+    {
+        auto maybeWall = positionToWall(position, 10.0f);
+        if(maybeWall)
+        {
+            WallPosition wallPosition = *maybeWall;
+
+            applyEditWallsDoors(wallPosition);
+        }
     }
 }
 
@@ -453,4 +526,34 @@ void InterfaceLogic::reset()
     mRoomPlan = {};
     mDoorsPlan = {};
     mStructureInteraction = {};
+}
+
+void InterfaceLogic::applyEditWallsDoors(const WallPosition& position)
+{
+    if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Walls)
+    {
+        if(mEditWallsDoorsInfo.toggleState == EditWallsDoorsInfo::On)
+            setWall(position, 1, mData);
+        else
+            setWall(position, 0, mData);
+    }
+    else if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Doors)
+    {
+        if(mEditWallsDoorsInfo.toggleState == EditWallsDoorsInfo::On && hasWall(position, mData))
+            createDoor(Door{position}, mData);
+        else if(mEditWallsDoorsInfo.toggleState == EditWallsDoorsInfo::Off && hasDoor(position, mData))
+            removeDoorAt(position, mData);
+    }
+    else if(mEditWallsDoorsInfo.placeState == EditWallsDoorsInfo::Lock)
+    {
+        auto door = doorAt(position, mData);
+
+        if(door)
+        {
+            if(mEditWallsDoorsInfo.toggleState == EditWallsDoorsInfo::On)
+                lockDoor(*door, mData);
+            else
+                unlockDoor(*door, mData);
+        }
+    }
 }

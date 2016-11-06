@@ -13,6 +13,7 @@
 #include "pathfindingutil.hpp"
 #include "atmosphereutil.hpp"
 #include "worldutil.hpp"
+#include "wallutil.hpp"
 
 const glm::ivec2 cMapSize(256, 256);
 
@@ -197,18 +198,18 @@ void Space::startScenario()
     mData.walls.fill(0);
     mData.atmosphere.fill(mData.defaultAtmosphere);
     glm::ivec2 offset(7, 7);
-    set({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(1, 1), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(2, 2), Orientation::Horizontal}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(0, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(0, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(3, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
-    set({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mData.walls, mData.wallChanges);
+    setWall({offset + glm::ivec2(0, 0), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(1, 0), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(1, 1), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(2, 0), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(0, 2), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(1, 2), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(2, 2), Orientation::Horizontal}, 1, mData);
+    setWall({offset + glm::ivec2(0, 0), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(0, 1), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(3, 0), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(3, 1), Orientation::Vertical}, 1, mData);
+    setWall({offset + glm::ivec2(2, 0), Orientation::Vertical}, 1, mData);
 
     createDoor(Door{{offset + glm::ivec2(1, 0), Orientation::Vertical}}, mData);
     createDoor(Door{{{9, 8}, Orientation::Horizontal}}, mData);
