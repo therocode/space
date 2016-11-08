@@ -11,6 +11,7 @@
 #include "../atmosphereutil.hpp"
 
 class Space;
+class ResourceManager;
 
 class InterfaceLogic
 {
@@ -33,6 +34,12 @@ class InterfaceLogic
         int32_t structureId;
         int32_t structureTypeId;
         th::Optional<glm::ivec2> initialPos;
+    };
+
+    struct BuildStructureInfo
+    {
+        th::Optional<int32_t> selectedStructureId;
+        std::unordered_map<glm::ivec2, int32_t> plans;
     };
 
     struct PaintAtmosphereInfo
@@ -59,12 +66,13 @@ class InterfaceLogic
             IDLE,
             DRAGGING_ROOM, PLANNING_ROOM,
             INTERACT_STRUCTURE,
+            BUILD_STRUCTURE,
             PLACING_DOORS,
             PAINT_ATMOSPHERE,
             EDIT_WALLS_DOORS,
         };
 
-        InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
+        InterfaceLogic(Space& space, fea::Renderer2D& renderer, ResourceManager& resources, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data);
         void update();
         void worldMouseClick(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
         void worldMouseDrag(const glm::ivec2& position, const glm::ivec2& tile, fea::Mouse::Button button);
@@ -80,6 +88,7 @@ class InterfaceLogic
         th::Optional<glm::ivec2> mDragEnd;
         th::Optional<RoomPlanInfo> mRoomPlan;
         th::Optional<DoorsPlanInfo> mDoorsPlan;
+        th::Optional<BuildStructureInfo> mBuildStructureInfo;
         PaintAtmosphereInfo mPaintAtmosphereInfo;
         EditWallsDoorsInfo mEditWallsDoorsInfo;
 
@@ -87,6 +96,7 @@ class InterfaceLogic
 
 		Space& mSpace;
         fea::Renderer2D& mRenderer;
+        ResourceManager& mResources;
         int32_t& mGameSpeedMultiplier;
         int32_t& mStepAmount;
         GameData& mData;

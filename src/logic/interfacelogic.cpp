@@ -10,11 +10,12 @@
 #include "../wallutil.hpp"
 #include "../atmosphereutil.hpp"
 
-InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
+InterfaceLogic::InterfaceLogic(Space& space, fea::Renderer2D& renderer, ResourceManager& resources, int32_t& gameSpeedMultiplier, int32_t& stepAmount, bool& showZones, bool& showAtmosphere, NumberPool<int32_t>& taskIdPool, GameData& data):
     mState(IDLE),
     mPaintAtmosphereInfo({cHealthyAtmosphere}),
 	mSpace(space),
     mRenderer(renderer),
+    mResources(resources),
     mGameSpeedMultiplier(gameSpeedMultiplier),
     mStepAmount(stepAmount),
     mData(data),
@@ -46,6 +47,11 @@ void InterfaceLogic::update()
     {
         mState = PLACING_DOORS;
         mDoorsPlan = {{}};
+    }
+    if(ImGui::SmallButton("Build structure"))
+    {
+        mState = BUILD_STRUCTURE;
+        mBuildStructureInfo = {{}};
     }
 
     ImGui::Checkbox("Show zones", &mShowZones);
@@ -134,6 +140,54 @@ void InterfaceLogic::update()
 
             reset();
         }
+        ImGui::End();
+    }
+
+    //render build plan
+    if(mBuildStructureInfo)
+    {
+        for(const auto& plan : mBuildStructureInfo->plans)
+        {
+            fea::Quad structureQuad({32.0f, 32.0f});
+            structureQuad.setPosition(plan.first * glm::ivec2(32, 32));
+            structureQuad.setOpacity(0.4f);
+            const fea::Texture& texture = *mResources.textures().at(static_cast<size_t>(get(plan.second, mData.tStructureType).texture)).texture;
+            structureQuad.setTexture(texture);
+
+            mRenderer.render(structureQuad);
+        }
+
+        ImGui::Begin("Build structure");
+        ImGui::Text("Select and place structures you want to build");
+
+        forEach([&](int32_t id, const StructureType& type)
+        {
+            if(!mBuildStructureInfo->selectedStructureId)
+                mBuildStructureInfo->selectedStructureId = id;
+
+            ImColor buttonColor(0, 0, 0, 255);
+
+            if(id == mBuildStructureInfo->selectedStructureId)
+                buttonColor = {100, 150, 200, 255};
+
+            if(ImGui::ImageButton(reinterpret_cast<void*>(mResources.textures().at(static_cast<size_t>(type.texture)).texture->getId()), {32, 32}, {0.0, 0.0}, {1.0, 1.0f}, -1, buttonColor))
+            {
+                mBuildStructureInfo->selectedStructureId = id;
+            }
+
+            if(ImGui::IsItemHovered())
+            {
+                ImGui::BeginTooltip();
+                ImGui::Text("%s",type.name.c_str());
+                ImGui::EndTooltip();
+            }
+        }, mData.tStructureType);
+
+        if(ImGui::SmallButton("Done"))
+        {
+            reset();
+        }
+
         ImGui::End();
     }
 
@@ -388,6 +442,13 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
                 };
             }
         }
+        else if(mState == BUILD_STRUCTURE)
+        {
+            if(mBuildStructureInfo->plans.count(tile) == 0)
+                mBuildStructureInfo->plans[tile] = *mBuildStructureInfo->selectedStructureId;
+            else
+                mBuildStructureInfo->plans.erase(tile);
+        }
         else if(mState == PLACING_DOORS)
         {
             auto clickedWall = positionToWall(position, 10.0f);
@@ -510,10 +571,12 @@ std::string InterfaceLogic::stateToString(State state) const
         return "Plan Room";
     else if(state == INTERACT_STRUCTURE)
         return "Structure Interaction";
+    else if(state == BUILD_STRUCTURE)
+        return "Build Structure";
     else if(state == PLACING_DOORS)
-        return "Place doors on walls";
+        return "Place Doors On Walls";
     else if(state == PAINT_ATMOSPHERE)
-        return "Paint atmosphere";
+        return "Paint Atmosphere";
     else
         return "None";
 }
@@ -526,6 +589,7 @@ void InterfaceLogic::reset()
     mRoomPlan = {};
     mDoorsPlan = {};
     mStructureInteraction = {};
+    mBuildStructureInfo = {};
 }
 
 void InterfaceLogic::applyEditWallsDoors(const WallPosition& position)

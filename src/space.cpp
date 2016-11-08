@@ -44,7 +44,7 @@ Space::Space() :
     mZoneLogic(mData),
     mAtmosphereLogic(mData),
     mRenderLogic(mResources, mFeaRenderer, mData, mShowZones, mShowAtmosphere),
-    mInterfaceLogic(*this, mFeaRenderer, mGameSpeedMultiplier, mStepAmount, mShowZones, mShowAtmosphere, mTaskIdPool, mData)
+    mInterfaceLogic(*this, mFeaRenderer, mResources, mGameSpeedMultiplier, mStepAmount, mShowZones, mShowAtmosphere, mTaskIdPool, mData)
 {
     mWindow.setVSyncEnabled(true);
     mWindow.setFramerateLimit(60);
