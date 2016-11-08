@@ -17,6 +17,8 @@ std::string toString(Task::Type type)
         return "Door";
     else if(type == Task::WallTask)
         return "Wall";
+    else if(type == Task::StructureTask)
+        return "Structure";
     else
     {
         TH_ASSERT(false, "unknown task");

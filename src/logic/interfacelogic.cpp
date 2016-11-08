@@ -185,6 +185,16 @@ void InterfaceLogic::update()
 
         if(ImGui::SmallButton("Done"))
         {
+
+            for(const auto& structurePlan : mBuildStructureInfo->plans)
+            {
+                addTask(StructureTask
+                {
+                    structurePlan.second,
+                    structurePlan.first
+                }, mData.tStructureTask, mData);
+            }
+
             reset();
         }
 

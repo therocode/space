@@ -888,6 +888,42 @@
             "external_id": true,
             "inherits": "item",
             "name": "space_suit"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "table_id",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "structureType"
+                },
+                {
+                    "data_type": "ivec2",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "position"
+                }
+            ],
+            "description": "Task to create a structure at a given position",
+            "display_name": "Structure Task",
+            "external_id": true,
+            "inherits": "task",
+            "name": "structure_task"
+        },
+        {
+            "columns": [
+                {
+                    "data_type": "int32",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "workLeft"
+                }
+            ],
+            "description": "Action to construct structures",
+            "display_name": "Construct Structure Action",
+            "external_id": true,
+            "inherits": "action",
+            "name": "construct_structure_action"
         }
     ]
 }

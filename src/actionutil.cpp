@@ -56,6 +56,11 @@ void createAction(int32_t aiId, AiType aiType, int32_t taskId, Task::Type taskTy
             int32_t newActionId = addAction(aiId, ConstructWallAction{100}, data.tConstructWallAction, data);
             insert({newActionId, taskId}, data.tTaskAction);
         }
+        else if(taskType == Task::StructureTask)
+        {
+            int32_t newActionId = addAction(aiId, ConstructStructureAction{100}, data.tConstructStructureAction, data);
+            insert({newActionId, taskId}, data.tTaskAction);
+        }
         else
         {
             TH_ASSERT(false, "Cannot create action for unknown task type " << toString(taskType));
@@ -79,6 +84,8 @@ std::string toString(Action::Type type)
         return {"Construct Wall"};
     else if(type == Action::ConstructDoorAction)
         return {"Construct Door"};
+    else if(type == Action::ConstructStructureAction)
+        return {"Construct Structure"};
     else if(type == Action::EquipSpaceSuitAction)
         return {"Equip space suit"};
     else
