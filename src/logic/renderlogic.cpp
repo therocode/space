@@ -169,5 +169,23 @@ void RenderLogic::renderTasks()
                 );  
     }, mData.tDoorTask); 
 
+    forEach([&] (int32_t taskId, const StructureTask& structureTask)
+    {   
+        const glm::vec2& position = structureTask.position * 32;
+
+        orders.emplace_back(
+                RenderOrder{
+                position,
+                {},
+                fea::Color(50, 150, 0, 200),
+                {32.0f, 32.0f},
+                FillType::Hollow,
+                //sprite.rotation,
+                //sprite.animationProgress,
+                //sprite.flip,
+                }   
+                );  
+    }, mData.tStructureTask); 
+
     mRenderer.render(orders);
 }
