@@ -11,6 +11,7 @@ class TaskLogic
         void updateRoomTasks();
         void updateWallTasks();
         void updateDoorTasks();
+        void updateStructureTasks();
 
         GameData& mData;
 };

@@ -8,6 +8,7 @@
 #include "itemutil.hpp"
 #include "moveutil.hpp"
 #include "structureutil.hpp"
+#include "structuretypes.hpp"
 
 ActionResult humanGoto(int32_t aiId, int32_t actionId, GameData& data)
 {
@@ -317,6 +318,39 @@ ActionResult humanEquipSpaceSuit(int32_t aiId, int32_t actionId, GameData& data)
     {
         //no free space suit :<
         return {ActionResult::Fail};
+    }
+
+    return {};
+}
+
+ActionResult humanConstructStructure(int32_t aiId, int32_t actionId, GameData& data)
+{
+    const Action& action = get(actionId, data.tAction);
+    const TaskAction& taskAction = findOne([&] (int32_t id, const TaskAction& tA)
+    {
+        return tA.actionId == actionId;
+    }, data.tTaskAction)->data;
+
+    const StructureTask& structureTask = get(taskAction.taskId, data.tStructureTask);
+    const auto& targetTile = structureTask.position;
+    auto targetPosition = tileCenter(targetTile);
+    const auto& currentPosition = get(aiId, data.tPosition).position;
+    float acceptableDistance = 15.0f;
+
+    if(glm::distance(currentPosition, targetPosition) > acceptableDistance)
+    {
+        return {ActionResult::InProgress, ActionVariant{action.actorId, {actionId}, GotoAction::type, GotoAction{targetPosition, acceptableDistance, {}, {}, AllowUnbreathable::Allow}}};
+    }
+    else
+    {
+        ConstructStructureAction& constructStructureAction = get(actionId, data.tConstructStructureAction);
+        if(constructStructureAction.workLeft > 0)
+            --constructStructureAction.workLeft;
+        else
+        {
+            createStructure(Structure{structureTask.structureType, targetTile}, data);
+            return {ActionResult::Success};
+        }
     }
 
     return {};

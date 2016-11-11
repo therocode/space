@@ -162,17 +162,17 @@ void InterfaceLogic::update()
 
         forEach([&](int32_t id, const StructureType& type)
         {
-            if(!mBuildStructureInfo->selectedStructureId)
-                mBuildStructureInfo->selectedStructureId = id;
+            if(!mBuildStructureInfo->selectedStructureType)
+                mBuildStructureInfo->selectedStructureType = type.type;
 
             ImColor buttonColor(0, 0, 0, 255);
 
-            if(id == mBuildStructureInfo->selectedStructureId)
+            if(type.type == mBuildStructureInfo->selectedStructureType)
                 buttonColor = {100, 150, 200, 255};
 
             if(ImGui::ImageButton(reinterpret_cast<void*>(mResources.textures().at(static_cast<size_t>(type.texture)).texture->getId()), {32, 32}, {0.0, 0.0}, {1.0, 1.0f}, -1, buttonColor))
             {
-                mBuildStructureInfo->selectedStructureId = id;
+                mBuildStructureInfo->selectedStructureType = type.type;
             }
 
             if(ImGui::IsItemHovered())
@@ -455,7 +455,7 @@ void InterfaceLogic::worldMouseClick(const glm::ivec2& position, const glm::ivec
         else if(mState == BUILD_STRUCTURE)
         {
             if(mBuildStructureInfo->plans.count(tile) == 0)
-                mBuildStructureInfo->plans[tile] = *mBuildStructureInfo->selectedStructureId;
+                mBuildStructureInfo->plans[tile] = *mBuildStructureInfo->selectedStructureType;
             else
                 mBuildStructureInfo->plans.erase(tile);
         }

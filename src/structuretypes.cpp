@@ -8,26 +8,31 @@ void loadStructureTypes(TStructureType& types, const ResourceManager& resources)
     {
         "Airlock",
         resources.textureFromName("airlock"),
+        Airlock::type,
     }, types);
     insert(Structure::CryoPods, StructureType
     {
         "Cryo pods",
         resources.textureFromName("cryopods"),
+        CryoPods::type,
     }, types);
     insert(Structure::Battery, StructureType
     {
         "Battery",
         resources.textureFromName("battery"),
+        Battery::type,
     }, types);
     insert(Structure::Crate, StructureType
     {
         "Crate",
         resources.textureFromName("crate"),
+        Crate::type,
     }, types);
     insert(Structure::Toilet, StructureType
     {
         "Toilet",
         resources.textureFromName("toilet"),
+        Toilet::type,
     }, types);
 }
 

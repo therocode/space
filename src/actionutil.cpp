@@ -111,6 +111,8 @@ void deleteAction(int32_t actionId, GameData& data)
         erase(actionId, data.tConstructDoorAction);
     else if(action.type == Action::EquipSpaceSuitAction)
         erase(actionId, data.tEquipSpaceSuitAction);
+    else if(action.type == Action::ConstructStructureAction)
+        erase(actionId, data.tConstructStructureAction);
     else
     {
         TH_ASSERT(false, "No cleanup for action " << toString(action.type));

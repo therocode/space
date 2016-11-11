@@ -38,8 +38,8 @@ class InterfaceLogic
 
     struct BuildStructureInfo
     {
-        th::Optional<int32_t> selectedStructureId;
-        std::unordered_map<glm::ivec2, int32_t> plans;
+        th::Optional<Structure::Type> selectedStructureType;
+        std::unordered_map<glm::ivec2, Structure::Type> plans;
     };
 
     struct PaintAtmosphereInfo

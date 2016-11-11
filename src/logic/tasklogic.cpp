@@ -12,6 +12,7 @@ void TaskLogic::update()
     updateRoomTasks();
     updateWallTasks();
     updateDoorTasks();
+    updateStructureTasks();
 }
 
 void TaskLogic::updateRoomTasks()
@@ -74,4 +75,24 @@ void TaskLogic::updateDoorTasks()
 
     for(int32_t id : toErase)
         eraseTask(id, mData.tDoorTask, mData);
+}
+
+void TaskLogic::updateStructureTasks()
+{
+    std::vector<int32_t> toErase;
+
+    forEach([&] (int32_t id, const StructureTask& structureTask)
+    {
+        bool finished = !findOne([&] (int32_t doorId, const Structure& structure)
+        {
+            return structureTask.position == structure.position && structureTask.structureType == structure.type;
+        },  mData.tStructure).isNull();
+        if(finished)
+        {
+            toErase.push_back(id);
+        }
+    }, mData.tStructureTask);
+
+    for(int32_t id : toErase)
+        eraseTask(id, mData.tStructureTask, mData);
 }

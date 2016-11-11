@@ -95,6 +95,13 @@
             ],
             "name": "path",
             "output": "fea::Pathfinder<WorkerPathAdaptor>::Result"
+        },
+        {
+            "dependencies": [
+                ""
+            ],
+            "name": "structure_type",
+            "output": "Structure::Type"
         }
     ],
     "field_types": [
@@ -635,6 +642,12 @@
                     "field_type": "default",
                     "field_type_variables": [],
                     "name": "texture"
+                },
+                {
+                    "data_type": "structure_type",
+                    "field_type": "default",
+                    "field_type_variables": [],
+                    "name": "type"
                 }
             ],
             "description": "Data for a specific type of structure",
@@ -892,7 +905,7 @@
         {
             "columns": [
                 {
-                    "data_type": "table_id",
+                    "data_type": "structure_type",
                     "field_type": "default",
                     "field_type_variables": [],
                     "name": "structureType"

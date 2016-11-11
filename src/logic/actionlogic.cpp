@@ -72,11 +72,11 @@ void ActionLogic::update()
             }
             else if(action.type == Action::ConstructStructureAction)
             {
-                //auto result = humanEquipSpaceSuit(action.actorId, actionId, mData);
-                //if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
-                //    doneActions.push_back(actionId);
-                //else if(result.createdSubAction)
-                //    newActions.push_back(std::move(*result.createdSubAction));
+                auto result = humanConstructStructure(action.actorId, actionId, mData);
+                if(result.status == ActionResult::Fail || result.status == ActionResult::Success)
+                    doneActions.push_back(actionId);
+                else if(result.createdSubAction)
+                    newActions.push_back(std::move(*result.createdSubAction));
             }
             else if(action.type == Action::EquipSpaceSuitAction)
             {
